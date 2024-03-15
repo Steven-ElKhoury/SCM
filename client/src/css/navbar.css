@@ -1,0 +1,137 @@
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+ /* color: #6729d0;*/
+}
+
+#icon {
+  width: 2rem;
+}
+
+body {
+  font-family: Montserrat, sans-serif;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+.productCategories {
+  font-size: 30px;
+  font-weight: bold;
+  margin-left: 0.3rem;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-top: 3.5em;
+}
+
+
+
+.nav {
+  background-color: white;
+  position: fixed;
+  width: 100vw;
+  box-shadow: 0 0 10px #e1e5ee;
+  z-index: 2;
+}
+.nav__list {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2rem;
+  margin: 0 2rem;
+  margin-left: 3em;
+}
+.tl{
+  margin-right: 27rem;
+  left:0;
+}
+.nav__listlogo {
+  list-style: none;
+  margin-right: auto;
+  cursor: pointer;
+  
+}
+.nav__listlogo img {
+  width: 50px;
+  height:auto;
+  transition: fill 250ms ease-in;
+}
+.nav__listlogo img:hover, .nav__listlogo img:focus {
+  fill: #484ca1;
+}
+.nav__listitem {
+  list-style: none;
+  font-weight: bold;
+  position: relative;
+  padding: 1.5rem 1rem;
+  cursor: pointer;
+
+}
+.nav__listitem::after {
+  content: "";
+  width: 0;
+  height: 0.3rem;
+  border-radius: 0.2rem;
+  position: absolute;
+  left: 1rem;
+  bottom: 0.8rem;
+  background-color: #484ca1;
+  transition: width 200ms ease-in;
+}
+.nav__listitem:hover::after, .nav__listitem:focus::after {
+  width: 80%;
+}
+.nav__listitem:hover ul, .nav__listitem:focus ul {
+  opacity: 1;
+  visibility: visible;
+}
+.nav__listitemdrop {
+  position: absolute;
+  top: 4rem;
+  left: -1rem;
+  box-shadow: 0 0 10px #e1e5ee;
+  background-color: white;
+  border-radius: 0.2rem;
+  width: 12rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 200ms ease-in-out;
+}
+.nav__listitemdrop li {
+  color: black;
+  list-style: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.2rem;
+  transition: background-color 200ms ease-in-out;
+}
+.nav__listitemdrop li:hover, .nav__listitemdrop li:focus {
+  background-color: #fce4ec;
+}
+
+nav {
+  margin-top: 0;
+  top: 0;
+  left: 0;
+}
+
+.distance {
+  margin-top: 5rem;
+}
+
+.rightmost{
+  margin-right: 0;;
+}
