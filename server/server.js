@@ -91,6 +91,18 @@ app.post('/create', (req, res) => {
 })
 */
 
+app.get('/gettingsuppliers', (req, res) => {
+  db.query('select supplier_name,offering_id,price,lead_time,supplier_id,type from supplier_offerings natural join component_type natural join supplier', (err, result) => {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log("SUPPLIERS ARE:"+JSON.stringify(result));
+      res.send(result) //to send the data that we got from our query
+    }
+  })
+})
+
+
 app.listen(3001, () => {
   console.log('your server is running on port 3001')
 }) //start our app
