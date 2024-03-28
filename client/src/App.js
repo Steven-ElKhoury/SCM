@@ -1,5 +1,5 @@
 import Navbar from './Navbar'
-import Content from './Content'
+
 import About from './pages/About'
 import Home from './pages/Home'
 import Products from './pages/Products'
@@ -9,25 +9,19 @@ import Pants from './pages/Pants';
 import { useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Axios from 'axios'
+import Login from './pages/Login'
+import Main from './pages/Main'
+
 
 function App() {
   return (
     <div>
-      helloz
-      <Navbar />
       <div className='container'>
         <Routes>
-          <Route path='/' element={<Home />}></Route>
-          <Route path='/products' element={<Products />}></Route>
-          <Route path='/about' element={<About />}></Route>
-
-          <Route path='/shoes' element={<Shoes />}></Route>
-          <Route path='/shirts' element={<Shirts />}></Route>
-          <Route path='/pants' element={<Pants />}></Route>
+          <Route path='/' element = {<Login/>}></Route>
+          <Route path='/main/*' element={<Main/>}></Route>
         </Routes>
       </div>
-      <Content/>
-      
     </div>
   )
 }

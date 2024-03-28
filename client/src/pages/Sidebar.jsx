@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faArrowLeft, faUsers, faTasks, faClipboardList, faShoppingCart, faTruckLoading, faWarehouse, faHome } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function Sidebar({sidebarOpen, setSidebarOpen}){
@@ -8,59 +8,34 @@ function Sidebar({sidebarOpen, setSidebarOpen}){
         <div className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
            <button className='sidebar-toggle' onClick={() => setSidebarOpen(!sidebarOpen)}>
                 <FontAwesomeIcon icon={sidebarOpen ? faArrowLeft : faArrowRight} />
-            </button>
+                </button>
             <nav>
                 <ul className="nav-list">
                     <li className="nav-item">
-                        <a className="nav-link" href="/Car/CarEntry.aspx">إدخال سيارة</a>
+                        <Link className="nav-link" to="/main"><FontAwesomeIcon icon={faHome} /> Home</Link>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="/AssignmentEntry.aspx">إدخال تكليف</a>
+                        <Link className="nav-link" to="employees"><FontAwesomeIcon icon={faUsers} /> Employees</Link>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="/InvoiceEntry.aspx">إدخال فاتورة</a>
+                        <Link className="nav-link" to="/tasks"><FontAwesomeIcon icon={faTasks} /> Tasks</Link>
                     </li>
-                    {/* {this.props.role === "Admin" && */}
-                        <li className="dropdown">
-                            <a className="nav-link" href="#">جداول</a>
-                            <ul className="dropdown-list">
-                                <li className="dropdown-car">
-                                    <a className="nav-link" href="/Car/Car.aspx">السيارات</a>
-                                    <ul className="dropdownlist-car">
-                                        <li className="dropdown-item"><a className="nav-link" href="/Car/CarType.aspx">نوع السيارة</a></li>
-                                        <li className="dropdown-item"><a className="nav-link" href="/Car/CarCategory.aspx">فئة السيارة</a></li>
-                                        <li className="dropdown-item"><a className="nav-link" href="/Car/CarStatus.aspx">حالة السيارة</a></li>
-                                        <li className="dropdown-item"><a className="nav-link" href="/Car/CarsInsurance.aspx">تأمين السيارة</a></li>
-                                        <li className="dropdown-item"><a className="nav-link" href="/Car/PlateNumber.aspx">رقم لوحة السيارة</a></li>
-                                        <li className="dropdown-item"><a className="nav-link" href="/Car/CarHistory.aspx">تاريخ السيارة</a></li>
-                                    </ul>
-                                </li>
-                                <li className="dropdown-item"><a className="nav-link" href="/EmployeeOfficer.aspx">السائقين</a></li>
-                                <li className="dropdown-item"><a className="nav-link" href="/Grade.aspx">الرتبة</a></li>
-                                <li className="dropdown-item"><a className="nav-link" href="/EmployeeOfficerType.aspx">نوع الموظف</a></li>
-                                <li className="dropdown-item"><a className="nav-link" href="/Assignment/AssignmentType.aspx">نوع التكليف</a></li>
-                                <li className="dropdown-item"><a className="nav-link" href="/Assignment/AssignmentCategory.aspx">فئة التكليف</a></li>
-                                <li className="dropdown-item"><a className="nav-link" href="/Assignment/AssignmentStatus.aspx">حالة التكليف</a></li>
-                                <li className="dropdown-item"><a className="nav-link" href="/Invoice/InvoiceStatus.aspx">حالة الفاتورة</a></li>
-                                <li className="dropdown-item"><a className="nav-link" href="/InsuranceType.aspx">نوع التأمين</a></li>
-                                <li className="dropdown-item"><a className="nav-link" href="/Insurance.aspx">التأمين</a></li>
-                                <li className="dropdown-item"><a className="nav-link" href="/PaymentType.aspx">طريقة الدفع</a></li>
-                                <li className="dropdown-item"><a className="nav-link" href="/Area.aspx">المنطقة</a></li>
-                                <li className="dropdown-item"><a className="nav-link" href="/Company.aspx">الشركة</a></li>
-                                <li className="dropdown-item"><a className="nav-link" href="/Users.aspx">المستخدمين</a></li>
-                            </ul>
-                        </li>
-                    {/* } */}
+                    <li className="nav-item">
+                        <Link className="nav-link" to="/orders"><FontAwesomeIcon icon={faClipboardList} /> Orders</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" to="/purchases"><FontAwesomeIcon icon={faShoppingCart} /> Purchases</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" to="/suppliers"><FontAwesomeIcon icon={faTruckLoading} /> Suppliers</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" to="/warehouse"><FontAwesomeIcon icon={faWarehouse} /> Warehouse</Link>
+                    </li>
                 </ul>
             </nav>
-          
         </div>
     );
 }
 
 export default Sidebar;
-
-
-
-
-

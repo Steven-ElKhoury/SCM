@@ -4,25 +4,51 @@ import { Link } from "react-router-dom";
 import {useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import logo from '../pictures/bicycle.png'
+import axios from 'axios';
 
 function Login(){
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
-
-    const signIn = (e) => {
+    const [emailError, setEmailError] = useState(null);
+    const [passwordError, setPasswordError] = useState(null);  
+    const [signInError, setSignInError] = useState(null);
+    const signIn = async (e) => {
         e.preventDefault();
-        //firebase login
-        //navigate to home
-        navigate('/');
-    }
+    
+        // Reset validation messages
+        setEmailError('');
+        setPasswordError('');
+    
+        // Validate email and password
+        if (!email) {
+            setEmailError('Please enter your email'); 
+        }else{   
+            if (!/\S+@\S+\.\S+/.test(email)) {
+                setEmailError('Please enter a valid email address');   
+            }
+        }
+    
+    
+        if (!password) {
+            setPasswordError('Please enter your password');       
+        }else{
+        }
 
-    const register = (e) => {
-        e.preventDefault();
-        //firebase register
-        //navigate to home
-        navigate('/');
+        if(emailError || passwordError){
+            return;
+        }else{
+            axios.post('http://localhost:3001/signin',{
+                email: email,
+                password: password
+            }).then((response)=>{
+                if(response.data.error()){
+                    setSignInError('Invalid email or password. Please try again.');
+                }else{
+                    navigate('/main');
+                }
+            })
+        }
     }
 
     return(
@@ -35,10 +61,13 @@ function Login(){
                 <form>
                     <h5>Email</h5>
                     <input value={email} onChange={e => setEmail(e.target.value)} type='email'/>
+                    {emailError && <p className="error">{emailError}</p>}
                     <h5>Password</h5>
                     <input value={password} onChange={e => setPassword(e.target.value)} type='password'/>
+                    {passwordError && <p className="error">{passwordError}</p>}
                     <button onClick={signIn} type='submit' className='login__signInButton'>Sign In</button>
                 </form>
+                {signInError && <p className="error">{signInError}</p>}
             <p>
                 By signing-in you agree to the SCM Conditions of Use & Sale. Please see our Privacy Notice, our Cookies Notice and our Interest-Based Ads Notice.
             </p>

@@ -1,11 +1,15 @@
 const express = require('express') //now we have an instance of the express libary
 const app = express()
 const mysql = require('mysql')
-
+const bcrypt = require('bcryptjs')
 const cors = require('cors')
+const authRouter = require('./routes/auth_endpoints.js');
+
 app.use(cors()) //just a standard
 
 app.use(express.json()) //probably standard too, just to parse json
+
+
 
 const db = mysql.createConnection({
   user: 'root',
@@ -13,6 +17,8 @@ const db = mysql.createConnection({
   password: 'password',
   database: 'supply_chain',
 })
+app.use(authRouter);
+
 
 
 app.get('/gettinglibrary', (req, res) => {
