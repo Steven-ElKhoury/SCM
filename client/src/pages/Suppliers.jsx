@@ -6,9 +6,168 @@ import Axios from 'axios';
 import "../css/supplier.css";
 
 
+// NewSupplier component for adding a new supplier
+const NewSupplier = ({ existingTypes, supplierfunc }) => {
+  const [supplierName, setSupplierName] = useState('');
+  const [supplierEmail, setSupplierEmail] = useState('');
+  const [selectedType, setSelectedType] = useState('');
+  const [selectedPrice, setSelectedPrice] = useState('');
+  const [leadTime,setLeadTime] = useState('');
+  const [component_id,setComponent_id] = useState('');
+  const [supplier_id,setSupplier_id] = useState('');
+  
+  const handleAddSupplier = () => {
+    // Validation checks can be added here if needed
+    if (supplierName && supplierEmail && leadTime &&  selectedPrice) {
+      addSupplier({ supplierName,supplierEmail,selectedPrice, selectedType,leadTime,component_id,supplier_id });
+      setSupplierName('');
+      setSupplierEmail('');
+      setSelectedType('');
+      setSelectedPrice('');
+      setLeadTime('');
+      setSupplier_id('');
+      setComponent_id('');
+    } else {
+      // Handle invalid input
+      console.log('invalid input')
+    }
+  };
+  
+  const addSupplier = (newSupplier) => {
+    Axios.post('http://localhost:3001/getcomponentid',{ selectedType: newSupplier.selectedType })
+      .then(response => {
+        console.log(response.data[0])
+        setComponent_id(response.data[0].component_type_id);
+
+
+        const componentId = response.data[0].component_type_id;
+        newSupplier.component_id = componentId;
+
+        Axios.post('http://localhost:3001/addSupplier', newSupplier)
+        .then(response => {
+            supplierfunc();
+
+            Axios.get('http://localhost:3001/getsupplierid').then((response) => {
+              console.log("supplier id is "+JSON.stringify(response.data[0].supplier_id))
+              setSupplier_id(response.data[0].supplier_id);
+
+              const supplierId = response.data[0].supplier_id;
+              newSupplier.supplier_id = supplierId;
+        
+              Axios.post('http://localhost:3001/addsupplieroffering', newSupplier)
+              .then(response => {
+                  console.log("added supplier")
+                })
+                .catch(error => {
+                  console.error('Error adding supplier offering:', error);
+                });
+          
+          
+          
+        }).catch(error => {
+          console.error('Error fetching suppliers:', error);
+        });
+        console.log("supermario"+supplier_id)
+
+
+
+    })
+    .catch(error => {
+      console.error('Error adding supplier:', error);
+    });
+
+        })
+        .catch(error => {
+          console.error('Error getting component id:', error);
+        });
+
+
+
+      
+      
+    };
+
+
+  return (
+    <div className="new-supplier">
+      <h2>Add New Supplier</h2>
+      <input
+        type="text"
+        placeholder="Supplier Name"
+        value={supplierName}
+        onChange={(e) => setSupplierName(e.target.value)}
+      />
+      <input
+        type="text" //change to emaillllllllllllllllllll
+        placeholder="Supplier Email"
+        value={supplierEmail}
+        onChange={(e) => setSupplierEmail(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Component Price"
+        value={selectedPrice}
+        onChange={(e) => setSelectedPrice(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Lead Time"
+        value={leadTime} ////////change data restriction to data only (integer)
+        onChange={(e) => setLeadTime(e.target.value)}
+      />
+
+
+      <select
+        value={selectedType}
+        onChange={(e) => setSelectedType(e.target.value)}
+      >
+        <option value="">Select Type</option>
+        {existingTypes.map((type, index) => (
+          <option key={index} value={type}>{type}</option>
+        ))}
+      </select>
+      <button onClick={handleAddSupplier}>Add Supplier</button>
+    </div>
+  );
+};
+
+
 // SupplierDetails component to display details of a supplier
-const SupplierDetails = ({ supplier, offerings }) => {
-    return (
+const SupplierDetails = ({ supplier, offerings,supplierfunc }) => {
+
+  // const isManager = userData.role === 'manager';
+  const isManager = true;
+
+  const [newPrices, setNewPrices] = useState({});
+  // Function to send new prices to the backend
+  const updatePrice = (offeringId) => {
+    const newPrice = newPrices[offeringId];
+    if (newPrice !== undefined && newPrice !== '') {
+        Axios.post('http://localhost:3001/updatePrice', { offeringId, newPrice })
+            .then(response => {
+                // Handle success, maybe show a success message
+                supplierfunc();
+
+            })
+            .catch(error => {
+                console.error('Error updating price:', error);
+            });
+    } else {
+      console.log('problem')  
+      // Handle invalid input, maybe show a validation message
+    }
+  };
+  
+  // Function to handle change in price
+  const handlePriceChange = (offeringId, event) => {
+    const { value } = event.target;
+    setNewPrices(prevState => ({
+      ...prevState,
+      [offeringId]: value
+    }));
+  };
+
+  return (
         <div className="supplier-details">
             <h2 className="supplier-name">Supplier: {supplier}</h2>
             <div className="offerings">
@@ -18,6 +177,18 @@ const SupplierDetails = ({ supplier, offerings }) => {
                         <p>Price: ${offering.price}</p>
                         <p>Lead Time: {offering.lead_time} days</p>
                         <p>Type: {offering.type}</p>
+                        
+                        {isManager && (
+                        <div>
+                            <input
+                                type="number"
+                                placeholder="New Price"
+                                value={newPrices[offering.offering_id] || ''}
+                                onChange={(e) => handlePriceChange(offering.offering_id, e)}
+                                />
+                            <button onClick={() => updatePrice(offering.offering_id)}>Edit Price</button>
+                        </div>
+                        )}
                     </div>
                 ))}
             </div>
@@ -32,6 +203,7 @@ const Suppliers = () => {
     const [selectedType, setSelectedType] = useState('');
     const [sortOrder, setSortOrder] = useState({ sortBy: 'price', order: 'asc' });
 
+    
     useEffect(() => {
         getSupplier();
     }, []);
@@ -43,6 +215,10 @@ const Suppliers = () => {
             console.error('Error fetching suppliers:', error);
         });
     }
+
+
+
+
 
     // Filter and sort suppliers based on selected criteria
     const filteredSuppliers = suppliersList.filter(supplier => {
@@ -72,6 +248,11 @@ const Suppliers = () => {
         groupedSuppliers[supplier.supplier_name].push(supplier);
     });
 
+  //for add supplier feature
+  const existingTypes = Array.from(new Set(suppliersList.map(supplier => supplier.type)));
+
+
+
     return (
         <div className="container" id='supplier-page'>
             <TopBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -81,6 +262,9 @@ const Suppliers = () => {
                     <div className="header">
                         <h1>Suppliers List</h1>
                     </div>
+                                                                                                                                                  <NewSupplier existingTypes={existingTypes} supplierfunc={getSupplier}/>
+
+
                     <div className="filters">
                         <select value={selectedSupplier} onChange={(e) => setSelectedSupplier(e.target.value)}>
                             <option value="">Select Supplier</option>
@@ -103,7 +287,7 @@ const Suppliers = () => {
                     </div>
                     <div className="supplier-list">
                         {Object.keys(groupedSuppliers).map((supplierName, index) => (
-                            <SupplierDetails key={index} supplier={supplierName} offerings={groupedSuppliers[supplierName]} />
+                            <SupplierDetails key={index} supplier={supplierName} offerings={groupedSuppliers[supplierName]} supplierfunc ={getSupplier}/>
                         ))}
                     </div>
                 </div>
