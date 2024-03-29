@@ -12,8 +12,8 @@ const transporter = nodemailer.createTransport({
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
-        user: 'steven.elkhoury@hotmail.com', // your SMTP username
-        pass: 'Q11_H36o17ER' // your SMTP password
+        user: '', // your SMTP username
+        pass: ' '
     }
 });
 
