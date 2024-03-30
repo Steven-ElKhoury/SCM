@@ -1,7 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { faArrowRight, faArrowLeft, faUsers, faTasks, faClipboardList, faShoppingCart, faTruckLoading, faWarehouse, faHome } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faArrowLeft, faUsers, faTasks, faClipboardList, faShoppingCart, faTruckLoading, faWarehouse, faHome, faBoxOpen, faCogs } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+
+
+
+
 
 function Sidebar({sidebarOpen, setSidebarOpen}){
     return (
@@ -21,16 +26,22 @@ function Sidebar({sidebarOpen, setSidebarOpen}){
                         <Link className="nav-link" to="/tasks"><FontAwesomeIcon icon={faTasks} /> Tasks</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/orders"><FontAwesomeIcon icon={faClipboardList} /> Orders</Link>
+                        <Link className="nav-link" to="orders"><FontAwesomeIcon icon={faClipboardList} /> Orders</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/purchases"><FontAwesomeIcon icon={faShoppingCart} /> Purchases</Link>
+                        <Link className="nav-link" to="purchases"><FontAwesomeIcon icon={faShoppingCart} /> Purchases</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/suppliers"><FontAwesomeIcon icon={faTruckLoading} /> Suppliers</Link>
+                        <Link className="nav-link" to="suppliers"><FontAwesomeIcon icon={faTruckLoading} /> Suppliers</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/warehouse"><FontAwesomeIcon icon={faWarehouse} /> Warehouse</Link>
+                        <Link className="nav-link" to="warehouses"><FontAwesomeIcon icon={faWarehouse} /> Warehouse</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" to="products"><FontAwesomeIcon icon={faBoxOpen} /> Products</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" to="parts"><FontAwesomeIcon icon={faCogs} /> Parts</Link>
                     </li>
                 </ul>
             </nav>

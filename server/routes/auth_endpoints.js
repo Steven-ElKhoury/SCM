@@ -20,14 +20,14 @@ const transporter = nodemailer.createTransport({
 const dbPromise = mysqlPromise.createPool({
     host: 'localhost',
     user: 'root',
-    password: 'password',
+    password: 'root',
     database: 'supply_chain'
   });
 
 const db = mysql.createConnection({
     user: 'root',
     host: 'localhost',
-    password: 'password',
+    password: 'root',
     database: 'supply_chain',
   })
 
