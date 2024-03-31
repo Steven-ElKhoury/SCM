@@ -20,7 +20,7 @@ const productRouter = require('./routes/product_endpoints.js');
 const partRouter = require('./routes/part_endpoints.js');
 const warehouseRouter = require('./routes/warehouse_endpoints.js');
 
-app.use(cors()) //just a standard
+//app.use(cors()) //just a standard
 
 app.use(
   cors({
@@ -31,7 +31,7 @@ app.use(
 ) 
 app.use(
   session({
-    key: 'userId',
+    key: 'employeeId',
     secret: 'Jude',
     resave: false,
     saveUninitialized: false,
@@ -40,6 +40,11 @@ app.use(
     },
   })
 )
+
+///////////3/31
+app.options('*', cors());
+
+
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -353,8 +358,10 @@ app.post('/updatePrice', async (req, res) => {
 
   app.get('/login', (req, res) => {
     if (req.session.user) {
+      console.log('fiiiiii')
       res.send({ loggedIn: true, user: req.session.user })
     } else {
+      console.log('maaaaaaaaaaafiiiiii')
       res.send({ loggedIn: false, user: req.session.user });
     }
   })
