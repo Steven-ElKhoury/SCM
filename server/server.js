@@ -1,6 +1,6 @@
 const express = require('express') //now we have an instance of the express libary
 const app = express()
-const mysql = require('mysql')
+const mysql = require('mysql2')
 
 const bcrypt = require('bcrypt')
 const saltRounds = 10
@@ -346,8 +346,9 @@ app.post('/updatePrice', async (req, res) => {
         (err, result) => {
           if (err) {
             console.log(err)
+            console.log("he 1")
           } else {
-            console.log('no error')
+            console.log('he 2')
             res.send('values Inserted') 
           }
         }
@@ -376,6 +377,7 @@ app.post('/login', (req, res) => {
         res.send({ err: err })
       }
       if (result.length > 0) {
+        console.log("tryyyyyy")
         // console.log(result)
         // console.log(result[0].password)
         // console.log(pass)
