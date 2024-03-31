@@ -1,84 +1,61 @@
-const express = require('express') 
-const app = express()
-const mysql = require('mysql')
+const express = require('express');
+const authRouter = express.Router();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const mysql = require('mysql2');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const mysqlPromise = require('mysql2/promise');
 
-const bcrypt = require('bcrypt')
-const saltRounds = 10
+const transporter = nodemailer.createTransport({
+    host: 'smtp-mail.outlook.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: '', // your SMTP username
+        pass: ' '
+    }
+});
 
-const bodyParser = require('body-parser')
-const cookieParser = require('cookie-parser')
-const session = require('express-session')
-
-const cors = require('cors')
-app.use(
-  cors({
-    origin: ['http://localhost:3000'],
-    methods: ['GET', 'POST'],
-    credentials: true,
-  })
-) 
-
-app.use(
-  session({
-    key: 'userId',
-    secret: 'Jude',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      expires: 60 * 60 * 24, 
-    },
-  })
-)
-app.use(cookieParser())
-app.use(bodyParser.urlencoded({ extended: true }))
-
-app.use(express.json()) //probably standard too, just to parse json
+const dbPromise = mysqlPromise.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: 'root',
+    database: 'supply_chain'
+  });
 
 const db = mysql.createConnection({
-  user: 'root',
-  host: 'localhost',
-  password: 'password',
-  database: 'supply_chain',
-})
-app.post('/register', (req, res) => {
-  const email = req.body.email
-  const pass = req.body.pass
-  const first_name = req.body.first_name
-  const last_name = req.body.last_name
-  const userName = req.body.userName
-  const Phone = req.body.Phone
-  bcrypt.hash(pass, saltRounds, (err, hash) => {
-    if (err) {
-      //console.log(err)
-    }
-    db.query(
-      'INSERT INTO user (email,passcode,first_name,last_name,phone,username,created_AT) VALUES (?,?,?,?,?,?,CURRENT_DATE())',
-      [email, hash, first_name, last_name, Phone, userName],
-      (err, result) => {
-        if (err) {
-          //console.log(err)
-        } else {
-          res.send('values Inserted') 
-        }
-      }
-    )
+    user: 'root',
+    host: 'localhost',
+    password: 'root',
+    database: 'supply_chain',
   })
-})
 
 
-app.post('/registerAdd', (req, res) => {
-    const governate = req.body.governate
-    const city = req.body.city
-    const floorNB = req.body.floorNB
-    const phone = req.body.PhoneHome
-    const address_line1 = req.body.address_line1
+// Sign in & Sign Up endpoints
+authRouter.post('/signin', (req, res) => {
+    const { email, password } = req.body;
   
-    db.query(
-      'INSERT INTO user_address (user_ID,governate,city,floorNB,phone,address_line1,type) VALUES ((select max(user_ID) from user),?,?,?,?,?,("Home"))',
-      [governate, city, floorNB, phone, address_line1],
-      (err, result) => {
-        if (err) {
-          //console.log(err)
+    // Query to join the manager and employee tables and get the user
+    db.query('SELECT * FROM manager LEFT JOIN employee ON manager.email = employee.email WHERE manager.email = ? OR employee.email = ?', [email, email], async (error, result) => {
+            if (error) {
+                console.log(error);
+                res.status(500).send({ message: 'Database error' });
+                return;
+            }
+            
+        if (result.length > 0) {
+            // Compare the provided password with the hashed password in the database
+            console.log(result);
+            const comparison = await bcrypt.compare(password, result[0].password);
+  
+            if (comparison) {
+                // Assign the role based on the isManager attribute
+                const role = result[0].isManager ? 'manager' : 'employee';
+                res.send({ message: 'Logged in successfully', role: role });
+            } else {
+                res.send({ message: 'Wrong password' });
+            }
         } else {
           res.send('values Inserted') 
         }

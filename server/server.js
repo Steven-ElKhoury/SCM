@@ -15,6 +15,12 @@ const session = require('express-session')
 
 //const authRouter = require('./routes/auth_endpoints.js');
 const cors = require('cors')
+const authRouter = require('./routes/auth_endpoints.js');
+const productRouter = require('./routes/product_endpoints.js');
+const partRouter = require('./routes/part_endpoints.js');
+const warehouseRouter = require('./routes/warehouse_endpoints.js');
+
+app.use(cors()) //just a standard
 
 app.use(
   cors({
@@ -49,12 +55,17 @@ app.use(express.json()) //probably standard too, just to parse json
 const db = mysql.createConnection({
   user: 'root',
   host: 'localhost',
-  password: 'password',
+  password: 'root',
   database: 'supply_chain',
 })
-//app.use(authRouter);
 
+app.use(authRouter);
 
+app.use(productRouter); 
+
+app.use(partRouter);
+
+app.use(warehouseRouter);
 
 app.get('/gettinglibrary', (req, res) => {
   db.query('SELECT * FROM publisher', (err, result) => {

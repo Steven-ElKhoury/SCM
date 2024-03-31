@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from "./Sidebar";
-import TopBar from "./TopBar";
 import Axios from 'axios';
 
 import "../css/supplier.css";
@@ -208,7 +206,6 @@ const SupplierDetails = ({ supplier, offerings,supplierfunc }) => {
 };
 
 const Suppliers = () => {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
     const [suppliersList, setSuppliersList] = useState([]);
     const [selectedSupplier, setSelectedSupplier] = useState('');
     const [selectedType, setSelectedType] = useState('');
@@ -266,9 +263,6 @@ const Suppliers = () => {
 
     return (
         <div className="container" id='supplier-page'>
-            <TopBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-            <div className={`main-container ${sidebarOpen ? 'sidebar-open' : ''}`}>
-                <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
                 <div className="content">
                     <div className="header">
                         <h1>Suppliers List</h1>
@@ -303,7 +297,6 @@ const Suppliers = () => {
                     </div>
                 </div>
             </div>
-        </div>
     );
 }
 
