@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { contentSecurityPolicy } from 'helmet';
+//import { contentSecurityPolicy } from 'helmet';
 
 
 function EditProduct() {

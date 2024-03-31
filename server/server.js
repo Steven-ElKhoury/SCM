@@ -55,11 +55,11 @@ app.use(express.json()) //probably standard too, just to parse json
 const db = mysql.createConnection({
   user: 'root',
   host: 'localhost',
-  password: 'root',
+  password: 'password',
   database: 'supply_chain',
 })
 
-app.use(authRouter);
+//app.use(authRouter);
 
 app.use(productRouter); 
 
@@ -336,7 +336,7 @@ app.post('/updatePrice', async (req, res) => {
         //console.log(err)
       }
       db.query(//fix manager id and pending
-        'INSERT INTO employee (email,password,pending,manager_id,name) VALUES (?,?,1,0,?)',
+        'INSERT INTO employee (email,password,pending,manager_id,name) VALUES (?,?,1,1,?)',
         [email, hash, name],
         (err, result) => {
           if (err) {

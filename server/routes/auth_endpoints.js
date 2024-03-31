@@ -20,14 +20,14 @@ const transporter = nodemailer.createTransport({
 const dbPromise = mysqlPromise.createPool({
     host: 'localhost',
     user: 'root',
-    password: 'root',
+    password: 'password',
     database: 'supply_chain'
   });
 
 const db = mysql.createConnection({
     user: 'root',
     host: 'localhost',
-    password: 'root',
+    password: 'password',
     database: 'supply_chain',
   })
 
@@ -63,60 +63,60 @@ authRouter.post('/signin', (req, res) => {
     )
   })
 
-app.post('/registerAdd2', (req, res) => {
-    const governate2 = req.body.governate2
-    const city2 = req.body.city2
-    const floorNB2 = req.body.floorNB2
-    const phone2 = req.body.PhoneWork
-    const address_line12 = req.body.address_line12
+// app.post('/registerAdd2', (req, res) => {
+//     const governate2 = req.body.governate2
+//     const city2 = req.body.city2
+//     const floorNB2 = req.body.floorNB2
+//     const phone2 = req.body.PhoneWork
+//     const address_line12 = req.body.address_line12
 
-    db.query(
-      'INSERT INTO user_address (user_ID,governate,city,floorNB,phone,address_line1,type) VALUES ((select max(user_ID) from user),?,?,?,?,?,("Work"))',
-      [governate2, city2, floorNB2, phone2, address_line12],
-      (err, result) => {
-        if (err) {
-          //console.log(err)
-        } else {
-          res.send('values Inserted')
-        }
-      }
-    )
-  })
+//     db.query(
+//       'INSERT INTO user_address (user_ID,governate,city,floorNB,phone,address_line1,type) VALUES ((select max(user_ID) from user),?,?,?,?,?,("Work"))',
+//       [governate2, city2, floorNB2, phone2, address_line12],
+//       (err, result) => {
+//         if (err) {
+//           //console.log(err)
+//         } else {
+//           res.send('values Inserted')
+//         }
+//       }
+//     )
+//   })
 
 
-app.get('/login', (req, res) => {
-    if (req.session.user) {
-      res.send({ loggedIn: true, user: req.session.user })
-    } else {
-      res.send({ loggedIn: false, user: req.session.user });
-    }
-  })
+// app.get('/login', (req, res) => {
+//     if (req.session.user) {
+//       res.send({ loggedIn: true, user: req.session.user })
+//     } else {
+//       res.send({ loggedIn: false, user: req.session.user });
+//     }
+//   })
   
 
 
-app.post('/login', (req, res) => {
-    const email = req.body.email
-    const pass = req.body.pass
+// app.post('/login', (req, res) => {
+//     const email = req.body.email
+//     const pass = req.body.pass
   
-    db.query('SELECT * from user where email = ? ', email, (err, result) => {
-      if (err) {
-        res.send({ err: err })
-      }
+//     db.query('SELECT * from user where email = ? ', email, (err, result) => {
+//       if (err) {
+//         res.send({ err: err })
+//       }
   
-      if (result.length > 0) {
-        bcrypt.compare(pass, result[0].password, (error, response) => {
-          if (response) {
-            req.session.user = result // creating a session
-            res.send(result)
-          } else {
-            res.send({ message: 'wrong email password combination' })
-          }
-        })
-      } else {
-        res.send({ message: 'User does not exist' })
-      }
-    })
-  })
+//       if (result.length > 0) {
+//         bcrypt.compare(pass, result[0].password, (error, response) => {
+//           if (response) {
+//             req.session.user = result // creating a session
+//             res.send(result)
+//           } else {
+//             res.send({ message: 'wrong email password combination' })
+//           }
+//         })
+//       } else {
+//         res.send({ message: 'User does not exist' })
+//       }
+//     })
+//   })
   
 
 
@@ -140,7 +140,7 @@ app.post('/login', (req, res) => {
 
 
 
-app.listen(3002, () => {
-    console.log('your server is running on port 3002')
-  }) //start our app
+// app.listen(3002, () => {
+//     console.log('your server is running on port 3002')
+//   }) //start our app
   
