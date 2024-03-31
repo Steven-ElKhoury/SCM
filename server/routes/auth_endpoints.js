@@ -1,167 +1,169 @@
-const express = require('express');
-const authRouter = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const mysql = require('mysql2');
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
-const mysqlPromise = require('mysql2/promise');
+const express = require('express') 
+const app = express()
+const mysql = require('mysql')
 
-const transporter = nodemailer.createTransport({
-    host: 'smtp-mail.outlook.com',
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-        user: 'steven.elkhoury@hotmail.com', // your SMTP username
-        pass: 'Q11_H36o17ER' // your SMTP password
-    }
-});
+const bcrypt = require('bcrypt')
+const saltRounds = 10
 
-const dbPromise = mysqlPromise.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'supply_chain'
-  });
+const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
+const session = require('express-session')
+
+const cors = require('cors')
+app.use(
+  cors({
+    origin: ['http://localhost:3000'],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  })
+) 
+
+app.use(
+  session({
+    key: 'userId',
+    secret: 'Jude',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      expires: 60 * 60 * 24, 
+    },
+  })
+)
+app.use(cookieParser())
+app.use(bodyParser.urlencoded({ extended: true }))
+
+app.use(express.json()) //probably standard too, just to parse json
 
 const db = mysql.createConnection({
-    user: 'root',
-    host: 'localhost',
-    password: 'password',
-    database: 'supply_chain',
+  user: 'root',
+  host: 'localhost',
+  password: 'password',
+  database: 'supply_chain',
+})
+app.post('/register', (req, res) => {
+  const email = req.body.email
+  const pass = req.body.pass
+  const first_name = req.body.first_name
+  const last_name = req.body.last_name
+  const userName = req.body.userName
+  const Phone = req.body.Phone
+  bcrypt.hash(pass, saltRounds, (err, hash) => {
+    if (err) {
+      //console.log(err)
+    }
+    db.query(
+      'INSERT INTO user (email,passcode,first_name,last_name,phone,username,created_AT) VALUES (?,?,?,?,?,?,CURRENT_DATE())',
+      [email, hash, first_name, last_name, Phone, userName],
+      (err, result) => {
+        if (err) {
+          //console.log(err)
+        } else {
+          res.send('values Inserted') 
+        }
+      }
+    )
+  })
+})
+
+
+app.post('/registerAdd', (req, res) => {
+    const governate = req.body.governate
+    const city = req.body.city
+    const floorNB = req.body.floorNB
+    const phone = req.body.PhoneHome
+    const address_line1 = req.body.address_line1
+  
+    db.query(
+      'INSERT INTO user_address (user_ID,governate,city,floorNB,phone,address_line1,type) VALUES ((select max(user_ID) from user),?,?,?,?,?,("Home"))',
+      [governate, city, floorNB, phone, address_line1],
+      (err, result) => {
+        if (err) {
+          //console.log(err)
+        } else {
+          res.send('values Inserted') 
+        }
+      }
+    )
+  })
+
+app.post('/registerAdd2', (req, res) => {
+    const governate2 = req.body.governate2
+    const city2 = req.body.city2
+    const floorNB2 = req.body.floorNB2
+    const phone2 = req.body.PhoneWork
+    const address_line12 = req.body.address_line12
+
+    db.query(
+      'INSERT INTO user_address (user_ID,governate,city,floorNB,phone,address_line1,type) VALUES ((select max(user_ID) from user),?,?,?,?,?,("Work"))',
+      [governate2, city2, floorNB2, phone2, address_line12],
+      (err, result) => {
+        if (err) {
+          //console.log(err)
+        } else {
+          res.send('values Inserted')
+        }
+      }
+    )
   })
 
 
-// Sign in & Sign Up endpoints
-authRouter.post('/signin', (req, res) => {
-    const { email, password } = req.body;
-  
-    // Query to join the manager and employee tables and get the user
-    db.query('SELECT * FROM manager LEFT JOIN employee ON manager.email = employee.email WHERE manager.email = ? OR employee.email = ?', [email, email], async (error, result) => {
-            if (error) {
-                console.log(error);
-                res.status(500).send({ message: 'Database error' });
-                return;
-            }
-            
-        if (result.length > 0) {
-            // Compare the provided password with the hashed password in the database
-            console.log(result);
-            const comparison = await bcrypt.compare(password, result[0].password);
-  
-            if (comparison) {
-                // Assign the role based on the isManager attribute
-                const role = result[0].isManager ? 'manager' : 'employee';
-                res.send({ message: 'Logged in successfully', role: role });
-            } else {
-                res.send({ message: 'Wrong password' });
-            }
-        } else {
-            res.send({ message: 'User does not exist' });
-        }
-    });
-  });
-  
- 
-  const getEmailNumber = async (baseEmail) => {
-    const [rows] = await dbPromise.query(`
-        SELECT email FROM manager WHERE email LIKE ?
-        UNION ALL
-        SELECT email FROM employee WHERE email LIKE ?
-    `, [`${baseEmail}%`, `${baseEmail}%`]);
-
-    let maxNumber = 0;
-    rows.forEach(row => {
-        const number = parseInt(row.email.slice(baseEmail.length));
-        if (!isNaN(number)) {
-            maxNumber = Math.max(maxNumber, number);
-        }
-    });
-
-    return maxNumber;
-};
-
-authRouter.post('/signup', async (req, res) => {
-    const { name, dob, position, role, personalEmail } = req.body;
-
-    console.log(role);
-    const [firstName, ...lastNameParts] = name.split(' ');
-    const lastName = lastNameParts.join(' ').replace(/\s/g, '');
-    let baseEmail = `${firstName}.${lastName}@bike.com`.toLowerCase();
-
-    const maxEmailNumber = await getEmailNumber(baseEmail);
-    let email;
-    if (maxEmailNumber === 0) {
-        email = baseEmail;
+app.get('/login', (req, res) => {
+    if (req.session.user) {
+      res.send({ loggedIn: true, user: req.session.user })
     } else {
-        const newEmailNumber = String(maxEmailNumber + 1).padStart(2, '0');
-        email = `${baseEmail}${newEmailNumber}`;
+      res.send({ loggedIn: false, user: req.session.user });
     }
+  })
+  
 
-    const password = crypto.randomBytes(10).toString('hex'); // generates a random hex string
 
-    const hashedPassword = await bcrypt.hash(password, 10); // hash the password
+app.post('/login', (req, res) => {
+    const email = req.body.email
+    const pass = req.body.pass
+  
+    db.query('SELECT * from user where email = ? ', email, (err, result) => {
+      if (err) {
+        res.send({ err: err })
+      }
+  
+      if (result.length > 0) {
+        bcrypt.compare(pass, result[0].password, (error, response) => {
+          if (response) {
+            req.session.user = result // creating a session
+            res.send(result)
+          } else {
+            res.send({ message: 'wrong email password combination' })
+          }
+        })
+      } else {
+        res.send({ message: 'User does not exist' })
+      }
+    })
+  })
+  
 
-    const isManager = role === 'manager' ? 1 : 0;
 
-    if(isManager){
-        db.query('INSERT INTO manager (name, dob, email, position, password) VALUES (?, ?, ?, ?, ?)', 
-        [name, dob, email, position, hashedPassword], 
-        async (err, result) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send({ message: 'Database error' });
-                return;
-            }
 
-            const mailOptions = {
-                from: 'steven.elkhoury01@lau.edu',
-                to: personalEmail,
-                subject: 'Your new account',
-                text: `Welcome to our company! Your email is ${email} and your password is ${password}.`
-            };
 
-            try {
-                await transporter.sendMail(mailOptions);
-            } catch (err) {
-                console.log(err);
-                res.status(500).send({ message: 'Failed to send email' });
-                return;
-            }
 
-            res.send({ message: 'User created successfully', email: email, password: password });
-        }
-    );
-    }else{
-        db.query('INSERT INTO employee (name, dob, email, position, password) VALUES (?, ?, ?, ?, ?)', 
-        [name, dob, email, position, password], 
-        async (err, result) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send({ message: 'Database error' });
-                return;
-            }
-            console.log(personalEmail)
-            const mailOptions = {
-                from: 'steven.elkhoury@hotmail,com',
-                to: personalEmail,
-                subject: 'Your new account',
-                text: `Welcome to our company! Your email is ${email} and your password is ${password}.`
-            };
 
-            try {
-                await transporter.sendMail(mailOptions);
-            } catch (err) {
-                console.log(err);
-                res.status(500).send({ message: 'Failed to send email' });
-                return;
-            }
 
-            res.send({ message: 'User created successfully', email: email, password: password });
-        }
-    );
-    }
-    
-});
 
-  module.exports = authRouter;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.listen(3002, () => {
+    console.log('your server is running on port 3002')
+  }) //start our app
+  

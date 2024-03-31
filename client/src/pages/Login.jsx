@@ -1,80 +1,117 @@
-import React from "react";
-import '../css/Login.css';
-import { Link } from "react-router-dom";
-import {useState} from 'react'
-import {useNavigate} from 'react-router-dom'
-import logo from '../pictures/bicycle.png'
-import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import Axios from 'axios'
+import Home from './Home'
+import Main from './Main'
 
-function Login(){
-    const navigate = useNavigate();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [emailError, setEmailError] = useState(null);
-    const [passwordError, setPasswordError] = useState(null);  
-    const [signInError, setSignInError] = useState(null);
-    const signIn = async (e) => {
-        e.preventDefault();
-    
-        // Reset validation messages
-        setEmailError('');
-        setPasswordError('');
-    
-        // Validate email and password
-        if (!email) {
-            setEmailError('Please enter your email'); 
-        }else{   
-            if (!/\S+@\S+\.\S+/.test(email)) {
-                setEmailError('Please enter a valid email address');   
-            }
-        }
-    
-    
-        if (!password) {
-            setPasswordError('Please enter your password');       
-        }else{
-        }
+//import '../css/signin.css'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 
-        if(emailError || passwordError){
-            return;
-        }else{
-            axios.post('http://localhost:3001/signin',{
-                email: email,
-                password: password
-            }).then((response)=>{
-                if(response.data.error()){
-                    setSignInError('Invalid email or password. Please try again.');
-                }else{
-                    navigate('/main');
-                }
-            })
-        }
-    }
+export const Login = (props) => {
+  const navigate = useNavigate()
+  const [emailLog, setEmailLog] = useState('')
+  const [passLog, setPassLog] = useState('')
+  //const [LoginStatus, setLoginStatus] = useState('')
+  const [user_ID, setUser_ID] = useState(0)
+  const win = window.sessionStorage
+  function refreshPage() {
+    window.location.reload(false)
+  }
 
-    return(
-        <div className="login">
-            <Link to ='/'>
-            <img src={logo} alt="logo" className="login__logo"/>
-            </Link>
-            <div className = 'login__container'>
-                <h1>Sign In</h1>
-                <form>
-                    <h5>Email</h5>
-                    <input value={email} onChange={e => setEmail(e.target.value)} type='email'/>
-                    {emailError && <p className="error">{emailError}</p>}
-                    <h5>Password</h5>
-                    <input value={password} onChange={e => setPassword(e.target.value)} type='password'/>
-                    {passwordError && <p className="error">{passwordError}</p>}
-                    <button onClick={signIn} type='submit' className='login__signInButton'>Sign In</button>
-                </form>
-                {signInError && <p className="error">{signInError}</p>}
-            <p>
-                By signing-in you agree to the SCM Conditions of Use & Sale. Please see our Privacy Notice, our Cookies Notice and our Interest-Based Ads Notice.
-            </p>
-        </div>
-    </div>
-    );
+  Axios.defaults.withCredentials = true // in order to make the session work in our front-end
+  const navigateToHome = () => {
+    navigate('/main')
+  }
+  const navigateAdmin = () => {
+    navigate('/Admin')
+  }
+
+ const SignIn = () => {
+   Axios.post('http://localhost:3001/login', {
+     email: emailLog,
+     pass: passLog,
+   }).then((response) => {
+     if (response.data.message) {
+      // setLoginStatus(response.data.message)
+      
+      console.log(response.data.message)
+    } else {
+        //setLoginStatus(response.data[0].username)
+        console.log('no msg')
+        localStorage.setItem('employee_id', response.data[0].employee_id)
+        console.log('hello')
+       win.setItem('Wmployee_ID', response.data[0].employee_id)
+
+
+       if (response.data[0].employee_id == 15) {
+         navigateAdmin()
+       } else {
+        console.log('aal bet')
+         navigateToHome()
+       }
+
+       refreshPage()
+     }
+   })
+ }
+ const handleSubmit = (e) => {
+   e.preventDefault()
+   //console.log(emailLog)
+ }
+ Axios.defaults.withCredentials = true
+ useEffect(() => {
+   Axios.get('http://localhost:3001/login').then((response) => {
+     if (response.data.loggedIn == true) {
+       //setLoginStatus(response.data.user[0].username)
+     }
+
+    // console.log(sessionStorage.getItem('User_ID'))
+   })
+ }, [])
+ return (
+   <div className='auth-form-container'>
+
+     <h2 className='sign'>Login</h2>
+     <form className='login-form' onSubmit={handleSubmit}>
+       <label className='signlbl' for='email'>
+         email:
+       </label>
+       <input
+         className='signinput'
+         onChange={(e) => {
+           setEmailLog(e.target.value)
+         }}
+         type='email'
+         id='email'
+         required
+       />
+       <label className='signlbl' for='email'>
+         password:
+       </label>
+       <input
+         className='signinput'
+         onChange={(e) => {
+           setPassLog(e.target.value)
+         }}
+         type='password'
+         id='password'
+         required
+       />
+       <button className='sign-btn' onClick={SignIn}>
+         Login
+       </button>
+     </form>
+
+     <button
+       className='link-btn sign-btn'
+       onClick={() =>     navigate('/register')}
+     >
+       Don't have an accoount? Register here
+     </button>
+
+     <Routes>
+       <Route path='/Main' element={<Main />} />
+     </Routes>
+   </div>
+ )
 }
-
-
-export default Login;
+export default Login

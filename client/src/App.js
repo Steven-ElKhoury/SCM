@@ -1,11 +1,10 @@
-import Navbar from './Navbar'
-
-import { useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import Axios from 'axios'
-import Login from './pages/Login'
 import Main from './pages/Main'
+
 import Suppliers from './pages/Suppliers';
+import Login from './pages/Login'
+import Register from './pages/Register'
+import AcceptEmployee from './pages/AcceptEmployee';
 
 
 function App() {
@@ -16,6 +15,9 @@ function App() {
           <Route path='/' element = {<Login/>}></Route>
           <Route path='/main/*' element={<Main/>}></Route>
           <Route path='/suppliers/' element={<Suppliers/>}></Route>
+          <Route path='/login/' element={<Login/>}></Route>
+          <Route path='/register/' element={<Register/>}></Route>
+          {/* <Route path='/acceptemployee/' element={<AcceptEmployee/>}></Route> */}
         </Routes>
       </div>
     </div>

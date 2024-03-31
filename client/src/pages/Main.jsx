@@ -2,6 +2,7 @@ import {React, useState} from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
+import AcceptEmployee from "./AcceptEmployee";
 import "../css/Main.css";
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -22,9 +23,10 @@ export default function Main() {
         <div className="scrollable-content">
             <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route path="employees" element={<Employees />} />
-                  <Route path="createEmployee" element={<CreateEmployee />} />
-                  <Route path="suppliers" element={<Suppliers />} />
+                  <Route path="/employees" element={<Employees />} />
+                  <Route path="/createEmployee" element={<CreateEmployee />} />
+                  <Route path="/suppliers" element={<Suppliers />} />
+                  <Route path="/acceptemployee" element={<AcceptEmployee />} />
               </Routes>
         </div>
     </div>

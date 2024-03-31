@@ -15,6 +15,9 @@ const NewSupplier = ({ existingTypes, supplierfunc }) => {
   const [leadTime,setLeadTime] = useState('');
   const [component_id,setComponent_id] = useState('');
   const [supplier_id,setSupplier_id] = useState('');
+
+  const [isExpanded, setIsExpanded] = useState(false); // State to track whether section is expanded
+
   
   const handleAddSupplier = () => {
     // Validation checks can be added here if needed
@@ -90,43 +93,51 @@ const NewSupplier = ({ existingTypes, supplierfunc }) => {
 
   return (
     <div className="new-supplier">
-      <h2>Add New Supplier</h2>
+    <h2 className="section-header" id="supplier-page"  onClick={() => setIsExpanded(!isExpanded)}>Add New Supplier {isExpanded ? '-' : '+'}</h2>
+      {isExpanded && ( // Render the form only if the section is expanded
+        <div className='form-container' id='supplier-page'>
       <input
         type="text"
+        id='supplier-page'
         placeholder="Supplier Name"
         value={supplierName}
         onChange={(e) => setSupplierName(e.target.value)}
-      />
+        />
       <input
         type="text" //change to emaillllllllllllllllllll
+        id='supplier-page'
         placeholder="Supplier Email"
         value={supplierEmail}
         onChange={(e) => setSupplierEmail(e.target.value)}
-      />
+        />
       <input
         type="text"
+        id='supplier-page'
         placeholder="Component Price"
         value={selectedPrice}
         onChange={(e) => setSelectedPrice(e.target.value)}
-      />
+        />
       <input
         type="text"
+        id='supplier-page'
         placeholder="Lead Time"
         value={leadTime} ////////change data restriction to data only (integer)
         onChange={(e) => setLeadTime(e.target.value)}
-      />
+        />
 
 
-      <select
+      <select className='select-type'
         value={selectedType}
         onChange={(e) => setSelectedType(e.target.value)}
-      >
-        <option value="">Select Type</option>
+        >
+        <option id='supplier-page' value="">Select Type</option>
         {existingTypes.map((type, index) => (
           <option key={index} value={type}>{type}</option>
-        ))}
+          ))}
       </select>
-      <button onClick={handleAddSupplier}>Add Supplier</button>
+      <button className="submit-btn" id='supplier-page' onClick={handleAddSupplier}>Add Supplier</button>
+      </div>
+      )}
     </div>
   );
 };

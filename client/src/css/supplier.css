@@ -155,3 +155,53 @@
     border: 1px solid #ccc; /* Example border color */
     border-radius: 5px;
   }
+  #supplier-page .new-supplier {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  #supplier-page .section-header {
+    background-color: #f0f0f0;
+    padding: 10px 20px;
+    margin: 0;
+    cursor: pointer;
+  }
+  
+  #supplier-page .form-container {
+    padding: 20px;
+  }
+  
+  #supplier-page input[type="text"]{
+    width: 70%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  #supplier-page .select-type select{
+    width: 70%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  
+  
+  #supplier-page .submit-btn {
+    width: 20%;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  
+  #supplier-page .submit-btn:hover {
+    background-color: #0056b3;
+  }
+  
