@@ -19,7 +19,7 @@ import CreatePart from "./createPart";
 import EditPart from "./editPart";
 import CreateStorageUnit from "./createWarehouse";
 import EditStorageUnit from "./editWarehouse";
-import Orders from "/Orders.jsx"
+import Orders from ".//Orders.jsx"
 
 
 export default function Main() {

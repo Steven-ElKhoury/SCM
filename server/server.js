@@ -152,8 +152,60 @@ app.get('/getpendingemployees', (req, res) => {
     }
   })
 })
+const query = `
+    SELECT 
+      cso.order_id,
+      s.supplier_name,
+      comp.type AS component_type,
+      co.quantity,
+      co.date_ordered,
+      co.date_arrived,
+      co.price,
+      co.lead_time
+    FROM 
+      component_supplier_order cso
+    JOIN 
+      component_order co ON cso.order_id = co.order_id
+    JOIN 
+      supplier s ON cso.supplier_id = s.supplier_id
+    JOIN 
+      component comp ON cso.component_id = comp.component_id;
+  `;
 
+  app.get('/getOrders', (req, res) => {
+    db.query(query, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+      } else {
+        console.log("success");
+        res.send(result); 
+      }
+    });
+  });
 
+  app.get('/getSuppliers', (req, res) => {
+    db.query("SELECT *FROM supplier", (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+      } else {
+        console.log("successs");
+        res.send(result); 
+      }
+    });
+  });
+  app.get('/getComponents', (req, res) => {
+    db.query("SELECT *FROM component", (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+      } else {
+        console.log("successs");
+        res.send(result); 
+      }
+    });
+  });
 
 app.get('/gettingsuppliers', (req, res) => {
   db.query('select supplier_name,offering_id,price,lead_time,supplier_id,type from supplier_offerings natural join component_type natural join supplier', (err, result) => {
