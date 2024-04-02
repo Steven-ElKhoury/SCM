@@ -19,7 +19,7 @@ import CreatePart from "./createPart";
 import EditPart from "./editPart";
 import CreateStorageUnit from "./createWarehouse";
 import EditStorageUnit from "./editWarehouse";
-
+import Orders from "/Orders.jsx"
 
 
 export default function Main() {
@@ -49,6 +49,7 @@ export default function Main() {
                   <Route path = "editPart/:id" element = {<EditPart/>} />
                   <Route path = "createUnit" element = {<CreateStorageUnit/>} />
                   <Route path = "editUnit/:id" element = {<EditStorageUnit/>} />
+                  <Route path = "/Orders" element = {<Orders />} />
             </Routes>
         </div>
     </div>
