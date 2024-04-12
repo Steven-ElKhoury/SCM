@@ -1,5 +1,6 @@
 export const initialState = {
     blueprint: [],
+    cart: [], // Add initial state for cart
     user: null,
 };
 
@@ -10,7 +11,6 @@ export const getblueprintTotal = (blueprint) =>
     
 
 const reducer = (state, action) => {
-
     switch(action.type) {
         case 'ADD_TO_blueprint':
             // Logic for adding item to blueprint
@@ -27,29 +27,32 @@ const reducer = (state, action) => {
             if (index >= 0) {
                 // item exists in blueprint, remove it...
                 newblueprint.splice(index, 1);
-            } else {
-                console.warn(
-                    `Can't remove product (id: ${action.id}) as it's not in blueprint!`
-                )
-                }
+            }
             return {
                 ...state,
-                blueprint: newblueprint
+                blueprint: newblueprint,
             };
-        case 'SET_USER':
-            // Logic for setting user
+        case 'ADD_TO_CART':
+            // Logic for adding item to cart
             return {
                 ...state,
-                user: action.user
-            }   
-        case 'EMPTY_blueprint':
+                cart: [...state.cart, action.item],
+            };
+        case 'REMOVE_FROM_CART':
+            // Logic for removing item from cart
+            let newCart = [...state.cart];
+            const cartIndex = state.cart.findIndex((cartItem) => cartItem.id === action.id);
+            if (cartIndex >= 0) {
+                // item exists in cart, remove it...
+                newCart.splice(cartIndex, 1);
+            }
             return {
                 ...state,
-                blueprint: []
-            }       
+                cart: newCart,
+            };
         default:
             return state;
-    }       
+    }
 };
 
 export default reducer;

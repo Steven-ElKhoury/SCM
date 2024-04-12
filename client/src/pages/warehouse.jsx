@@ -21,7 +21,7 @@ const Warehouses = () => {
     return (
         <div className="container">
             <h1 className="header">Warehouses</h1>
-            <button type="button" className="btn btn-primary" onClick={() => navigate('/main/createUnit')}>Create Warehouse</button>
+            <button id = 'create-warehouse-btn' type="button" className="btn btn-primary" onClick={() => navigate('/main/createUnit')}>Create Warehouse</button>
             {warehouses.map((warehouse, index) => (
                 <div className='item' key={index}>
                     <h2 className="item-name">Storage Unit: {warehouse.name}</h2>

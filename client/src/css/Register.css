@@ -1,50 +1,65 @@
 #register .auth-form-container {
-    width: 300px;
-    margin: 0 auto;
-    text-align: center;
-  }
-  
-  #register.register-form {
-    margin-top: 20px;
-  }
-  
-  #register  .signlbl {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  #register  .signinput {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  #register  .sign-btn {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width:20%;
-  }
-  
-  #register  .sign-btn:hover {
-    background-color: #0056b3;
-  }
-  
-  #register  .link-btn {
-    margin-top: 20px;
-    width: 20%;
-    background: #d2dce6;
-    border: none;
-    color: #007bff;
-    cursor: pointer;
-  }
-  
-  #register .link-btn:hover {
-    text-decoration: underline;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f5f5f5;
+  height: 100vh;
+}
+
+#register .sign {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+#register .register-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 30px;
+}
+
+#register .signlbl {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+#register .signinput {
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#register .sign-btn {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+#register .sign-btn:hover {
+  background-color: #0056b3;
+}
+
+#register .link-btn {
+  margin-top: 10px;
+  color: white;
+  background-color: #007bff;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+#register .link-btn:hover {
+  background-color: #0056b3;
+  text-decoration: none;
+}

@@ -1,4 +1,5 @@
 /* Container for the whole page */
+/* Container for the whole page */
 .warehouse-container {
     width: 100%;
     padding: 20px;
@@ -6,17 +7,26 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
+/* Header styling */
 /* Header styling */
 .header {
     width: 100%;
     padding: 20px;
-    background-color: #343a40;
-    color: #fff;
+    background-color: transparent; /* Remove the background color */
+    color: #333;
     text-align: center;
     font-size: 2em;
     margin-bottom: 20px;
+    border-bottom: 1px solid #dee2e6; /* Add a separator underneath */
+    font-weight: bold; /* Make the text bold */
+}
+
+#create-warehouse-btn{
+   margin:10px;
+
 }
 
 /* Warehouse items */
@@ -25,11 +35,12 @@
     padding: 10px;
     background-color: #fff;
     border: 1px solid #dee2e6;
-    margin-bottom: 10px;
+    margin: 20px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
 }
-
 .item-name {
     font-size: 1.2em;
     color: #212529;

@@ -20,15 +20,16 @@ import EditPart from "./editPart";
 import CreateStorageUnit from "./createWarehouse";
 import EditStorageUnit from "./editWarehouse";
 import Orders from ".//Orders.jsx"
-
+import CreateOrder from "./createOrder";
+import ViewOrders from "./viewOrders";
 
 export default function Main() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
-    <div className="container">
+    <div className="dashboard-container" >
     <TopBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
-   <div className="main-container">
+   <div className="dashboard-main-container">
    <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
    <div className={`body-container ${sidebarOpen ? 'sidebar-open' : ''}`}>
         <div className="scrollable-content">
@@ -50,6 +51,8 @@ export default function Main() {
                   <Route path = "createUnit" element = {<CreateStorageUnit/>} />
                   <Route path = "editUnit/:id" element = {<EditStorageUnit/>} />
                   <Route path = "/Orders" element = {<Orders />} />
+                  <Route path = 'createOrder' element = {<CreateOrder/>} />
+                  <Route path = 'viewOrders' element = {<ViewOrders/>} />
             </Routes>
         </div>
     </div>

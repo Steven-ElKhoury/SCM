@@ -19,6 +19,9 @@ function EditPart() {
     const [imageUrlError, setImageUrlError] = useState(null);
     const [error, setError] = useState(null);
 
+
+
+
     const handleImageUrlChange = (e) => {
         setImageUrl(e.target.value);
     };
@@ -77,6 +80,7 @@ function EditPart() {
             })
             .then(response => {
                 console.log(response);
+                navigate('/main/parts')
             })
             .catch(error => {
                 console.error('Error updating part:', error);
@@ -97,34 +101,23 @@ function EditPart() {
         navigate('/main/parts');
     }
     return (
-        <div>
-        <h1>Edit Part</h1>
-            <form onSubmit={handleEdit}>
+        <div className="create-part-container">
+        <h1 className="create-part-header">Edit Part</h1>
+        <form className="create-part-form" onClick={handleEdit}>
             <label>
                 Part Type:
-                <select value={partType} onChange={handlePartTypeChange}>
+                 <select value={partType} onChange={handlePartTypeChange}>
                     <option value="">Select a part type</option>
-                    <optgroup label="Wheels, tires & tubes">
-                        <option value="Road wheels">Road wheels</option>
-                        <option value="Mountain wheels">Mountain wheels</option>
-                        <option value="All wheels">All wheels</option>
-                        <option value="Road tires">Road tires</option>
-                        <option value="Mountain tires">Mountain tires</option>
-                        <option value="Gravel tires">Gravel tires</option>
-                        <option value="City & hybrid tires">City & hybrid tires</option>
-                        <option value="All tires">All tires</option>
-                        <option value="Tubes">Tubes</option>
-                        <option value="Tubeless accessories">Tubeless accessories</option>
-                    </optgroup>
-                    <optgroup label="Lights">
-                        <option value="Front bike lights">Front bike lights</option>
-                        <option value="Rear bike lights">Rear bike lights</option>
-                        <option value="Daytime Running Lights">Daytime Running Lights</option>
-                        <option value="Bike light accessories">Bike light accessories</option>
-                        <option value="All bike lights">All bike lights</option>
-                    </optgroup>
-                    {/* Add more <optgroup> and <option> elements for the other categories and subcategories */}
-                        </select>
+                    <option value="Handlebars">Handlebars</option>
+                    <option value="Brakes">Brakes</option>
+                    <option value="Shifters">Shifters</option>
+                    <option value="Fork">Fork</option>
+                    <option value="Drivetrain">Drivetrain</option>
+                    <option value="Saddle">Saddle</option>
+                    <option value="Pedals">Pedals</option>
+                    <option value="Wheels">Wheels</option>
+                    <option value="Tires">Tires</option>
+                </select>
                         {partTypeError && <p className="error">{partTypeError}</p>}
                     </label>
                         <br />

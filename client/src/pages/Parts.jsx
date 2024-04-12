@@ -24,9 +24,10 @@ const Parts = () => {
     };
 
     return (
-        <div>
+        <div className="parts-page">
             <h1 className="parts-header">Parts</h1>
-            <button type="button" className="btn btn-primary" onClick={navigateToCreatePart}>Create Part</button>
+            <button type="button" className="create-part-button" onClick={navigateToCreatePart}>Create Part</button>
+            <div className="parts-container">
                 {parts.map((part) => (
                     <Part
                         key={part.component_type_id}
@@ -39,6 +40,7 @@ const Parts = () => {
                         editable={true}
                     />
                 ))}
+            </div>
         </div>
     );
 };

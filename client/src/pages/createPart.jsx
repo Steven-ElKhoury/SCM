@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import '../css/createPart.css';
+
+
 
 function CreatePart() {
     const [partType, setPartType] = useState('');
@@ -82,9 +85,9 @@ function CreatePart() {
     };
 
     return (
-        <div>
+        <div className='create-part-container'>
             <h1>Create Part</h1>
-    <form onSubmit={handleSubmit}>
+    <form className='create-part-form' onSubmit={handleSubmit}>
     <label>
         Part Type:
         <select value={partType} onChange={handlePartTypeChange}>

@@ -1,17 +1,11 @@
 const express = require('express') //now we have an instance of the express libary
 const app = express()
 const mysql = require('mysql2')
-
 const bcrypt = require('bcrypt')
 const saltRounds = 10
-
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
-
-
-
-
 
 //const authRouter = require('./routes/auth_endpoints.js');
 const cors = require('cors')
@@ -25,7 +19,7 @@ const warehouseRouter = require('./routes/warehouse_endpoints.js');
 app.use(
   cors({
     origin: ['http://localhost:3000'],
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST','PUT','DELETE'],
     credentials: true,
   })
 ) 
@@ -51,16 +45,10 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.json()) //probably standard too, just to parse json
 
 
-
-
-
-
-
-
 const db = mysql.createConnection({
   user: 'root',
   host: 'localhost',
-  password: 'password',
+  password: 'root',
   database: 'supply_chain',
 })
 
@@ -183,6 +171,8 @@ const query = `
       }
     });
   });
+
+
 
   app.get('/getSuppliers', (req, res) => {
     db.query("SELECT *FROM supplier", (err, result) => {
@@ -377,7 +367,31 @@ app.post('/updatePrice', async (req, res) => {
     });
   }
 
+
+
+  app.get('/supplierofferings/:componentType', (req, res) => {
+    console.log('hello')
+    const { componentType } = req.params;
+
+    db.query('SELECT supplier_id, supplier_name, price, lead_time FROM supplier_offerings NATURAL JOIN supplier WHERE component_type_id = ?', [componentType], (err, results) => {
+      if (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+      }
+      console.log(results);
+      res.json(results);
+    });
+  });
+
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+//order endpoints
+
+app.put('/createOrders', (req, res) => {
+  db.query('INSERT INTO  FROM orders', (err, result) => {
+
 
 
 

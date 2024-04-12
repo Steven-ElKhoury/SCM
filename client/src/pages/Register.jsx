@@ -37,7 +37,7 @@ export const Register = (props) => {
     console.log('f')
   }
   return (
-    <div id='register' clasName='auth-form-container'>
+    <div id='register' className='auth-form-container'>
       <h2>Register</h2>
       <form id='register' className='register-form' onSubmit={handleSubmit}>
         <label id='register' className='signlbl' htmlfor='name'>

@@ -55,19 +55,22 @@ function EditStorageUnit() {
             return;
         }
 
+        e.preventDefault();
+
         if (selectedPartType && name && size && capacity) {
             axios.put(`http://localhost:3001/editUnit/${unit.unit_id}`, {
-                component_type_id: selectedPartType,
                 name: name,
                 size: size,
-                capacity: capacity
+                capacity: capacity,
+                component_type_id: selectedPartType,
             })
             .then(response => {
-                console.log(response);
+                console.log(response.data);
                 navigate('/main/warehouses');
             })
             .catch(error => {
-                console.error('Error updating warehouse:', error);
+                console.error(error);
+                // Handle the error
             });
         }
     }
@@ -84,12 +87,12 @@ function EditStorageUnit() {
         });
     }
     return (
-        <div>
-            <h1>Edit Storage Unit</h1>
-            <form onSubmit={handleEdit}>
+        <div id='edit-warehouse-container'>
+            <h1 id='header'>Edit Storage Unit</h1>
+            <form id = 'form' onSubmit={handleEdit}>
                 <label>
                     Part Type:
-                    <select value={selectedPartType} onChange={e => setSelectedPartType(e.target.value)}>
+                    <select id='part-type-select' value={selectedPartType} onChange={e => setSelectedPartType(e.target.value)}>
                         {partTypes.map(partType => (
                             <option key={partType.component_type_id} value={partType.component_type_id}>{partType.type}</option>
                         ))}
@@ -115,8 +118,8 @@ function EditStorageUnit() {
                     {capacityError && <p className="error">{capacityError}</p>}
                 </label>
                 <br />
-                <button className='btn btn-primary' type="submit">Edit</button>
-                <button className='btn btn-danger' type="button" onClick={handleDelete}>Delete</button>
+                <button id='submit-button' className='btn btn-primary' type="submit">Edit</button>
+                <button id = 'submit-button' className='btn btn-danger' type="button" onClick={handleDelete}>Delete</button>
             </form>
         </div>
     );
