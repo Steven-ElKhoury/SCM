@@ -389,11 +389,6 @@ app.post('/updatePrice', async (req, res) => {
 
 //order endpoints
 
-app.put('/createOrders', (req, res) => {
-  db.query('INSERT INTO  FROM orders', (err, result) => {
-
-
-
 
   app.post('/register', (req, res) => {
     const email = req.body.email
@@ -461,18 +456,6 @@ app.post('/login', (req, res) => {
     })
   })
   
-
-
-
-
-
-
-
-
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
