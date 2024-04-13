@@ -49,12 +49,10 @@ function Part({id, name, type, description, image, modelNumber, editable}) {
                     <p className='toggle-description' onClick={toggleDescription}>Read More</p>
                 )}
             </div>
-            {editable ? (
+            {editable && (
                 <>
                     <button onClick={() => navigate(`/main/editPart/${id}`, { state: { part: { id, name, type, description, image, modelNumber } }  })} className='part-edit-btn'>Edit</button>
                 </>
-            ) : (
-                <button onClick={addToBlueprint}>Add to Blueprint</button>
             )}
         </div>
     );

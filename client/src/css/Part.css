@@ -47,9 +47,6 @@
     color: white;
 }
 
-button:hover {
-    background-color: #0056b3;
-}
 .toggle-description {
     color: #007BFF;
     cursor: pointer;

@@ -9,13 +9,22 @@ function Products() {
 
     useEffect(() => {
         axios.get('http://localhost:3001/getProducts')
-            .then((response) => {
-                setProducts(response.data);
-            })
-            .catch((error) => {
-                console.error('Error fetching products:', error);
-            });
-    }, []);
+          .then((response) => {
+            const productPromises = response.data.map((product) => 
+              axios.get(`http://localhost:3001/blueprintCheck/${product.model_id}`)
+                .then((res) => ({ ...product, hasBlueprint: res.data.hasBlueprint }))
+            );
+      
+            Promise.all(productPromises)
+              .then((productsWithBlueprintInfo) => {
+                setProducts(productsWithBlueprintInfo);
+              });
+          })
+          .catch((error) => {
+            console.error('Error fetching products:', error);
+          });
+      }, []);
+
 
     return (
         <div className="product-container">
@@ -37,7 +46,11 @@ function Products() {
                                     <h3>${product.price}</h3>
                                     <h4>Quantity: {product.quantity}</h4>
                                     <button onClick={() => navigate(`/main/editProduct/${product.model_id}`, { state: { product } })}>Edit</button>
-                                    <button onClick={() => navigate(`/main/viewParts/${product.model_id}`)}>View Parts</button>
+                                    {product.hasBlueprint ? (
+                                        <button onClick={() => navigate(`/main/viewParts/${product.model_id}`)}>View Parts</button>
+                                    ) : (
+                                      <button onClick={() => navigate(`/main/addParts/${product.model_id}`)}>Add Parts</button>
+                                        )}
                                 </div>
                             </div>
                         </div>

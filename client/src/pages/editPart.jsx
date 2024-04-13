@@ -21,25 +21,49 @@ function EditPart() {
 
 
 
-
     const handleImageUrlChange = (e) => {
         setImageUrl(e.target.value);
+        if (e.target.value) {
+            setImageUrlError(''); // clear error if input is not empty
+        } else {
+            setImageUrlError('Please enter the image URL'); // set error if input is empty
+        }
     };
-
+    
     const handlePartTypeChange = (e) => {
         setPartType(e.target.value);
+        if (e.target.value) {
+            setPartTypeError(''); // clear error if input is not empty
+        } else {
+            setPartTypeError('Please enter the part type'); // set error if input is empty
+        }
     };
-
+    
     const handleNameChange = (e) => {
         setName(e.target.value);
+        if (e.target.value) {
+            setNameError(''); // clear error if input is not empty
+        } else {
+            setNameError('Please enter the name'); // set error if input is empty
+        }
     };
-
+    
     const handleModelNumberChange = (e) => {
         setModelNumber(e.target.value);
+        if (e.target.value) {
+            setModelNumberError(''); // clear error if input is not empty
+        } else {
+            setModelNumberError('Please enter the model number'); // set error if input is empty
+        }
     };
-
+    
     const handleDescriptionChange = (e) => {
         setDescription(e.target.value);
+        if (e.target.value) {
+            setDescriptionError(''); // clear error if input is not empty
+        } else {
+            setDescriptionError('Please enter the description'); // set error if input is empty
+        }
     };
 
     function handleEdit(e) {
@@ -67,11 +91,13 @@ function EditPart() {
 
         if (name === part.name && partType === part.type && modelNumber === part.modelNumber && imageUrl === part.image && description === part.description) {
             setError('No changes were made');
+            console.log('No changes were made');
             return;
         }
 
         if (!partTypeError && !nameError && !modelNumberError && !descriptionError && !imageUrlError) {
-            axios.put(`http://localhost:3001/editpart/${part.id}`, {
+            console.log('hello');
+            axios.put(`http://localhost:3001/editPart/${part.id}`, {
                 name: name,
                 type: partType,
                 model_number: modelNumber,
@@ -80,7 +106,7 @@ function EditPart() {
             })
             .then(response => {
                 console.log(response);
-                navigate('/main/parts')
+                navigate('/main/parts');
             })
             .catch(error => {
                 console.error('Error updating part:', error);
@@ -94,16 +120,16 @@ function EditPart() {
         axios.delete(`http://localhost:3001/deletepart/${part.id}`)
         .then(response => {
             console.log(response);
+            navigate('/main/parts');
         })
         .catch(error => {
             console.error('Error deleting part:', error);
         });
-        navigate('/main/parts');
     }
     return (
         <div className="create-part-container">
         <h1 className="create-part-header">Edit Part</h1>
-        <form className="create-part-form" onClick={handleEdit}>
+        <form className="create-part-form" onSubmit={handleEdit}>
             <label>
                 Part Type:
                  <select value={partType} onChange={handlePartTypeChange}>

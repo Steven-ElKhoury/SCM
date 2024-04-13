@@ -9,7 +9,6 @@ import Home from "./Home";
 import Employees from "./Employees";
 import CreateEmployee from "./createEmployee";
 import Suppliers from "./Suppliers";
-import AddParts from "./AddParts";
 import Products from "./Products";
 import CreateProduct from "./createProduct";
 import Warehouses from "./warehouse";
@@ -22,6 +21,8 @@ import EditStorageUnit from "./editWarehouse";
 import Orders from ".//Orders.jsx"
 import CreateOrder from "./createOrder";
 import ViewOrders from "./viewOrders";
+import ProductBlueprint from "./ProductBlueprint";
+import ViewParts from "./ViewParts";
 
 export default function Main() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -39,12 +40,10 @@ export default function Main() {
                   <Route path="/createEmployee" element={<CreateEmployee />} />
                   <Route path="/suppliers" element={<Suppliers />} />
                   <Route path="/acceptemployee" element={<AcceptEmployee />} />
-                  <Route path="addParts" element={<AddParts />} />
                   <Route path="products" element={<Products />} />
                   <Route path="createProduct" element={<CreateProduct />} />
                   <Route path="warehouses" element={<Warehouses />} />
                   <Route path="parts" element={<Parts />} />
-                  <Route path="addpart" element={<AddParts />} />
                   <Route path="editProduct/:id" element={<EditProduct />} />
                   <Route path="createPart" element={<CreatePart />} />
                   <Route path = "editPart/:id" element = {<EditPart/>} />
@@ -53,6 +52,8 @@ export default function Main() {
                   <Route path = "/Orders" element = {<Orders />} />
                   <Route path = 'createOrder' element = {<CreateOrder/>} />
                   <Route path = 'viewOrders' element = {<ViewOrders/>} />
+                  <Route path="addParts/:modelId" element={<ProductBlueprint />} /> {/* Add this line */}
+                  <Route path="viewParts/:modelId" element={<ViewParts />} /> {/* Add this line */}
             </Routes>
         </div>
     </div>
