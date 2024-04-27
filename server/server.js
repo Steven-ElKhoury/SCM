@@ -48,7 +48,7 @@ app.use(express.json()) //probably standard too, just to parse json
 const db = mysql.createConnection({
   user: 'root',
   host: 'localhost',
-  password: 'root',
+  password: 'password',
   database: 'supply_chain',
 })
 
@@ -531,7 +531,7 @@ app.put('/updateBlueprint/:modelId', (req, res) => {
       }
       db.query(//fix manager id and pending
         'INSERT INTO manager (email,password) VALUES (?,?)',
-       // 'INSERT INTO employee (email,password,pending,manager_id,name) VALUES (?,?,1,1,?)',
+       //'INSERT INTO employee (email,password,pending,manager_id,name) VALUES (?,?,1,1,?)',
         [email, hash, name],
         (err, result) => {
           if (err) {
@@ -567,23 +567,23 @@ app.post('/login', (req, res) => {
         res.send({ err: err })
       }
       if(result.length == 0){
-        db.query('SELECT * from manager where email = ? ', email, (err, result) => {
-          if (err) {
-            res.send({ err: err })
-          }else{
-            //add managger queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
-            bcrypt.compare(pass, result[0].password, (error, response) => {
-              if (response) {
-                req.session.user = result // creating a session
-                //req.session.isadmin = 1 
-                console.log('manager in house')
-                res.send(result)
-              } else {
-                res.send({ message: 'wrong email password combination' })
-              }
-            })
-          }  
-        })  
+        // db.query('SELECT * from manager where email = ? ', email, (err, result) => {
+        //   if (err) {
+        //     res.send({ err: err })
+        //   }else{
+        //     //add managger queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+        //     bcrypt.compare(pass, result[0].password, (error, response) => {
+        //       if (response) {
+        //         req.session.user = result // creating a session
+        //         //req.session.isadmin = 1 
+        //         console.log('manager in house')
+        //         res.send(result)
+        //       } else {
+        //         res.send({ message: 'wrong email password combination' })
+        //       }
+        //     })
+        //   }  
+        // })  
 
 
       }
