@@ -524,14 +524,14 @@ app.put('/updateBlueprint/:modelId', (req, res) => {
     const name= req.body.name
 
 
-    console.log('xx')
+    //console.log('xx')
     bcrypt.hash(pass, saltRounds, (err, hash) => {
       if (err) {
-        //console.log(err)
+        console.log(err)
       }
-      db.query(//fix manager id and pending
-        'INSERT INTO manager (email,password) VALUES (?,?)',
-       //'INSERT INTO employee (email,password,pending,manager_id,name) VALUES (?,?,1,1,?)',
+      db.query(
+       // 'INSERT INTO manager (email,password) VALUES (?,?)',
+       'INSERT INTO employee (email,password,pending,manager_id,name) VALUES (?,?,1,1,?)',
         [email, hash, name],
         (err, result) => {
           if (err) {
@@ -549,11 +549,11 @@ app.put('/updateBlueprint/:modelId', (req, res) => {
 
   app.get('/login', (req, res) => {
     if (req.session.user) {
-      console.log('fiiiiii')
+      console.log('there is a current session')
       res.send({ loggedIn: true, user: req.session.user, isadmin: req.session.isadmin })
     } else {
-      console.log('maaaaaaaaaaafiiiiii')
-      res.send({ loggedIn: false, user: req.session.user, isadmin: req.session.isadmin });
+      console.log('no current session')
+      res.send({ loggedIn: false});
     }
   })
   
@@ -567,34 +567,41 @@ app.post('/login', (req, res) => {
         res.send({ err: err })
       }
       if(result.length == 0){
-        // db.query('SELECT * from manager where email = ? ', email, (err, result) => {
-        //   if (err) {
-        //     res.send({ err: err })
-        //   }else{
-        //     //add managger queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
-        //     bcrypt.compare(pass, result[0].password, (error, response) => {
-        //       if (response) {
-        //         req.session.user = result // creating a session
-        //         //req.session.isadmin = 1 
-        //         console.log('manager in house')
-        //         res.send(result)
-        //       } else {
-        //         res.send({ message: 'wrong email password combination' })
-        //       }
-        //     })
-        //   }  
-        // })  
+        db.query('SELECT * from manager where email = ? ', email, (err, result) => {
+          if (err) {
+            res.send({ err: err })
+          }else if(result.length == 0){
+            //no email found
+            res.send({ message: 'User does not exist' })
+
+          }
+          
+          else{
+            
+            //manager query
+            bcrypt.compare(pass, result[0].password, (error, response) => {
+              if (response) {
+                result[0].isadmin = 1;
+                //console.log('jaweb'+result)
+                req.session.user = result // creating a session
+                console.log('manager in house')
+                res.send(result)
+              } else {
+                res.send({ message: 'wrong email password combination' })
+              }
+            })
+          }  
+        })  
 
 
       }
       else if (result.length > 0) {
-        // console.log(result)
-        // console.log(result[0].password)
-        // console.log(pass)
         bcrypt.compare(pass, result[0].password, (error, response) => {
           if (response) {
+            result[0].isadmin = 0;
+            console.log('jaweb'+JSON.stringify(result))
             req.session.user = result // creating a session
-            //req.session.isadmin = 0
+            req.session.isadmin = 0
 
             res.send(result)
           } else {

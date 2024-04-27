@@ -40,12 +40,20 @@ export const Login = (props) => {
     } else {
         //setLoginStatus(response.data[0].username)
         console.log('no msg')
+        console.log(response.data[0])
         localStorage.setItem('employee_id', response.data[0].employee_id)
         localStorage.setItem('isadmin', response.data[0].isadmin)
-        console.log(response.data[0].employee_id)
-       win.setItem('Employee_ID', response.data[0].employee_id)
-       win.setItem('isadmin', response.data[0].isadmin)
-       console.log('li eja'+ response.data[0].isadmin)
+        //console.log(response.data[0].employee_id)
+        if(response.data[0].isadmin==0){
+          win.setItem('Employee_ID', response.data[0].employee_id)
+          
+        }
+        else{
+          win.setItem('Employee_ID', response.data[0].manager_id)
+        }
+        win.setItem('isadmin', response.data[0].isadmin)
+       console.log('isadmin = '+ sessionStorage.isadmin)
+       console.log(win)
 
        if (response.data[0].employee_id == 15) {
          navigateAdmin()
@@ -69,7 +77,7 @@ export const Login = (props) => {
        //setLoginStatus(response.data.user[0].username)
      }
 
-     console.log("abc"+sessionUser)
+     console.log("session user: "+sessionUser)
    })
  }, [])
  return (
