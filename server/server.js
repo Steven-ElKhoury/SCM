@@ -1,17 +1,11 @@
 const express = require('express') //now we have an instance of the express libary
 const app = express()
-const mysql = require('mysql')
-
+const mysql = require('mysql2')
 const bcrypt = require('bcrypt')
 const saltRounds = 10
-
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
-
-
-
-
 
 //const authRouter = require('./routes/auth_endpoints.js');
 const cors = require('cors')
@@ -25,7 +19,7 @@ const warehouseRouter = require('./routes/warehouse_endpoints.js');
 app.use(
   cors({
     origin: ['http://localhost:3000'],
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST','PUT','DELETE'],
     credentials: true,
   })
 ) 
@@ -51,16 +45,10 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.json()) //probably standard too, just to parse json
 
 
-
-
-
-
-
-
 const db = mysql.createConnection({
   user: 'root',
   host: 'localhost',
-  password: 'password',
+  password: 'root',
   database: 'supply_chain',
 })
 
@@ -152,8 +140,62 @@ app.get('/getpendingemployees', (req, res) => {
     }
   })
 })
+const query = `
+    SELECT 
+      cso.order_id,
+      s.supplier_name,
+      comp.type AS component_type,
+      co.quantity,
+      co.date_ordered,
+      co.date_arrived,
+      co.price,
+      co.lead_time
+    FROM 
+      component_supplier_order cso
+    JOIN 
+      component_order co ON cso.order_id = co.order_id
+    JOIN 
+      supplier s ON cso.supplier_id = s.supplier_id
+    JOIN 
+      component comp ON cso.component_id = comp.component_id;
+  `;
+
+  app.get('/getOrders', (req, res) => {
+    db.query(query, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+      } else {
+        console.log("success");
+        res.send(result); 
+      }
+    });
+  });
 
 
+
+  app.get('/getSuppliers', (req, res) => {
+    db.query("SELECT *FROM supplier", (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+      } else {
+        console.log("successs");
+        res.send(result); 
+      }
+    });
+  });
+  app.get('/getComponents', (req, res) => {
+    db.query("SELECT *FROM component", (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+      } else {
+        console.log("successs");
+        res.send(result); 
+      }
+    });
+  });
 
 app.get('/gettingsuppliers', (req, res) => {
   db.query('select supplier_name,offering_id,price,lead_time,supplier_id,type from supplier_offerings natural join component_type natural join supplier', (err, result) => {
@@ -325,8 +367,155 @@ app.post('/updatePrice', async (req, res) => {
     });
   }
 
+
+
+  app.get('/supplierofferings/:componentType', (req, res) => {
+    console.log('hello')
+    const { componentType } = req.params;
+
+    db.query('SELECT supplier_id, supplier_name, price, lead_time FROM supplier_offerings NATURAL JOIN supplier WHERE component_type_id = ?', [componentType], (err, results) => {
+      if (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+      }
+      console.log(results);
+      res.json(results);
+    });
+  });
+
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+  app.get('/blueprintCheck/:modelId', (req, res) => {
+    const { modelId } = req.params;
+  
+    db.query('SELECT * FROM blueprint WHERE model_id = ?', [modelId], (err, results) => {
+      if (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+      }
+  
+      if (results.length > 0) {
+        res.json({ hasBlueprint: true });
+      } else {
+        res.json({ hasBlueprint: false });
+      }
+    });
+  });
+
+  app.get('/blueprint/:modelId', (req, res) => {
+    const { modelId } = req.params;
+  
+    const query = `
+      SELECT * FROM blueprint INNER JOIN component_type ON blueprint.component_type_id = component_type.component_type_id
+    `;
+  
+    db.query(query, [modelId], (err, results) => {
+      if (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+      }
+  
+      res.json(results);
+    });
+  });
+
+
+// Fetch all parts
+app.get('/parts', (req, res) => {
+  db.query('SELECT * FROM parts', (err, results) => {
+    if (err) {
+      console.error(err.message);
+      return res.status(500).send('Server error');
+    }
+
+    res.json(results);
+  });
+});
+
+app.post('/blueprint', (req, res) => {
+  const { modelId, parts } = req.body;
+
+  // Start a transaction
+  db.beginTransaction((err) => {
+    if (err) {
+      console.error(err.message);
+      return res.status(500).send('Server error');
+    }
+
+    // Insert the new blueprint
+    const values = parts.map((part) => [modelId, part.id]);
+    db.query('INSERT INTO blueprint (model_id, component_type_id) VALUES ?', [values], (err) => {
+      if (err) {
+        return db.rollback(() => {
+          console.error(err.message);
+          res.status(500).send('Server error');
+        });
+      }
+
+      // Commit the transaction
+      db.commit((err) => {
+        if (err) {
+          return db.rollback(() => {
+            console.error(err.message);
+            res.status(500).send('Server error');
+          });
+        }
+
+        res.json({ message: 'Blueprint created successfully' });
+      });
+    });
+  });
+});
+
+
+
+
+// Update the blueprint for a product
+// Update the blueprint for a product
+app.put('/updateBlueprint/:modelId', (req, res) => {
+  const { modelId } = req.params;
+  const newBlueprint = req.body;
+
+  db.query('SELECT * FROM blueprint WHERE model_id = ?', [modelId], (err, currentBlueprint) => {
+    if (err) {
+      console.error(err.message);
+      return res.status(500).send('Server error');
+    }
+  
+    // Find components to delete
+    const componentsToDelete = currentBlueprint.filter(component => !newBlueprint.some(newComponent => newComponent.blueprint_id === component.blueprint_id));
+    // Find components to add
+    // Find components to add
+    const componentsToAdd = newBlueprint.filter(newComponent => !currentBlueprint.some(component => component.component_type_id === newComponent.component_type_id));
+    // Delete components
+    componentsToDelete.forEach(component => {
+      db.query('DELETE FROM blueprint WHERE blueprint_id = ?', [component.blueprint_id], (err, results) => {
+        if (err) {
+          console.error('delete error');
+          return res.status(500).send('Server error');
+        }
+      });
+    });
+
+    // Add components
+    componentsToAdd.forEach(newComponent => {
+      db.query('INSERT INTO blueprint (model_id, component_type_id) VALUES (?, ?)', [modelId, newComponent.id], (err) => {
+        if (err) {
+          console.error('insert error');
+          return res.status(500).send('Server error');
+        }
+      });
+    });
+
+    res.json({ message: 'Blueprint updated' });
+  });
+});
+
+
+
+
+//order endpoints
 
 
   app.post('/register', (req, res) => {
@@ -347,8 +536,9 @@ app.post('/updatePrice', async (req, res) => {
         (err, result) => {
           if (err) {
             console.log(err)
+            console.log("he 1")
           } else {
-            console.log('no error')
+            console.log('he 2')
             res.send('values Inserted') 
           }
         }
@@ -417,18 +607,6 @@ app.post('/login', (req, res) => {
     })
   })
   
-
-
-
-
-
-
-
-
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

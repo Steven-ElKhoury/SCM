@@ -24,10 +24,10 @@ function TopBar() {
                 <h2 id="welcomeMessage" style={{ color: 'white' }}>Welcome, </h2>
             </div>
             <div className="top-bar-buttons">
-                <button><FontAwesomeIcon icon={faBell} /></button>
-                <button><FontAwesomeIcon icon={faCog} /></button>
+                <button className='topbutton'><FontAwesomeIcon icon={faBell} /></button>
+                <button className = 'topbutton'><FontAwesomeIcon icon={faCog} /></button>
                 <div className="profile-dropdown" ref={dropdownRef}>
-                <button className="profile-button" onClick={toggleDropdown}><FontAwesomeIcon icon={faUser} /></button>
+                <button className="profilebutton" onClick={toggleDropdown}><FontAwesomeIcon icon={faUser} /></button>
                     {dropdownOpen && (
                         <div className="dropdown-menu">
                             <button>Logout</button>

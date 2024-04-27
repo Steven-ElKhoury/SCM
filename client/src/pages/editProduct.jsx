@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
-//import { contentSecurityPolicy } from 'helmet';
-
 
 function EditProduct() {
     const location = useLocation();
@@ -103,42 +101,37 @@ function EditProduct() {
 
     
     return (
-        <div>
-            <h1>Edit Product</h1>
-            <form onSubmit={handleEdit}>
-            <label>
-                Name:
-                <input type="text" value={name} onChange={handleNameChange} />
-                {nameError && <p className="error">{nameError}</p>}
-            </label>
-            <br />
-            <label>
-                Price:
-                <input type="number" value={price} onChange={handlePriceChange} />
-                {priceError && <p className="error">{priceError}</p>}
-            </label>
-            <br />
-            <label>
-                Bike Type:
-                <input type="text" value={bikeType} onChange={handleBikeTypeChange} />
-                {bikeTypeError && <p className="error">{bikeTypeError}</p>}
-            </label>
-            <br />
-            <label>
-                Quantity:
-                <input type="number" value={quantity} onChange={handleQuantityChange} />
-                {quantityError && <p className="error">{quantityError}</p>}
-            </label>
-            <br />
-            <label>
-                Image URL:
-                <input type="text" value={imageUrl} onChange={handleImageUrlChange} />
-                {imageUrlError && <p className="error">{imageUrlError}</p>}
-            </label>
-            <br />
-            <button className='btn btn-primary' type="submit">Edit</button>
-            <button className='btn btn-danger' type="button" onClick={handleDelete}>Delete</button>
-        </form>
+        <div className="create-part-container">
+            <h1 className="create-part-header">Edit Product</h1>
+            <form className="create-part-form" onSubmit={handleEdit}>
+                <label>
+                    Name:
+                    <input type="text" value={name} onChange={handleNameChange} />
+                    {nameError && <p className="error">{nameError}</p>}
+                </label>
+                <label>
+                    Price:
+                    <input type="number" value={price} onChange={handlePriceChange} />
+                    {priceError && <p className="error">{priceError}</p>}
+                </label>
+                <label>
+                    Bike Type:
+                    <input type="text" value={bikeType} onChange={handleBikeTypeChange} />
+                    {bikeTypeError && <p className="error">{bikeTypeError}</p>}
+                </label>
+                <label>
+                    Quantity:
+                    <input type="number" value={quantity} onChange={handleQuantityChange} />
+                    {quantityError && <p className="error">{quantityError}</p>}
+                </label>
+                <label>
+                    Image URL:
+                    <input type="text" value={imageUrl} onChange={handleImageUrlChange} />
+                    {imageUrlError && <p className="error">{imageUrlError}</p>}
+                </label>
+                <button className="create-part-form button" type="submit">Edit</button>
+                <button className="create-part-form button" type="button" onClick={handleDelete}>Delete</button>
+            </form>
         </div>
     );
 };

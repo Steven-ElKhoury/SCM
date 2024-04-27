@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../css/createWarehouse.css';
+
 
 function CreateStorageUnit() {
     const [partTypes, setPartTypes] = useState([]);
@@ -58,40 +60,40 @@ function CreateStorageUnit() {
     };
 
     return (
-        <div>
-            <h1>Create Storage Unit</h1>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Part Type:
-                    <select value={selectedPartType} onChange={e => setSelectedPartType(e.target.value)}>
-                        {partTypes.map(partType => (
-                            <option key={partType.component_type_id} value={partType.component_type_id}>{partType.type}</option>
-                        ))}
-                    </select>
-                    {partTypeError && <p className="error">{partTypeError}</p>}
-                </label>
-                <br />
-                <label>
-                    Name:
-                    <input type="text" value={name} onChange={e => setName(e.target.value)} />
-                    {nameError && <p className="error">{nameError}</p>}
-                </label>
-                <br />
-                <label>
-                    Size (in sqm):
-                    <input type="number" value={size} onChange={e => setSize(e.target.value)} />
-                    {sizeError && <p className="error">{sizeError}</p>}
-                </label>
-                <br />
-                <label>
-                    Capacity:
-                    <input type="number" value={capacity} onChange={e => setCapacity(e.target.value)} />
-                    {capacityError && <p className="error">{capacityError}</p>}
-                </label>
-                <br />
-                <button type="submit">Create</button>
-            </form>
-        </div>
+        <div id="create-warehouse-container">
+        <h1 id="header">Create Storage Unit</h1>
+        <form id="form" onSubmit={handleSubmit}>
+            <label>
+                Part Type:
+                <select id="part-type-select" value={selectedPartType} onChange={e => setSelectedPartType(e.target.value)}>
+                    {partTypes.map(partType => (
+                        <option key={partType.component_type_id} value={partType.component_type_id}>{partType.type}</option>
+                    ))}
+                </select>
+                {partTypeError && <p className="error">{partTypeError}</p>}
+            </label>
+            <br />
+            <label>
+                Name:
+                <input id="name-input" type="text" value={name} onChange={e => setName(e.target.value)} />
+                {nameError && <p className="error">{nameError}</p>}
+            </label>
+            <br />
+            <label>
+                Size (in sqm):
+                <input id="size-input" type="number" value={size} onChange={e => setSize(e.target.value)} />
+                {sizeError && <p className="error">{sizeError}</p>}
+            </label>
+            <br />
+            <label>
+                Capacity:
+                <input id="capacity-input" type="number" value={capacity} onChange={e => setCapacity(e.target.value)} />
+                {capacityError && <p className="error">{capacityError}</p>}
+            </label>
+            <br />
+            <button id="submit-button" type="submit">Create</button>
+        </form>
+    </div>
     );
 }
 

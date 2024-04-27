@@ -1,0 +1,80 @@
+#blueprint-section, #selection-section {
+    width: 45%;
+    padding: 10px;
+    min-height: 100px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    max-height: 500px;
+    overflow: auto;
+  }
+  
+  .blueprint-container {
+    display: flex;
+    flex-wrap: wrap; /* allow the items to wrap as needed */
+  }
+
+  .blueprint-parts{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap; /* allow the items to wrap as needed */
+  }
+
+  .selection-parts{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap; /* allow the items to wrap as needed */
+  }
+  .section-header {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+  }
+  
+  #part-select button {
+    background-color: #f44336; /* red */
+    color: white; /* white text */
+    border: none; /* remove default button border */
+    cursor: pointer; /* change cursor to pointer on hover */
+    padding: 5px 10px; /* smaller padding */
+    text-align: center; /* center the text */
+    text-decoration: none; /* remove default button text decoration */
+    display: block; /* make the button block to take full width */
+    font-size: 12px; /* smaller font size */
+    margin: auto; /* center the button */
+    transition-duration: 0.4s; /* add transition for hover effect */
+  }
+  
+  #part-select button:hover {
+    background-color: #d32f2f; /* darken the background color on hover */
+    color: white; /* keep the text color white on hover */
+  }
+  
+  #part-select > div {
+    width: 200px; /* adjust as needed */
+    height: auto; /* maintain aspect ratio */
+    font-size: 0.6em; /* adjust as needed */
+    padding: 5px; /* adjust as needed */
+  }
+  
+  #part-select > div img {
+    width: 100%; /* make the image take up the full width of the part */
+    height: auto; /* maintain the original aspect ratio of the image */
+  }
+
+  #part-select .add-to-basket {
+    background-color: #4CAF50; /* green */
+    color: white; /* white text */
+    border: none; /* remove default button border */
+    cursor: pointer; /* change cursor to pointer on hover */
+    padding: 5px 10px; /* smaller padding */
+    text-align: center; /* center the text */
+    text-decoration: none; /* remove default button text decoration */
+    display: block; /* make the button block to take full width */
+    font-size: 12px; /* smaller font size */
+    margin: auto; /* center the button */
+    transition-duration: 0.4s; /* add transition for hover effect */
+  }
+  
+  #part-select .add-to-basket:hover {
+    background-color: #45a049; /* darken the background color on hover */
+    color: white; /* keep the text color white on hover */
+  }

@@ -2,8 +2,11 @@ import React from 'react';
 import '../css/Part.css';
 import { useStateValue } from './StateProvider';
 import {useNavigate} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
+
 
 function Part({id, name, type, description, image, modelNumber, editable}) {
+    const [showDescription, setShowDescription] = React.useState(false);
     const [{basket}, dispatch] = useStateValue();
     const navigate = useNavigate();
 
@@ -26,22 +29,30 @@ function Part({id, name, type, description, image, modelNumber, editable}) {
         console.log('Edit part:', id);
     };
 
+    const toggleDescription = () => {
+        setShowDescription(!showDescription);
+    };
 
     return (
         <div className='part'>
             <div className="part__info">
                 <h1>{name}</h1>
                 <p>Type: {type}</p>
-                <img src={image} alt={type} />
+                <img className='part-image' src={image} alt={type} />
                 <p>Model: {modelNumber}</p>
-                {description && <p>Description: {description}</p>}
+                {showDescription ? (
+                    <>
+                        <p className='part-description'>Description: {description}</p>
+                        <p className='toggle-description' onClick={toggleDescription}>Read Less</p>
+                    </>
+                ) : (
+                    <p className='toggle-description' onClick={toggleDescription}>Read More</p>
+                )}
             </div>
-            {editable ? (
+            {editable && (
                 <>
-                    <button onClick={() => navigate(`/main/editPart/${id}`, { state: { part: { id, name, type, description, image, modelNumber } }  })}>Edit</button>
+                    <button onClick={() => navigate(`/main/editPart/${id}`, { state: { part: { id, name, type, description, image, modelNumber } }  })} className='part-edit-btn'>Edit</button>
                 </>
-            ) : (
-                <button onClick={addToBlueprint}>Add to Blueprint</button>
             )}
         </div>
     );

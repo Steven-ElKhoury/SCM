@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
+import '../css/createProduct.css';
 
 function CreateProduct() {
     const [name, setName] = useState('');
@@ -82,40 +82,35 @@ function CreateProduct() {
     };
 
     return (
-        <div>
-            <h1>Create Product</h1>
-            <form onSubmit={handleSubmit}>
+        <div className="create-product-container">
+            <h1 className="create-product-header">Create Product</h1>
+            <form className="create-product-form" onSubmit={handleSubmit}>
                 <label>
                     Name:
                     <input type="text" value={name} onChange={handleNameChange} />
                     {nameError && <p className="error">{nameError}</p>}
                 </label>
-                <br />
                 <label>
                     Price:
                     <input type="number" value={price} onChange={handlePriceChange} />
                     {priceError && <p className="error">{priceError}</p>}
                 </label>
-                <br />
                 <label>
                     Bike Type:
                     <input type="text" value={bikeType} onChange={handleBikeTypeChange} />
                     {bikeTypeError && <p className="error">{bikeTypeError}</p>}
                 </label>
-                <br />
                 <label>
                     Quantity:
                     <input type="number" value={quantity} onChange={handleQuantityChange} />
                     {quantityError && <p className="error">{quantityError}</p>}
                 </label>
-                <br />
                 <label>
                     Image URL:
                     <input type="text" value={imageUrl} onChange={handleImageUrlChange} />
                     {imageUrlError && <p className="error">{imageUrlError}</p>}
                 </label>
-                <br />
-                <button className = 'btn btn-primary' type="submit">Create</button>
+                <button type="submit">Create Product</button>
             </form>
         </div>
     );

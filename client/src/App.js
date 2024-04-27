@@ -1,10 +1,10 @@
 import { Route, Routes } from 'react-router-dom'
-import Main from './pages/Main'
-
+import Main from './pages/Main';
 import Suppliers from './pages/Suppliers';
 import Login from './pages/Login'
 import Register from './pages/Register'
 import AcceptEmployee from './pages/AcceptEmployee';
+import { useStateValue } from './Components/StateProvider';
 
 
 function App() {

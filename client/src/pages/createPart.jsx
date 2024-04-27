@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import '../css/createPart.css';
+import { useNavigate } from 'react-router-dom';
+
 
 function CreatePart() {
     const [partType, setPartType] = useState('');
@@ -12,6 +15,8 @@ function CreatePart() {
     const [descriptionError, setDescriptionError] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
     const [imageUrlError, setImageUrlError] = useState(null);
+    const navigate = useNavigate();
+
 
     const handleImageUrlChange = (e) => {
         setImageUrl(e.target.value);
@@ -74,6 +79,8 @@ function CreatePart() {
             }).then((response) => {
                 // Handle the response here
                 console.log(response);
+                navigate('/main/parts');
+
             }).catch((error) => {
                 // Handle the error here
                 console.log(error);
@@ -82,34 +89,23 @@ function CreatePart() {
     };
 
     return (
-        <div>
+        <div className='create-part-container'>
             <h1>Create Part</h1>
-    <form onSubmit={handleSubmit}>
+    <form className='create-part-form' onSubmit={handleSubmit}>
     <label>
         Part Type:
         <select value={partType} onChange={handlePartTypeChange}>
-            <option value="">Select a part type</option>
-            <optgroup label="Wheels, tires & tubes">
-                <option value="Road wheels">Road wheels</option>
-                <option value="Mountain wheels">Mountain wheels</option>
-                <option value="All wheels">All wheels</option>
-                <option value="Road tires">Road tires</option>
-                <option value="Mountain tires">Mountain tires</option>
-                <option value="Gravel tires">Gravel tires</option>
-                <option value="City & hybrid tires">City & hybrid tires</option>
-                <option value="All tires">All tires</option>
-                <option value="Tubes">Tubes</option>
-                <option value="Tubeless accessories">Tubeless accessories</option>
-            </optgroup>
-            <optgroup label="Lights">
-                <option value="Front bike lights">Front bike lights</option>
-                <option value="Rear bike lights">Rear bike lights</option>
-                <option value="Daytime Running Lights">Daytime Running Lights</option>
-                <option value="Bike light accessories">Bike light accessories</option>
-                <option value="All bike lights">All bike lights</option>
-            </optgroup>
-            {/* Add more <optgroup> and <option> elements for the other categories and subcategories */}
-        </select>
+                    <option value="">Select a part type</option>
+                    <option value="Handlebars">Handlebars</option>
+                    <option value="Brakes">Brakes</option>
+                    <option value="Shifters">Shifters</option>
+                    <option value="Fork">Fork</option>
+                    <option value="Drivetrain">Drivetrain</option>
+                    <option value="Saddle">Saddle</option>
+                    <option value="Pedals">Pedals</option>
+                    <option value="Wheels">Wheels</option>
+                    <option value="Tires">Tires</option>
+                </select>
         {partTypeError && <p className="error">{partTypeError}</p>}
     </label>
                 <br />

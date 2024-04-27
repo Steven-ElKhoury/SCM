@@ -7,7 +7,7 @@ const crypto = require('crypto');
 const db = mysql.createConnection({
     user: 'root',
     host: 'localhost',
-    password: 'password',
+    password: 'root',
     database: 'supply_chain',
 });
 
@@ -28,21 +28,38 @@ warehouseRouter.get('/getWarehouses', (req, res) => {
 
 warehouseRouter.post('/createUnits', (req, res) => {
     // Extract data from the request body
-    const {  name, capacity, size, component_type_id} = req.body;
+    const { name, capacity, size, component_type_id } = req.body;
 
-    // Insert the new supplier into the database
-    db.query('INSERT INTO storage_unit(name, size, capacity, component_type_id) VALUES (?, ?, ?, ?)', [name, size, capacity, component_type_id], (err, result) => {
+    // Check if a warehouse with the same name already exists
+    db.query('SELECT * FROM storage_unit WHERE name = ?', [name], (err, result) => {
         if (err) {
-            console.error('Error adding warehouse to database:', err);
-            res.status(500).send('Error adding warehouse');
+            console.error('Error checking warehouse name:', err);
+            res.status(500).send('Error checking warehouse name');
             return;
         }
-        console.log('Warehouse added successfully');
-        res.status(200).send('Warehouse added successfully');
+
+        if (result.length > 0) {
+            console.error('A warehouse with this name already exists');
+            res.status(400).send('A warehouse with this name already exists');
+            return;
+        }
+
+        // Insert the new warehouse into the database
+        db.query('INSERT INTO storage_unit(name, size, capacity, component_type_id) VALUES (?, ?, ?, ?)', [name, size, capacity, component_type_id], (err, result) => {
+            if (err) {
+                console.error('Error adding warehouse to database:', err);
+                res.status(500).send('Error adding warehouse');
+                return;
+            }
+            console.log('Warehouse added successfully');
+            res.status(200).send('Warehouse added successfully');
+        });
     });
 });
 
+
 warehouseRouter.put('/editUnit/:id', (req, res) => {
+    console.log('editUnit');
     const { id } = req.params;
     const { name, size, capacity, component_type_id } = req.body;
 
@@ -60,6 +77,7 @@ warehouseRouter.put('/editUnit/:id', (req, res) => {
     });
 });
 
+
 warehouseRouter.delete('/deleteUnit/:id', (req, res) => {
     const { id } = req.params;
 
@@ -76,4 +94,24 @@ warehouseRouter.delete('/deleteUnit/:id', (req, res) => {
         res.status(200).send('Warehouse deleted successfully');
     });
 });
+
+warehouseRouter.get('/warehouse/check/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('SELECT * FROM storage_unit WHERE unit_id = ?', [id], (err, result) => {
+      if (err) {
+        console.error('Error fetching warehouse:', err);
+        res.status(500).send('Error fetching warehouse');
+        return;
+      }
+      if (result.length === 0) {
+        res.status(404).send('Warehouse not found');
+        return;
+      }
+      const storageUnit = result[0];
+      res.status(200).json({ capacity: storageUnit.capacity });
+    });
+  });
+
+  
+
 module.exports = warehouseRouter;

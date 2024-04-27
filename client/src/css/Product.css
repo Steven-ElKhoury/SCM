@@ -1,47 +1,69 @@
-.product-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-  
-  .product-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border-bottom: 1px solid #ccc;
-    padding: 1rem;
-  }
-  
-  .product-content {
-    flex: 1;
-    overflow: auto;
-    padding: 1rem;
-  }
-  
-  .product-grid {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+
+.add-product-button {
+    background-color: #007bff; /* Change the background color */
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 20px;
 }
 
-  .product-card-container {
-    display: grid;
-    gap: 1rem;
-  }
-  
-  .product-card {
-    border: 1px solid #ccc;
-    border-radius: 0.25rem;
-    background-color: white;
-    max-width: 500px;
-  }
-  
-  .product-card-content {
-    padding: 1rem;
-  }
-  
-  .product-image {
-    max-width: 100%;
+.products-container {
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.products-header {
+    width: 100%;
+    color: #333;
+    text-align: center;
+    font-size: 2em;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dee2e6;
+    font-weight: bold;
+}
+
+.product-card {
+    width: calc(50% - 10px);
+    max-width: 400px;
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.product-card img {
+    width: 100%;
     height: auto;
-    margin-bottom: 1rem;
-  }
+}
+
+.product-card h2,
+.product-card p {
+    margin-bottom: 10px;
+}
+
+.product-card button {
+    width: 100px;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.product-card button:last-child {
+    margin-right: 0;
+}
+
+.product-card button:hover {
+    background-color: #0056b3;
+}
