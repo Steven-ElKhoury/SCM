@@ -14,6 +14,7 @@ export const Login = (props) => {
   //const [LoginStatus, setLoginStatus] = useState('')
   const [user_ID, setUser_ID] = useState(0)
   const [errorMessage, setErrorMessage] = useState('');
+  const [isPending, setisPending] = useState(1);
   const win = window.sessionStorage
   var sessionUser = 0;
 
@@ -31,7 +32,6 @@ export const Login = (props) => {
 
  const SignIn = () => {
 
-  console.log("called")
    Axios.post('http://localhost:3001/login', {
      email: emailLog,
      pass: passLog,
@@ -49,17 +49,25 @@ export const Login = (props) => {
         //console.log(response.data[0].employee_id)
         if(response.data[0].isadmin==0){
           win.setItem('Employee_ID', response.data[0].employee_id)
+          setisPending(response.data[0].pending)
           
         }
         else{
           win.setItem('Employee_ID', response.data[0].manager_id)
+          console.log("im a manager")
+          setisPending(0)
         }
         win.setItem('isadmin', response.data[0].isadmin)
        console.log('isadmin = '+ sessionStorage.isadmin)
        console.log(win)
-
+      
        console.log('going to main')
-       navigate('/main')
+       if(sessionStorage.isadmin==1 || isPending==0){
+        navigate('/main')
+       }else if(isPending==1){
+        alert('please wait until your account is approved, you will receive an email once it is approved')
+       }
+       //navigate('/main')
       }
     })
     
