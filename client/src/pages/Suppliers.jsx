@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
-
+import { Navigate } from 'react-router-dom';
 import "../css/supplier.css";
-
 
 // NewSupplier component for adding a new supplier
 const NewSupplier = ({ existingTypes, supplierfunc }) => {
@@ -35,6 +34,8 @@ const NewSupplier = ({ existingTypes, supplierfunc }) => {
   };
   
   const addSupplier = (newSupplier) => {
+
+    
     Axios.post('http://localhost:3001/getcomponentid',{ selectedType: newSupplier.selectedType })
       .then(response => {
         console.log(response.data[0])
@@ -80,12 +81,7 @@ const NewSupplier = ({ existingTypes, supplierfunc }) => {
         })
         .catch(error => {
           console.error('Error getting component id:', error);
-        });
-
-
-
-      
-      
+        });    
     };
 
 
@@ -206,22 +202,26 @@ const SupplierDetails = ({ supplier, offerings,supplierfunc }) => {
 };
 
 const Suppliers = () => {
+
+
     const [suppliersList, setSuppliersList] = useState([]);
     const [selectedSupplier, setSelectedSupplier] = useState('');
     const [selectedType, setSelectedType] = useState('');
     const [sortOrder, setSortOrder] = useState({ sortBy: 'price', order: 'asc' });
 
+
     var sessionUser = sessionStorage.getItem('Employee_ID');
     var isAdmin = sessionStorage.getItem('isadmin');
     console.log('sessionUser is :', sessionUser)
     console.log('houwwe admin :', isAdmin)
-    console.log("SESSION STORAGE:"+sessionStorage)
+    console.log("SESSION STORAGE:"+JSON.stringify(sessionStorage))
 
 
-    
+ 
     useEffect(() => {
         getSupplier();
-    }, []);
+      }, []);
+
 
     const getSupplier = () => {
         Axios.get('http://localhost:3001/gettingsuppliers').then((response) => {

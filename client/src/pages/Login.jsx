@@ -13,6 +13,7 @@ export const Login = (props) => {
   const [passLog, setPassLog] = useState('')
   //const [LoginStatus, setLoginStatus] = useState('')
   const [user_ID, setUser_ID] = useState(0)
+  const [errorMessage, setErrorMessage] = useState('');
   const win = window.sessionStorage
   var sessionUser = 0;
 
@@ -29,14 +30,16 @@ export const Login = (props) => {
   }
 
  const SignIn = () => {
+
+  console.log("called")
    Axios.post('http://localhost:3001/login', {
      email: emailLog,
      pass: passLog,
    }).then((response) => {
      if (response.data.message) {
       // setLoginStatus(response.data.message)
-      
-      console.log(response.data.message)
+      setErrorMessage(response.data.message)
+      //console.log("ff"+response.data.message)
     } else {
         //setLoginStatus(response.data[0].username)
         console.log('no msg')
@@ -55,31 +58,24 @@ export const Login = (props) => {
        console.log('isadmin = '+ sessionStorage.isadmin)
        console.log(win)
 
-       if (response.data[0].employee_id == 15) {
-         navigateAdmin()
-       } else {
-        console.log('aal bet')
-        // navigateToHome()
-       }
+       console.log('going to main')
+       navigate('/main')
+      }
+    })
+    
+    // Axios.get('http://localhost:3001/login').then((response) => {
+    //   console.log('info'+JSON.stringify(response.data))
+    //   if (response.data.loggedIn == true) {
+    //     //setLoginStatus(response.data.user[0].username)
+    //   }
+    //   //console.log("session user: "+sessionUser)
+    // })
 
-      // refreshPage()
-     }
-   })
- }
- const handleSubmit = (e) => {
-   e.preventDefault()
-   //console.log(emailLog)
- }
- Axios.defaults.withCredentials = true
- useEffect(() => {
-   Axios.get('http://localhost:3001/login').then((response) => {
-     if (response.data.loggedIn == true) {
-       //setLoginStatus(response.data.user[0].username)
-     }
-
-     console.log("session user: "+sessionUser)
-   })
- }, [])
+  }
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    //console.log(emailLog)
+  }
  return (
    <div className='auth-form-container'>
 
@@ -112,6 +108,7 @@ export const Login = (props) => {
        <button className='sign-btn' onClick={SignIn}>
          Login
        </button>
+       {errorMessage && <h3>{errorMessage}</h3>}
      </form>
 
      <button
@@ -120,10 +117,6 @@ export const Login = (props) => {
      >
        Don't have an accoount? Register here
      </button>
-
-     <Routes>
-       <Route path='/Main' element={<Main />} />
-     </Routes>
    </div>
  )
 }

@@ -514,6 +514,22 @@ app.put('/updateBlueprint/:modelId', (req, res) => {
 
 
 
+//logout section
+
+app.post('/logout', (req, res) => {
+  // Destroy the session to log the user out
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      res.status(500).send('Error logging out');
+    } else {
+      // Session destroyed successfully
+      res.clearCookie('connect.sid'); // Clear the session cookie
+      res.sendStatus(200);
+      console.log('destroyed session')
+    }
+  });
+});
 
 //order endpoints
 

@@ -30,6 +30,7 @@ export const Register = (props) => {
       console.log('ggg123')
 
     console.log('ahla')
+    navigate('/login')
 
       
     })
