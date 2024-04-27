@@ -8,6 +8,7 @@ export const Register = (props) => {
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
   const [name, setName] = useState('')
+  const [exists, setExists] = useState(true)
 
 
   const navigate = useNavigate()
@@ -20,22 +21,52 @@ export const Register = (props) => {
     e.preventDefault()
   }
   const register = () => {
-    console.log('vvv')
-    Axios.post('http://localhost:3001/register', {
-      email: email,
-      pass: pass,
-      name: name,
-    }).then((response) => {
-      console.log(response)
-      console.log('ggg123')
 
-    console.log('ahla')
-    navigate('/login')
+    if (!name || !email || !pass) {
+      alert('Please fill in all fields.');
+    }else{
+      Axios.post('http://localhost:3001/userexists', {
+        email: email,
+      }).then((response) => {
+        console.log("hi"+JSON.stringify(response.data))
+        if(JSON.stringify(response.data) ==`"user exists"`){
+          //console.log("user mawjoud")
+          setExists(true)
+        }else{
+          setExists(false)
+          //console.log("no user found")
+        }
+        
+        //navigate('/login')
+        
+        
+      })
+      console.log(exists)
 
-      
-    })
 
-    console.log('f')
+      if(exists){
+        alert('email already used')
+      }else{
+
+        console.log('vvv')
+        Axios.post('http://localhost:3001/register', {
+          email: email,
+          pass: pass,
+          name: name,
+        }).then((response) => {
+          console.log(response)
+          console.log('ggg123')
+          
+          console.log('ahla')
+          navigate('/login')
+          
+          
+        })
+
+
+
+      }
+    }      
   }
   return (
     <div id='register' className='auth-form-container'>

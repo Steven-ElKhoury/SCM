@@ -74,6 +74,27 @@ app.get('/gettinglibrary', (req, res) => {
   })
 })
 
+app.post('/userexists', (req, res) => {
+  const email = req.body.email
+  db.query(
+    'SELECT * from employee WHERE email = ? ',
+    [email],
+    (err, result) => {
+      if (err) {
+        console.log(err)
+      } else {
+        if(result.length == 0){
+          res.send('no user found')
+        }else{
+          res.send('user exists')  
+          //console.log(result)
+        }
+      }
+    }
+  )
+  //err,result are what we will be done once the statement is done
+})
+
 
 app.post('/getpublisheraddress', (req, res) => {
   const book_id = req.body.Book_ID
