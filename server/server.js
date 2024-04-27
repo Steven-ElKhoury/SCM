@@ -338,54 +338,49 @@ app.post('/updatePrice', async (req, res) => {
   });
 
   const nodemailer = require("nodemailer");
-  // Import NodeMailer (after npm install)
   
   async function sendacceptance(email,status) {
-  // Async function enables allows handling of promises with await
-    if (status == 'accept'){
-      subject = 'Access Granted'
-      msg = `We are pleased to inform you that your access request to Bike SCM has been approved! You now have full access to the application, and we are excited to have you on board.
+    // if (status == 'accept'){
+    //   subject = 'Access Granted'
+    //   msg = `We are pleased to inform you that your access request to Bike SCM has been approved! You now have full access to the application, and we are excited to have you on board.
               
-      If you encounter any issues during the login process or while using the application, please don't hesitate to contact our support team. We are here to assist you every step of the way.
+    //   If you encounter any issues during the login process or while using the application, please don't hesitate to contact our support team. We are here to assist you every step of the way.
       
-      Thank you for choosing Bike SCM.`
-    }else{
-      subject = 'Access Denied'
-      msg = `I hope this email finds you well. We wanted to reach out to inform you about the recent status of your access request.
+    //   Thank you for choosing Bike SCM.`
+    // }else{
+    //   subject = 'Access Denied'
+    //   msg = `I hope this email finds you well. We wanted to reach out to inform you about the recent status of your access request.
       
-      After careful consideration and review of your request, we regret to inform you that we are unable to grant access to the application at this time.
+    //   After careful consideration and review of your request, we regret to inform you that we are unable to grant access to the application at this time.
       
-      We understand that this news may be disappointing, and we sincerely apologize for any inconvenience this may cause. Please know that our decision was made with careful consideration of various factors, and we remain committed to maintaining the security and integrity of our application.
+    //   We understand that this news may be disappointing, and we sincerely apologize for any inconvenience this may cause. Please know that our decision was made with careful consideration of various factors, and we remain committed to maintaining the security and integrity of our application.
       
-      If you have any questions or would like further clarification regarding this decision, please don't hesitate to reach out to our support team 
+    //   If you have any questions or would like further clarification regarding this decision, please don't hesitate to reach out to our support team 
       
-      Thank you for your understanding.`
-    }
-    // First, define send settings by creating a new transporter: 
-    let transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com", // SMTP server address (usually mail.your-domain.com)
-      port: 465, // Port for SMTP (usually 465)
-      secure: true, // Usually true if connecting to port 465
-      auth: {
-        user: "judenetwork1@gmail.com", // Your email address
-        pass: "iepp cssl tcvq pxyd", // Password (for gmail, your app password)
-        // ⚠️ For better security, use environment variables set on the server for these values when deploying
-      },
-    });
+    //   Thank you for your understanding.`
+    // }
+    // let transporter = nodemailer.createTransport({
+    //   host: "smtp.gmail.com", 
+    //   port: 465, 
+    //   secure: true, 
+    //   auth: {
+    //     user: "judenetwork1@gmail.com",
+    //     pass: "iepp cssl tcvq pxyd", 
+    //   },
+    // });
     
-    // Define and send message inside transporter.sendEmail() and await info about send from promise:
-    let info = await transporter.sendMail({
-      from: 'judenetwork1@gmail.com',
-      to: "vedroxplayz@gmail.com",
-      subject: `${subject}`,
-      html: `Greetings,
-      ${msg}
+    // let info = await transporter.sendMail({
+    //   from: 'judenetwork1@gmail.com',
+    //   to: "vedroxplayz@gmail.com",
+    //   subject: `${subject}`,
+    //   html: `Greetings,
+    //   ${msg}
       
-      Best regards,
-      Bike SCM Boarding Team.
+    //   Best regards,
+    //   Bike SCM Boarding Team.
       
-      `,
-    });
+    //   `,
+    // });
   }
 
 
