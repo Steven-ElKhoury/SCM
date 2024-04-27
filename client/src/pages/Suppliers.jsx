@@ -211,8 +211,12 @@ const Suppliers = () => {
     const [selectedType, setSelectedType] = useState('');
     const [sortOrder, setSortOrder] = useState({ sortBy: 'price', order: 'asc' });
 
-    var sessionUser = sessionStorage.getItem('User_ID');
+    var sessionUser = sessionStorage.getItem('Employee_ID');
+    var isAdmin = sessionStorage.getItem('isadmin');
     console.log('sessionUser is :', sessionUser)
+    console.log('houwwe admin :', sessionUser)
+    console.log("SESSION STORAGE:"+sessionStorage)
+
 
     
     useEffect(() => {

@@ -341,7 +341,8 @@ app.post('/updatePrice', async (req, res) => {
         //console.log(err)
       }
       db.query(//fix manager id and pending
-        'INSERT INTO employee (email,password,pending,manager_id,name) VALUES (?,?,1,1,?)',
+        'INSERT INTO manager (email,password) VALUES (?,?)',
+       // 'INSERT INTO employee (email,password,pending,manager_id,name) VALUES (?,?,1,1,?)',
         [email, hash, name],
         (err, result) => {
           if (err) {
@@ -359,10 +360,10 @@ app.post('/updatePrice', async (req, res) => {
   app.get('/login', (req, res) => {
     if (req.session.user) {
       console.log('fiiiiii')
-      res.send({ loggedIn: true, user: req.session.user })
+      res.send({ loggedIn: true, user: req.session.user, isadmin: req.session.isadmin })
     } else {
       console.log('maaaaaaaaaaafiiiiii')
-      res.send({ loggedIn: false, user: req.session.user });
+      res.send({ loggedIn: false, user: req.session.user, isadmin: req.session.isadmin });
     }
   })
   
@@ -375,13 +376,36 @@ app.post('/login', (req, res) => {
       if (err) {
         res.send({ err: err })
       }
-      if (result.length > 0) {
+      if(result.length == 0){
+        db.query('SELECT * from manager where email = ? ', email, (err, result) => {
+          if (err) {
+            res.send({ err: err })
+          }else{
+            //add managger queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+            bcrypt.compare(pass, result[0].password, (error, response) => {
+              if (response) {
+                req.session.user = result // creating a session
+                //req.session.isadmin = 1 
+                console.log('manager in house')
+                res.send(result)
+              } else {
+                res.send({ message: 'wrong email password combination' })
+              }
+            })
+          }  
+        })  
+
+
+      }
+      else if (result.length > 0) {
         // console.log(result)
         // console.log(result[0].password)
         // console.log(pass)
         bcrypt.compare(pass, result[0].password, (error, response) => {
           if (response) {
             req.session.user = result // creating a session
+            //req.session.isadmin = 0
+
             res.send(result)
           } else {
             res.send({ message: 'wrong email password combination' })

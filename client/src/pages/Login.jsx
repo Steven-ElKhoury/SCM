@@ -13,6 +13,8 @@ export const Login = (props) => {
   //const [LoginStatus, setLoginStatus] = useState('')
   const [user_ID, setUser_ID] = useState(0)
   const win = window.sessionStorage
+  var sessionUser = 0;
+
   function refreshPage() {
     window.location.reload(false)
   }
@@ -38,18 +40,20 @@ export const Login = (props) => {
         //setLoginStatus(response.data[0].username)
         console.log('no msg')
         localStorage.setItem('employee_id', response.data[0].employee_id)
-        console.log('hello')
-       win.setItem('Wmployee_ID', response.data[0].employee_id)
-
+        localStorage.setItem('isadmin', response.data[0].isadmin)
+        console.log(response.data[0].employee_id)
+       win.setItem('Employee_ID', response.data[0].employee_id)
+       win.setItem('isadmin', response.data[0].isadmin)
+       console.log('li eja'+ response.data[0].isadmin)
 
        if (response.data[0].employee_id == 15) {
          navigateAdmin()
        } else {
         console.log('aal bet')
-         navigateToHome()
+        // navigateToHome()
        }
 
-       refreshPage()
+      // refreshPage()
      }
    })
  }
@@ -64,7 +68,7 @@ export const Login = (props) => {
        //setLoginStatus(response.data.user[0].username)
      }
 
-    // console.log(sessionStorage.getItem('User_ID'))
+     console.log("abc"+sessionUser)
    })
  }, [])
  return (
