@@ -8,7 +8,7 @@ export const Register = (props) => {
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
   const [name, setName] = useState('')
-  const [exists, setExists] = useState(true)
+  //const [exists, setExists] = useState()
 
 
   const navigate = useNavigate()
@@ -30,42 +30,26 @@ export const Register = (props) => {
       }).then((response) => {
         console.log("hi"+JSON.stringify(response.data))
         if(JSON.stringify(response.data) ==`"user exists"`){
-          //console.log("user mawjoud")
-          setExists(true)
+
+          alert('email already used')
+
         }else{
-          setExists(false)
-          //console.log("no user found")
+          console.log('vvv')
+          Axios.post('http://localhost:3001/register', {
+            email: email,
+            pass: pass,
+            name: name,
+          }).then((response) => {
+            console.log(response)
+            console.log('ahla')
+            navigate('/login')
+          
+          })
         }
         
-        //navigate('/login')
-        
-        
       })
-      console.log(exists)
 
 
-      if(exists){
-        alert('email already used')
-      }else{
-
-        console.log('vvv')
-        Axios.post('http://localhost:3001/register', {
-          email: email,
-          pass: pass,
-          name: name,
-        }).then((response) => {
-          console.log(response)
-          console.log('ggg123')
-          
-          console.log('ahla')
-          navigate('/login')
-          
-          
-        })
-
-
-
-      }
     }      
   }
   return (
