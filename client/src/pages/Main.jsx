@@ -26,6 +26,8 @@ import ViewParts from "./ViewParts";
 
 export default function Main() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  // var isAdmin = sessionStorage.getItem('isadmin');
+  // console.log("AAAAAAAAAAAAAAAAAAAAAA" + isAdmin)
 
   return (
     <div className="dashboard-container" >

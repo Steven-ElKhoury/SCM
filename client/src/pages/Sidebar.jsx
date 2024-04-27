@@ -9,6 +9,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 function Sidebar({sidebarOpen, setSidebarOpen}){
+    var isAdmin = sessionStorage.getItem('isadmin');
+    console.log("AAAAAAAAAAAAAAAAAAAAAA" + isAdmin)
+
     return (
         <div className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
            <button className='sidebar-toggle' onClick={() => setSidebarOpen(!sidebarOpen)}>
@@ -19,9 +22,11 @@ function Sidebar({sidebarOpen, setSidebarOpen}){
                     <li className="nav-item">
                         <Link className="nav-link" to="/main"><FontAwesomeIcon icon={faHome} /> Home</Link>
                     </li>
+                    {isAdmin == 1 && (
                     <li className="nav-item">
                         <Link className="nav-link" to="employees"><FontAwesomeIcon icon={faUsers} /> Employees</Link>
                     </li>
+                    )}
                     <li className="nav-item">
                         <Link className="nav-link" to="/tasks"><FontAwesomeIcon icon={faTasks} /> Tasks</Link>
                     </li>

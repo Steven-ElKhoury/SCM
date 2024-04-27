@@ -214,7 +214,7 @@ const Suppliers = () => {
     var sessionUser = sessionStorage.getItem('Employee_ID');
     var isAdmin = sessionStorage.getItem('isadmin');
     console.log('sessionUser is :', sessionUser)
-    console.log('houwwe admin :', sessionUser)
+    console.log('houwwe admin :', isAdmin)
     console.log("SESSION STORAGE:"+sessionStorage)
 
 
