@@ -62,9 +62,9 @@ export const Login = (props) => {
        console.log(win)
       
        console.log('going to main')
-       if(sessionStorage.isadmin==1 || isPending==0){
+       if(sessionStorage.isadmin==1 || response.data[0].pending==0){
         navigate('/main')
-       }else if(isPending==1){
+       }else if(response.data[0].pending==1){
         alert('please wait until your account is approved, you will receive an email once it is approved')
        }
        //navigate('/main')
