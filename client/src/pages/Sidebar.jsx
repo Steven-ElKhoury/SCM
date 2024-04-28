@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function Sidebar({sidebarOpen, setSidebarOpen}){
     var isAdmin = sessionStorage.getItem('isadmin');
-    console.log("AAAAAAAAAAAAAAAAAAAAAA" + isAdmin)
+    console.log("sidebar admin: " + isAdmin)
 
     return (
         <div className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
@@ -28,7 +28,7 @@ function Sidebar({sidebarOpen, setSidebarOpen}){
                     </li>
                     )}
                     <li className="nav-item">
-                        <Link className="nav-link" to="/tasks"><FontAwesomeIcon icon={faTasks} /> Tasks</Link>
+                        <Link className="nav-link" to="tasks"><FontAwesomeIcon icon={faTasks} /> Tasks</Link>
                     </li>
                     <li className="nav-item">
                         <Link className="nav-link" to="orders"><FontAwesomeIcon icon={faClipboardList} /> Orders</Link>

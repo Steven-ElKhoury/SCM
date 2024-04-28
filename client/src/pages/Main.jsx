@@ -23,6 +23,7 @@ import CreateOrder from "./createOrder";
 import ViewOrders from "./viewOrders";
 import ProductBlueprint from "./ProductBlueprint";
 import ViewParts from "./ViewParts";
+import TaskAssignment from "./TaskAssignment.jsx";
 
 export default function Main() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -39,6 +40,7 @@ export default function Main() {
             <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/employees" element={<Employees />} />
+                  <Route path="tasks" element={<TaskAssignment />} />
                   <Route path="/createEmployee" element={<CreateEmployee />} />
                   <Route path="/suppliers" element={<Suppliers />} />
                   <Route path="/acceptemployee" element={<AcceptEmployee />} />

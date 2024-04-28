@@ -7,11 +7,11 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 
-//const authRouter = require('./routes/auth_endpoints.js');
 const cors = require('cors')
 const authRouter = require('./routes/auth_endpoints.js');
 const productRouter = require('./routes/product_endpoints.js');
 const partRouter = require('./routes/part_endpoints.js');
+const taskRouter = require('./routes/task_endpoints.js');
 const warehouseRouter = require('./routes/warehouse_endpoints.js');
 
 //app.use(cors()) //just a standard
@@ -57,6 +57,8 @@ const db = mysql.createConnection({
 app.use(productRouter); 
 
 app.use(partRouter);
+
+app.use(taskRouter);
 
 app.use(warehouseRouter);
 
@@ -339,7 +341,7 @@ app.post('/updatePrice', async (req, res) => {
 
   const nodemailer = require("nodemailer");
   
-  async function sendacceptance(email,status) {
+  async function sendacceptance(email,status) {     //DO NOTTTT DELETE COMMENTED CODEEEEEEEEEEEE
     // if (status == 'accept'){
     //   subject = 'Access Granted'
     //   msg = `We are pleased to inform you that your access request to Bike SCM has been approved! You now have full access to the application, and we are excited to have you on board.
