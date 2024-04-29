@@ -1,0 +1,29 @@
+.initial-top-top-bar {
+    background-color: #34495e; /* Dark blue */
+    color: #fff; /* White text */
+    padding: 10px 20px;
+  }
+  
+  .initial-top-User {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .initial-top-nav__listitem {
+    margin-left: 10px;
+  }
+  
+  .initial-top-nav__listitem button {
+    background-color: #2ecc71; /* Green */
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 8px 15px;
+    font-size: 16px;
+    border-radius: 5px; /* Rounded corners */
+  }
+  
+  .initial-top-nav__listitem button:hover {
+    background-color: #27ae60; /* Darker green on hover */
+  }
+  

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Axios from 'axios'
 import '../css/Register.css'
+import InitialTopBar from './InitialTopBar'
 
 import { Routes, Route, useNavigate } from 'react-router-dom'
 
@@ -53,7 +54,10 @@ export const Register = (props) => {
     }      
   }
   return (
+    <>
+              {/* <InitialTopBar /> */}
     <div id='register' className='auth-form-container'>
+
       <h2>Register</h2>
       <form id='register' className='register-form' onSubmit={handleSubmit}>
         <label id='register' className='signlbl' htmlfor='name'>
@@ -82,14 +86,14 @@ export const Register = (props) => {
           type='email'
           id='email'
           required
-        />
+          />
         <label id='register' className='signlbl' htmlfor='pass'>
           password:
         </label>
         <input
 
-          className='signinput'
-          onChange={(e) => {
+className='signinput'
+onChange={(e) => {
             setPass(e.target.value)
           }}
           value={pass}
@@ -110,6 +114,7 @@ export const Register = (props) => {
         Already have an accoount? Login here
       </button>
     </div>
+      </>
   )
 }
 export default Register
