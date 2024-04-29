@@ -648,6 +648,17 @@ app.post('/login', (req, res) => {
     })
   })
   
+///////////////////////////////////////////////////////////////////////////////////////////////////////Fadel
+app.get('/getbyProducts', (req, res) => {
+  db.query('SELECT co.*, pbp.* FROM customer_order AS co JOIN produced_byproduct AS pbp ON co.byProductID = pbp.byproduct_id;', (err, result) => {
+    if (err) {
+      console.log(err)
+      console.log("fi error")
+    } else {
+      res.send(result) //to send the data that we got from our query
+    }
+  })
+})
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

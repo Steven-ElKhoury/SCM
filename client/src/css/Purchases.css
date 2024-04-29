@@ -1,0 +1,47 @@
+.byProduct-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .byProduct-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid #ccc;
+    padding: 1rem;
+  }
+  
+  .byProduct-content {
+    flex: 1;
+    overflow: auto;
+    padding: 1rem;
+  }
+  
+  .byProduct-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+}
+
+  .byProduct-card-container {
+    display: grid;
+    gap: 1rem;
+  }
+  
+  .byProduct-card {
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    background-color: white;
+    max-width: 500px;
+  }
+  
+  .byProduct-card-content {
+    padding: 1rem;
+  }
+  
+  .byProduct-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
+  }

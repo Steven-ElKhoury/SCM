@@ -24,6 +24,7 @@ import ViewOrders from "./viewOrders";
 import ProductBlueprint from "./ProductBlueprint";
 import ViewParts from "./ViewParts";
 import TaskAssignment from "./TaskAssignment.jsx";
+import Purchases from './Purchases';
 
 export default function Main() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -58,6 +59,7 @@ export default function Main() {
                   <Route path = 'viewOrders' element = {<ViewOrders/>} />
                   <Route path="addParts/:modelId" element={<ProductBlueprint />} /> {/* Add this line */}
                   <Route path="viewParts/:modelId" element={<ViewParts />} /> {/* Add this line */}
+                  <Route path="/purchases" element={<Purchases />} />
             </Routes>
         </div>
     </div>
