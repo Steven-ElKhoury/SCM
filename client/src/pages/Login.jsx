@@ -85,6 +85,8 @@ export const Login = (props) => {
     //console.log(emailLog)
   }
  return (
+  <div className='login-page'>
+    <div className='left-container-login'></div>
    <div className='auth-form-container'>
 
      <h2 className='sign'>Login</h2>
@@ -96,11 +98,11 @@ export const Login = (props) => {
          className='signinput'
          onChange={(e) => {
            setEmailLog(e.target.value)
-         }}
-         type='email'
-         id='email'
-         required
-       />
+          }}
+          type='email'
+          id='email'
+          required
+          />
        <label className='signlbl' for='email'>
          password:
        </label>
@@ -108,11 +110,11 @@ export const Login = (props) => {
          className='signinput'
          onChange={(e) => {
            setPassLog(e.target.value)
-         }}
-         type='password'
-         id='password'
-         required
-       />
+          }}
+          type='password'
+          id='password'
+          required
+          />
        <button className='sign-btn' onClick={SignIn}>
          Login
        </button>
@@ -122,10 +124,11 @@ export const Login = (props) => {
      <button
        className='link-btn sign-btn'
        onClick={() =>     navigate('/register')}
-     >
+       >
        Don't have an accoount? Register here
      </button>
    </div>
+  </div>
  )
 }
 export default Login
