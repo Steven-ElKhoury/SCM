@@ -733,8 +733,6 @@ WHERE unit_id = (
         LIMIT 1
     ) AS temp
 );
-
-
   `;
   
     // Execute the query with parameters

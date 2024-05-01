@@ -44,8 +44,8 @@ function CreateStorageUnit() {
         }
 
         if (!partTypeError && !nameError && !sizeError && !capacityError) {
-            axios.post('http://localhost:3001/createUnits', {
-                component_type_id: selectedPartType,
+            axios.post('http://localhost:3001/create_component_storage', {
+                selectedPartType: selectedPartType, // hon hayda l user type aam neb3ato aal backend
                 name: name,
                 size: size,
                 capacity: capacity

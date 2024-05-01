@@ -58,7 +58,7 @@ function EditStorageUnit() {
         e.preventDefault();
 
         if (selectedPartType && name && size && capacity) {
-            axios.put(`http://localhost:3001/editUnit/${unit.unit_id}`, {
+            axios.put(`http://localhost:3001/edit_component_storage/${unit.unit_id}`, {
                 name: name,
                 size: size,
                 capacity: capacity,
@@ -77,7 +77,7 @@ function EditStorageUnit() {
     
     function handleDelete() {
         // Send a delete request to the server
-        axios.delete(`http://localhost:3001/deleteUnit/${unit.unit_id}`)
+        axios.delete(`http://localhost:3001/delete_component_storage/${unit.unit_id}`)
         .then(response => {
             console.log(response);
             navigate('/main/warehouses');

@@ -14,7 +14,7 @@ const db = mysql.createConnection({
 
 
 warehouseRouter.get('/getWarehouses', (req, res) => {
-    db.query('SELECT s.*, c.type FROM storage_unit s INNER JOIN component_type c ON s.component_type_id = c.component_type_id', (err, result) => {
+    db.query('SELECT s.*, c.type FROM component_storage s INNER JOIN component_type c ON s.component_type_id = c.component_type_id', (err, result) => {
         if (err) {
             console.error('Error fetching warehouses:', err);
             res.status(500).send('Error fetching warehouses');
@@ -26,12 +26,12 @@ warehouseRouter.get('/getWarehouses', (req, res) => {
 });
 
 
-warehouseRouter.post('/createUnits', (req, res) => {
+warehouseRouter.post('/create_component_storage', (req, res) => {
     // Extract data from the request body
-    const { name, capacity, size, component_type_id } = req.body;
+    const { name, capacity, size, selectedPartType } = req.body;
 
     // Check if a warehouse with the same name already exists
-    db.query('SELECT * FROM storage_unit WHERE name = ?', [name], (err, result) => {
+    db.query('SELECT * FROM component_storage WHERE name = ?', [name], (err, result) => {
         if (err) {
             console.error('Error checking warehouse name:', err);
             res.status(500).send('Error checking warehouse name');
@@ -44,8 +44,21 @@ warehouseRouter.post('/createUnits', (req, res) => {
             return;
         }
 
+        db.query('SELECT component_type_id FROM component_type WHERE type = ?', [selectedPartType], (err, result) => {
+            if (err) {
+                console.error('Error finding component type:', err);
+                res.status(500).send('Error finding component type');
+                return;
+            }
+
+            if (result.length === 0) {
+                console.error('Component type does not exist');
+                res.status(400).send('Component type does not exist');
+                return;
+            }
+        const componentTypeId = result[0].component_type_id;
         // Insert the new warehouse into the database
-        db.query('INSERT INTO storage_unit(name, size, capacity, component_type_id) VALUES (?, ?, ?, ?)', [name, size, capacity, component_type_id], (err, result) => {
+        db.query('INSERT INTO component_storage(name, size, capacity, component_type_id) VALUES (?, ?, ?,?)', [name, size, capacity,componentTypeId], (err, result) => {
             if (err) {
                 console.error('Error adding warehouse to database:', err);
                 res.status(500).send('Error adding warehouse');
@@ -54,16 +67,17 @@ warehouseRouter.post('/createUnits', (req, res) => {
             console.log('Warehouse added successfully');
             res.status(200).send('Warehouse added successfully');
         });
+        });
     });
 });
 
 
-warehouseRouter.put('/editUnit/:id', (req, res) => {
-    console.log('editUnit');
+warehouseRouter.put('/edit_component_storage/:id', (req, res) => {
+    console.log('edit_component_storage');
     const { id } = req.params;
     const { name, size, capacity, component_type_id } = req.body;
 
-    const query = 'UPDATE storage_unit SET name = ?, size = ?, capacity = ?, component_type_id = ? WHERE unit_id = ?';
+    const query = 'UPDATE component_storage SET name = ?, size = ?, capacity = ?, component_type_id = ? WHERE unit_id = ?';
     const values = [name, size, capacity, component_type_id, id];
 
     db.query(query, values, (err, result) => {
@@ -78,16 +92,16 @@ warehouseRouter.put('/editUnit/:id', (req, res) => {
 });
 
 
-warehouseRouter.delete('/deleteUnit/:id', (req, res) => {
+warehouseRouter.delete('/delete_component_storage/:id', (req, res) => {
     const { id } = req.params;
 
-    const query = 'DELETE FROM storage_unit WHERE unit_id = ?';
+    const query = 'DELETE FROM component_storage WHERE unit_id = ?';
     const values = [id];
 
     db.query(query, values, (err, result) => {
         if (err) {
-            console.error('Error deleting warehouse:', err);
-            res.status(500).send('Error deleting warehouse');
+            console.error('Error deleting component warehouse:', err);
+            res.status(500).send('Error deleting component warehouse');
             return;
         }
         console.log('Warehouse deleted successfully');
@@ -97,7 +111,7 @@ warehouseRouter.delete('/deleteUnit/:id', (req, res) => {
 
 warehouseRouter.get('/warehouse/check/:id', (req, res) => {
     const { id } = req.params;
-    db.query('SELECT * FROM storage_unit WHERE unit_id = ?', [id], (err, result) => {
+    db.query('SELECT * FROM component_storage WHERE unit_id = ?', [id], (err, result) => {
       if (err) {
         console.error('Error fetching warehouse:', err);
         res.status(500).send('Error fetching warehouse');

@@ -61,7 +61,8 @@ partRouter.post('/createPart', (req, res) => {
 // Select part types
 
 partRouter.get('/partTypes', (req, res) => {
-    const query = 'SELECT component_type_id, type from component_type';
+    //const query = 'SELECT component_type_id, type from component_type'; this is commented to extract only unique types
+    const query = 'SELECT DISTINCT type FROM component_type'
     db.query(query, (err, result) => {
         if (err) {
             console.error('Error fetching part types:', err);
