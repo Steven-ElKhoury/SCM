@@ -650,7 +650,7 @@ app.post('/login', (req, res) => {
   
 ///////////////////////////////////////////////////////////////////////////////////////////////////////Fadel
 app.get('/getbyProducts', (req, res) => {
-  db.query('SELECT co.*, pbp.* FROM customer_order AS co JOIN produced_byproduct AS pbp ON co.byProductID = pbp.byproduct_id;', (err, result) => {
+  db.query('SELECT co.*, m.name, m.type FROM customer_order AS co JOIN model AS m ON co.modelID = m.model_id group by co.cust_order_id;', (err, result) => {
     if (err) {
       console.log(err)
       console.log("fi error")
@@ -659,6 +659,61 @@ app.get('/getbyProducts', (req, res) => {
     }
   })
 })
+
+app.get('/gettingByproductList', (req, res) => {
+  db.query('SELECT name FROM model;', (err, result) => {
+    if (err) {
+      console.log(err)
+      console.log("gettingByproductList error")
+    } else {
+      res.send(result) //to send the data that we got from our query
+    }
+  })
+})
+
+app.get('/gettingByproductTypeList', (req, res) => {
+  db.query('SELECT type FROM model;', (err, result) => {
+    if (err) {
+      console.log(err)
+      console.log("gettingByproductTypeList error")
+    } else {
+      res.send(result) //to send the data that we got from our query
+    }
+  })
+})
+
+  
+  app.post('/newPurchase', (req, res) => {
+    const { byProductName, ByproductQuantity, purchaseDate } = req.body;
+  
+    // Log for debugging
+    console.log(ByproductQuantity);
+    console.log("Processing new purchase...");
+  
+    // SQL query that inserts into customer_order using a subquery to find the model_id
+    const query = `
+    INSERT INTO customer_order (quantity, total_price, date, modelID)
+    VALUES (?, 
+            ? * (SELECT price FROM model WHERE name = ?),
+            ?,
+            (SELECT model_id FROM model WHERE name = ?))
+  `;
+  
+    // Execute the query with parameters
+    db.query(
+      query,
+      [ByproductQuantity,ByproductQuantity,byProductName,purchaseDate,byProductName], // Ensure that the product name is passed correctly
+      (err, result) => {
+        if (err) {
+          console.error("Error inserting new purchase: ", err);
+          res.status(500).send('Error inserting values');
+        } else {
+          res.send('Values Inserted Successfully');
+        }
+      }
+    );
+  });
+  
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
