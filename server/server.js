@@ -714,6 +714,43 @@ app.get('/gettingByproductTypeList', (req, res) => {
     );
   });
   
+
+  
+  app.post('/update_byproduct_storage', (req, res) => {
+    const { byProductName, ByproductQuantity  } = req.body;
+  
+    console.log("updating byproduct_storage...");
+  
+    const query = `
+    UPDATE byproduct_storage
+SET current_stock = current_stock - ?
+WHERE unit_id = (
+    SELECT unit_id FROM (
+        SELECT unit_id
+        FROM byproduct_storage
+        WHERE model_id = (SELECT model_id FROM model WHERE name = ?)
+        ORDER BY current_stock DESC
+        LIMIT 1
+    ) AS temp
+);
+
+
+  `;
+  
+    // Execute the query with parameters
+    db.query(
+      query,
+      [ByproductQuantity,byProductName], // Ensure that the product name is passed correctly
+      (err, result) => {
+        if (err) {
+          console.error("Error reducing byproduct stock: ", err);
+          
+        } else {
+          res.send('Stock reduction success');
+        }
+      }
+    );
+  });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

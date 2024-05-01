@@ -104,9 +104,7 @@ const handleAddPurchase = (event) => {
             //byProductName: byProductName,
             byProductName: selectedName,
             ByproductQuantity: ByproductQuantity,
-            purchaseDate: purchaseDate
-            
-
+            purchaseDate: purchaseDate 
     })
               .then(response => {
                   console.log("added Purch")
@@ -114,6 +112,19 @@ const handleAddPurchase = (event) => {
                 .catch(error => {
                   console.error('Error adding purch :', error);
                 });
+                
+                
+        axios.post('http://localhost:3001/update_byproduct_storage', {
+                byProductName: selectedName,
+                ByproductQuantity: ByproductQuantity
+                
+            })
+                      .then(response => {
+                          console.log("added Purch")
+                        })
+                        .catch(error => {
+                          console.error('Error adding purch :', error);
+                        });              
 
             }
 
