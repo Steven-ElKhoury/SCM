@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { faArrowRight, faArrowLeft, faUsers, faTasks, faClipboardList, faShoppingCart, faTruckLoading, faWarehouse, faHome, faBoxOpen, faCogs } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight,faArrowLeft, faUsers, faTasks, faClipboardList, faShoppingCart, faTruckLoading, faWarehouse, faHome, faBoxOpen, faCogs, faDashboard } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
@@ -47,6 +47,9 @@ function Sidebar({sidebarOpen, setSidebarOpen}){
                     </li>
                     <li className="nav-item">
                         <Link className="nav-link" to="parts"><FontAwesomeIcon icon={faCogs} /> Parts</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" to="Dashboard"><FontAwesomeIcon icon={faDashboard} /> Dashboard</Link>
                     </li>
                 </ul>
             </nav>

@@ -18,13 +18,14 @@ import CreatePart from "./createPart";
 import EditPart from "./editPart";
 import CreateStorageUnit from "./createWarehouse";
 import EditStorageUnit from "./editWarehouse";
-import Orders from ".//Orders.jsx"
+import Orders from "./Orders"
 import CreateOrder from "./createOrder";
 import ViewOrders from "./viewOrders";
 import ProductBlueprint from "./ProductBlueprint";
 import ViewParts from "./ViewParts";
 import TaskAssignment from "./TaskAssignment.jsx";
 import Purchases from './Purchases';
+import Dashboard from './Dashboard';
 
 export default function Main() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -60,6 +61,8 @@ export default function Main() {
                   <Route path="addParts/:modelId" element={<ProductBlueprint />} /> {/* Add this line */}
                   <Route path="viewParts/:modelId" element={<ViewParts />} /> {/* Add this line */}
                   <Route path="/purchases" element={<Purchases />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  
             </Routes>
         </div>
     </div>

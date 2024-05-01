@@ -1,0 +1,137 @@
+/* Dashboard.css */
+
+.dashboard {
+    padding: 20px;
+}
+  
+.header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+  
+.header h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+  
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+  
+.button {
+    border: 2px solid #fff;
+    background-color: transparent;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+  
+.orders.button {
+    border-color: #ffd166;
+    color: #ffd166;
+}
+  
+.inventory.button {
+    border-color: #06d6a0;
+    color: #06d6a0;
+}
+  
+.production.button {
+    border-color: #118ab2;
+    color: #118ab2;
+}
+  
+.suppliers.button {
+    border-color: #ef476f;
+    color: #ef476f;
+}
+  
+.button:hover {
+    background-color: #fff;
+    color: #333;
+}
+  
+.graphs {
+    display: flex;
+    flex-direction: column;
+}
+  
+.chart-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 60px; /* Increased margin for more space between graphs */
+}
+
+.chart {
+    height: 400px;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-box-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-left: 20px;
+}
+
+.stat-box {
+    width: 200px;
+    height: auto;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.stat-box.orders {
+    background-color: #8884d8;
+}
+
+.stat-box.revenue {
+    background-color: #82ca9d;
+}
+
+.stat-box.production {
+    background-color: #118ab2;
+}
+
+.stat-box.suppliers {
+    color: #fff;
+    width: 200px;
+}
+
+.stat-box.suppliers:nth-child(1) {
+    background-color: #e34c26;
+}
+
+.stat-box.suppliers:nth-child(2) {
+    background-color: #2ca02c;
+}
+
+.stat-box.suppliers:nth-child(3) {
+    background-color: #9467bd;
+}
+
+.stat-icon {
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+.stat-content {
+    text-align: center;
+}
+
+#suppliers-section {
+    scroll-margin-top: 100px;
+}
