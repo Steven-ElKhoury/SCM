@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { BlobProvider } from '@react-pdf/renderer'; 
-import OrderReceipt from '../Components/OrderReceipt';
+import PurchaseReceipt from '../Components/PurchaseReceipt';
 import '../css/Purchases.css';
 
 function Purchases() {
@@ -127,7 +127,7 @@ const handleAddPurchase = (event) => {
                         });              
 
             }
-
+            console.log(byProducts)
 
     return (
         <>
@@ -231,13 +231,14 @@ const handleAddPurchase = (event) => {
                         <div key={byProducts.cust_order_id} className="byProduct-card-container">
                             <div className="byProduct-card">
                                 <div className="byProduct-card-content">
-                                    <h2>customer order ID: {byProducts.cust_order_id}</h2>
-                                    <h3>Model ID: {byProducts.modelID}</h3>
+                                    <h2>Customer Order ID #{byProducts.cust_order_id}</h2>
+                                    <h3>Bike Model #{byProducts.modelID}</h3>
+                                    <p>{byProducts.name}</p>
                                     <p>Type: {byProducts.type}</p>
-                                    <h3>quantity: {byProducts.quantity}</h3>
-                                    <h3>total price: ${byProducts.total_price}</h3>
+                                    <h3>Quantity: {byProducts.quantity}</h3>
+                                    <h3>Total: ${byProducts.total_price}</h3>
                                     <p>Date ordered: {formatDate(byProducts.date)}</p>
-                                    <BlobProvider document={<OrderReceipt order={byProducts} />}>
+                                    <BlobProvider document={<PurchaseReceipt order={byProducts} />}>
                                             {({ blob, url, loading, error }) => {
                                                 if (loading) {
                                                     return <div>Loading...</div>;
