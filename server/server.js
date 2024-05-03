@@ -663,6 +663,7 @@ app.get('/getbyProducts', (req, res) => {
   })
 })
 
+
 app.get('/gettingByproductList', (req, res) => {
   db.query('SELECT name FROM model;', (err, result) => {
     if (err) {

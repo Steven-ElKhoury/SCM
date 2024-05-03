@@ -1,22 +1,19 @@
 import '../css/dashboard.css';
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faBox, faTools } from '@fortawesome/free-solid-svg-icons';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 const Dashboard = () => {
   // Sample data arrays
-  const ordersData = [
-    { name: 'January', orders: 100, revenue: 5000 },
-    { name: 'February', orders: 150, revenue: 7500 },
-    { name: 'March', orders: 200, revenue: 10000 },
-    { name: 'April', orders: 180, revenue: 9000 },
-    { name: 'May', orders: 220, revenue: 11000 },
-    { name: 'June', orders: 180, revenue: 9000 },
-    { name: 'July', orders: 150, revenue: 7500 },
-    // Add more data as needed
-  ];
-
+  const [suppliersData, setSuppliersData] = useState([]);
+  const [ordersData, setOrdersData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  
   const inventoryData = [
     { unit: 'Unit A', Handlebars: 20, Frames: 50, Saddles: 30, Chains: 0, Wheels: 0, Pedals: 0, Forks: 0, Brakes: 0, Tires: 0, 'Mountain Bike': 0, BMX: 0, 'Hybrid Bike': 0, 'Road Bike': 0 },
     { unit: 'Unit B', Handlebars: 0, Frames: 0, Saddles: 0, Chains: 40, Wheels: 70, Pedals: 50, Forks: 0, Brakes: 0, Tires: 0, 'Mountain Bike': 0, BMX: 0, 'Hybrid Bike': 0, 'Road Bike': 0 },
@@ -32,19 +29,101 @@ const Dashboard = () => {
     // Add more data as needed
   ];
 
-  const suppliersData = [
-    { supplier: 'A', orders: 80, deliveryTime: 4, qualityRating: 8 },
-    { supplier: 'B', orders: 120, deliveryTime: 3, qualityRating: 7 },
-    { supplier: 'C', orders: 150, deliveryTime: 5, qualityRating: 6 },
-    // Add more data as needed
-  ];
 
+  useEffect(() => {
+    const fetchCustomerOrders = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/getbyProducts');
+        console.log('Customer orders data:', response.data); // Log the response data
+        const ordersData = response.data.map(order => ({
+          date: new Date(order.date), // Assuming date format is compatible with Date constructor
+          quantity: order.quantity,
+          total_price: order.total_price
+        }));
+  
+        // Filter orders for a specific year (e.g., 2024)
+        //const currentYear = new Date().getFullYear(); // Get current year
+        const currentYear = 2022;
+        const filteredOrdersData = ordersData.filter(order => order.date.getFullYear() === currentYear);
+  
+        // Generate monthly summary
+        const monthlySummary = filteredOrdersData.reduce((summary, order) => {
+          const month = order.date.getMonth(); // Month index (0-11)
+          const monthKey = `${currentYear}-${month + 1}`; // Key format: 'YYYY-MM'
+  
+          if (!summary[monthKey]) {
+            summary[monthKey] = { orders: 0, revenue: 0 };
+          }
+  
+          summary[monthKey].orders++;
+          summary[monthKey].revenue += order.total_price;
+  
+          return summary;
+        }, {});
+  
+        // Convert monthly summary to array of objects
+        const ordersByMonth = Object.keys(monthlySummary).map(monthKey => ({
+          month: monthKey,
+          orders: monthlySummary[monthKey].orders,
+          revenue: monthlySummary[monthKey].revenue
+        }));
+  
+        setOrdersData(ordersByMonth);
+        setLoading(false);
+  
+        // Calculate total revenue
+        const totalRevenue = filteredOrdersData.reduce((total, order) => total + parseFloat(order.total_price), 0).toFixed(2);
+        console.log('Total Revenue:', totalRevenue);
+        setTotalRevenue(totalRevenue);
+      } catch (error) {
+        console.error('Error fetching customer orders:', error);
+        setLoading(false);
+      }
+    };
+  
+    fetchCustomerOrders();
+  }, []);
+  
+
+  useEffect(() => {
+    const fetchSuppliersData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/getOrders');
+        console.log('Response data:', response.data); // Log the response data
+        const suppliersMap = {};
+        response.data.forEach(order => {
+          const supplierName = order.supplier_name;
+          const leadTime = order.lead_time;
+          if (!suppliersMap[supplierName]) {
+            suppliersMap[supplierName] = { totalLeadTime: 0, orderCount: 0 };
+          }
+          suppliersMap[supplierName].totalLeadTime += leadTime;
+          suppliersMap[supplierName].orderCount++;
+        });
+
+        const suppliersData = Object.keys(suppliersMap).map(supplierName => ({
+          supplier: supplierName,
+          orders: suppliersMap[supplierName].orderCount,
+          deliveryTime: suppliersMap[supplierName].totalLeadTime / suppliersMap[supplierName].orderCount
+        }));
+        
+        setSuppliersData(suppliersData);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching suppliers data:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchSuppliersData();
+  }, []);
   const colors = ['#8884d8', '#82ca9d', '#ffc658', '#e34c26', '#ff7f0e', '#2ca02c', '#9467bd', '#8c564b', '#1f77b4', '#ff00ff', '#ff99ff', '#33cc33', '#ff3300'];
 
   const scrollToSection = (id) => {
     const section = document.getElementById(id);
     section.scrollIntoView({ behavior: 'smooth' });
   };
+
 
   return (
     <div className="dashboard">
@@ -60,33 +139,34 @@ const Dashboard = () => {
       <div className="graphs">
         {/* Orders Section */}
         <div className="chart-container" id="orders-section">
-          <div className="chart">
-            <h2>Orders Overview</h2>
-            <BarChart width={800} height={400} data={ordersData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="orders" fill="#ffd166" />
-              <Bar dataKey="revenue" fill="#06d6a0" />
-            </BarChart>
-          </div>
-          <div className="stat-box-container">
-            <div className="stat-box orders" onClick={() => scrollToSection('orders-section')} style={{ backgroundColor: '#ffd166' }}>
-              <FontAwesomeIcon icon={faShoppingCart} className="stat-icon" />
-              <div className="stat-content">
-                <h3>Total Orders</h3>
-                <p>450</p>
-              </div>
-            </div>
-            <div className="stat-box revenue" onClick={() => scrollToSection('orders-section')} style={{ backgroundColor: '#06d6a0' }}>
-              <FontAwesomeIcon icon={faShoppingCart} className="stat-icon" />
-              <div className="stat-content">
-                <h3>Total Revenue</h3>
-                <p>$50,000</p>
-              </div>
-            </div>
+  <div className="chart">
+    <h2>Orders Overview</h2>
+    <BarChart width={800} height={400} data={ordersData}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="month" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Bar dataKey="orders" fill="#ffd166" name="Total Orders" />
+      <Bar dataKey="revenue" fill="#06d6a0" name="Total Revenue" />
+    </BarChart>
+  </div>
+  <div className="stat-box-container">
+    <div className="stat-box orders" onClick={() => scrollToSection('orders-section')} style={{ backgroundColor: '#ffd166' }}>
+      <FontAwesomeIcon icon={faShoppingCart} className="stat-icon" />
+      <div className="stat-content">
+        <h3>Total Orders</h3>
+        <p>{ordersData.reduce((total, data) => total + data.orders, 0)}</p>
+      </div>
+    </div>
+    <div className="stat-box revenue" onClick={() => scrollToSection('orders-section')} style={{ backgroundColor: '#06d6a0' }}>
+      <FontAwesomeIcon icon={faShoppingCart} className="stat-icon" />
+      <div className="stat-content">
+        <h3>Total Revenue</h3>
+        <p>${totalRevenue}</p>
+      </div>
+    </div>
+  
           </div>
         </div>
         {/* Inventory Section */}
@@ -111,7 +191,7 @@ const Dashboard = () => {
                 <FontAwesomeIcon icon={faBox} className="stat-icon" />
                 <div className="stat-content">
                   <h3>{item.unit} </h3>
-                  <p>{Object.values(item).reduce((total, val) => typeof val === 'number' ? total + val : total, 0)}</p>
+                  <p>{ordersData.reduce((total, order) => total + order.total_price, 0)}</p>
                 </div>
               </div>
             ))}
@@ -153,17 +233,15 @@ const Dashboard = () => {
               <Legend />
               <Bar dataKey="orders" fill="#ef476f" name="Orders" />
               <Bar dataKey="deliveryTime" fill="#8884d8" name="Avg. Delivery Time (Days)" />
-              <Bar dataKey="qualityRating" fill="#82ca9d" name="Quality Rating" />
             </BarChart>
           </div>
           <div className="stat-box-container">
             {suppliersData.map((supplier, index) => (
-              <div className="stat-box suppliers" key={index} onClick={() => scrollToSection('suppliers-section')}>
+              <div className="stat-box suppliers" key={index}>
                 <FontAwesomeIcon icon={faShoppingCart} className="stat-icon" />
                 <div className="stat-content">
                   <h3>Supplier {supplier.supplier}</h3>
                   <p>Orders: {supplier.orders}</p>
-                  
                 </div>
               </div>
             ))}
