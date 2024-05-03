@@ -50,6 +50,7 @@ const db = mysql.createConnection({
   host: 'localhost',
   password: 'password',
   database: 'supply_chain',
+  multipleStatements: true
 })
 
 //app.use(authRouter);
@@ -648,7 +649,9 @@ app.post('/login', (req, res) => {
     })
   })
   
-///////////////////////////////////////////////////////////////////////////////////////////////////////Fadel
+////////////////////////////////////Fadel//////////////////////////////////////////////
+
+
 app.get('/getbyProducts', (req, res) => {
   db.query('SELECT co.*, m.name, m.type FROM customer_order AS co JOIN model AS m ON co.modelID = m.model_id group by co.cust_order_id;', (err, result) => {
     if (err) {
@@ -682,33 +685,148 @@ app.get('/gettingByproductTypeList', (req, res) => {
   })
 })
 
+ /////////////////////////////////////////// //new purch:
+ app.get('/availableQuantityCheck', (req, res) => {
+  byProductName = req.query.byProductName;
+  const query = 'SELECT quantity FROM model WHERE name = ?';
+
+  db.query(query, [byProductName], (err, result) => {
+      if (err) {
+          console.error("Error retrieving quantity from name in model:", err);
+          res.status(500).send('Error retrieving quantity');
+          return;
+      }
+      if (result.length > 0) {
+        res.send({ quantity: result[0].quantity });
+      } else {
+        res.status(404).send('No data found');
+      }
+  });
+});
+app.post('/update_model', (req, res) => {
+  const {byProductName,ByproductQuantity} = req.body;
+
+  console.log("Reducing model quantity...");
+  console.log(ByproductQuantity);
+  console.log(byProductName);
   
-  app.post('/newPurchase', (req, res) => {
+  const query = `
+  UPDATE model
+  SET quantity = quantity - ?
+  WHERE name = ?
+`;
+  
+  db.query( 
+    query,
+    [ByproductQuantity,byProductName], 
+    (err, result) => {
+      if (err) {
+        console.error("Error updating product quantity:", err);
+        res.status(500).send('Error updating product quantity');
+        return;
+    }
+    
+    if (result.affectedRows === 0) {
+        // If no rows were affected, the product name might not exist (not gonna happen since name come from selecting an available name)
+        res.status(404).send('Product not found');
+    } else {
+        // Successfully updated the quantity
+        res.send('Product quantity updated successfully');
+    }
+    }
+  );
+});
+
+
+app.get('/getModelIdByName', (req, res) => {
+  const modelName = req.query.name;  // Get the model name from query parameters
+  const query = 'SELECT model_id FROM model WHERE name = ?';
+
+  db.query(query, [modelName], (err, result) => {
+      if (err) {
+          console.error("Error retrieving model ID:", err);
+          res.status(500).send('Error retrieving model ID');
+          return;
+      }
+
+      if (result.length === 0) {
+          res.status(404).send('Model not found');
+          return;
+      }
+
+      const modelId = result[0].model_id;
+      res.send({ modelId: modelId });
+  });
+});
+app.get('/get_byproduct_stock', (req, res) => {
+  const modelID = req.query.modelID; 
+  const query = 'SELECT current_stock FROM byproduct_storage WHERE model_id = ? ORDER BY current_stock DESC LIMIT 1';
+
+  db.query(query, [modelID], (err, result) => {
+      if (err) {
+          console.error("Error retrieving stock", err);
+          res.status(500).send('Error retrieving stock');
+          return;
+      }
+
+      if (result.length === 0) {
+          res.status(404).send('stock number not found');
+          return;
+      }
+
+      const stock = result[0].current_stock;
+      res.send({ stock: stock });
+  });
+});
+app.get('/highest_stock_unit_ID', (req, res) => {
+  const modelID = req.query.modelID; 
+  const query = 'SELECT unit_id FROM byproduct_storage WHERE model_id = ? ORDER BY current_stock DESC LIMIT 1';
+
+  db.query(query, [modelID], (err, result) => {
+      if (err) {
+          console.error("Error retrieving unit_id of highest stock", err);
+          res.status(500).send('Error retrieving unit_id of highest stock');
+          return;
+      }
+
+      if (result.length === 0) {
+          res.status(404).send('unit_id of highest stock not found');
+          return;
+      }
+
+      const unit_id = result[0].unit_id;
+      res.send({ unit_id: unit_id });
+  });
+});
+
+app.post('/newPurchase', (req, res) => {
     const { byProductName, ByproductQuantity, purchaseDate } = req.body;
   
-    // Log for debugging
+    
     console.log(ByproductQuantity);
     console.log("Processing new purchase...");
   
-    // SQL query that inserts into customer_order using a subquery to find the model_id
+    
     const query = `
     INSERT INTO customer_order (quantity, total_price, date, modelID)
     VALUES (?, 
             ? * (SELECT price FROM model WHERE name = ?),
             ?,
-            (SELECT model_id FROM model WHERE name = ?))
+            (SELECT model_id FROM model WHERE name = ?));
+    SELECT LAST_INSERT_ID() as cust_order_id;
   `;
-  
-    // Execute the query with parameters
-    db.query(
+    
+    db.query( 
       query,
-      [ByproductQuantity,ByproductQuantity,byProductName,purchaseDate,byProductName], // Ensure that the product name is passed correctly
+      [ByproductQuantity,ByproductQuantity,byProductName,purchaseDate,byProductName], 
       (err, result) => {
         if (err) {
           console.error("Error inserting new purchase: ", err);
           res.status(500).send('Error inserting values');
         } else {
-          res.send('Values Inserted Successfully');
+        const custOrderId = result[1][0].cust_order_id; 
+        console.log('New Customer Order ID:', custOrderId);
+        res.send({ custOrderId: custOrderId, message: 'Values Inserted Successfully' });
         }
       }
     );
@@ -717,28 +835,19 @@ app.get('/gettingByproductTypeList', (req, res) => {
 
   
   app.post('/update_byproduct_storage', (req, res) => {
-    const { byProductName, ByproductQuantity  } = req.body;
+    const { unitId, ByproductQuantity  } = req.body;
   
     console.log("updating byproduct_storage...");
   
     const query = `
     UPDATE byproduct_storage
 SET current_stock = current_stock - ?
-WHERE unit_id = (
-    SELECT unit_id FROM (
-        SELECT unit_id
-        FROM byproduct_storage
-        WHERE model_id = (SELECT model_id FROM model WHERE name = ?)
-        ORDER BY current_stock DESC
-        LIMIT 1
-    ) AS temp
-);
+WHERE unit_id = ?
   `;
   
-    // Execute the query with parameters
     db.query(
       query,
-      [ByproductQuantity,byProductName], // Ensure that the product name is passed correctly
+      [ByproductQuantity,unitId], 
       (err, result) => {
         if (err) {
           console.error("Error reducing byproduct stock: ", err);
@@ -749,6 +858,35 @@ WHERE unit_id = (
       }
     );
   });
+
+
+
+  app.post('/update_produced_byproduct', (req, res) => {
+    const { ModelID, custOrderId, ByproductQuantity } = req.body;
+        const updateQuery = `
+        UPDATE produced_byproduct
+        SET cus_orderID = ?,  sold = 1
+        WHERE byproduct_id IN (
+            SELECT byproduct_id FROM (
+                SELECT byproduct_id FROM produced_byproduct
+                WHERE sold = 0 AND cus_orderID IS NULL AND model_id = ?
+                ORDER BY byproduct_id ASC
+                LIMIT ?
+            ) AS subquery
+        )
+        `;
+
+        db.query(updateQuery, [custOrderId, ModelID, ByproductQuantity], (err, updateResults) => {
+            if (err) {
+                console.error("Error updating order by product:", err);
+                res.status(500).send('Error updating order by product');
+                return;
+            }
+            console.log('Updated order by product successfully');
+            res.send({ message: 'Updated order by product successfully', affectedRows: updateResults.affectedRows });
+        });
+    });
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
