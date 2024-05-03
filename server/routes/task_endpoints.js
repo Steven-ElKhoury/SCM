@@ -75,7 +75,70 @@ taskRouter.get('/gettasks', (req, res) => {
     })
 
     })
+    taskRouter.post('/makemanager', async (req, res) => {
+      const employee_id = req.body.employee_id
+      const email = req.body.email
+      const password = req.body.password
+      const name = req.body.name;
+
+      x = [];
+      db.query('select task_id from task_assignment where employee_id = ?;', [employee_id], (err, result) => {
+        if (err) {
+          console.log(err)
+        } else {
+          console.log(JSON.stringify(result))
+          x = result.map(item => item.task_id)
+          console.log("completed task")
+          console.log(result.map(item => item.task_id))
+          db.query('delete from task_assignment where employee_id = ?', [employee_id], (err, result) => {
+            if (err) {
+              //console.log(err)
+            } else {
+              //console.log(JSON.stringify(result))
+              //console.log("deleted tasks")
+              console.log('employee_id'+employee_id)
+              db.query('delete from task where task_id in (?);', [x], (err, result) => {
+                if (err) {
+                  //console.log(err)
+                } else {
+
+                  console.log(JSON.stringify(result))
+                  console.log("deleted task assignments")
+
+                  //res.send(result) 
+                }
+              })
+              //res.send(result) 
+            }
+          })
+          db.query('delete from employee where employee_id=?;', [employee_id], (err, result) => {
+            if (err) {
+              console.log(err)
+            } else {
+              db.query('insert into manager(email,password,name) values (?,?,?);', [email,password,name], (err, result) => {
+                if (err) {
+                  console.log(err)
+                } else {
+                  
+                  console.log(JSON.stringify(result))
+                  console.log("deleted employee")
+                  
+                  //res.send(result) 
+                }
+              })
+              console.log(JSON.stringify(result))
+              console.log("deleted employee")
+              
+              //res.send(result) 
+            }
+          })
+          
+          
+        }
+      })
   
+  
+      })
  
 
 
