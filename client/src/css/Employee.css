@@ -1,4 +1,4 @@
-.createEmployees {
+/* .createEmployees {
     display: flex;
     justify-content: end;
     margin-top: 10px;
@@ -14,4 +14,25 @@
     border-radius: 5px;
     background-color: skyblue;
     cursor: pointer;
-}
+} */
+.employee-table-container {
+    margin: 20px;
+  }
+  
+  .employee-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .employee-table th,
+  .employee-table td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .employee-table th {
+    background-color: #f2f2f2;
+  }
+  
