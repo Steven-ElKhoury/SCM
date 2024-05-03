@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/createPart.css';
 import { useNavigate } from 'react-router-dom';
 
-
 function CreatePart() {
-    const [partType, setPartType] = useState('');
+    const navigate = useNavigate();
+    const [selectedPartType, setSelectedPartType] = useState('');
     const [name, setName] = useState('');
     const [modelNumber, setModelNumber] = useState('');
     const [description, setDescription] = useState('');
@@ -15,126 +15,174 @@ function CreatePart() {
     const [descriptionError, setDescriptionError] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
     const [imageUrlError, setImageUrlError] = useState(null);
-    const navigate = useNavigate();
+    const [partTypes, setPartTypes] = useState([]);
 
+    useEffect(() => {
+        axios.get('http://localhost:3001/partTypes')
+          .then((response) => {
+            setPartTypes(response.data);
+          })
+          .catch((error) => {
+            console.error('Error fetching part types:', error);
+          });
+      }, []);
 
     const handleImageUrlChange = (e) => {
         setImageUrl(e.target.value);
+        if (e.target.value) {
+            setImageUrlError(''); // clear error if input is not empty
+        } else {
+            setImageUrlError('Please enter the image URL'); // set error if input is empty
+        }
     };
 
     const handlePartTypeChange = (e) => {
-        setPartType(e.target.value);
+        setSelectedPartType(e.target.value);
+        if (e.target.value) {
+            setPartTypeError(''); // clear error if input is not empty
+        } else {
+            setPartTypeError('Part type is required'); // set error if input is empty
+        }
     };
 
     const handleNameChange = (e) => {
         setName(e.target.value);
+        if (e.target.value) {
+            setNameError(''); // clear error if input is not empty
+        } else {
+            setNameError('Please enter the name'); // set error if input is empty
+        }
     };
 
     const handleModelNumberChange = (e) => {
         setModelNumber(e.target.value);
+        if (e.target.value) {
+            setModelNumberError(''); // clear error if input is not empty
+        } else {
+            setModelNumberError('Please enter the model number'); // set error if input is empty
+        }
     };
 
     const handleDescriptionChange = (e) => {
         setDescription(e.target.value);
+        if (e.target.value) {
+            setDescriptionError(''); // clear error if input is not empty
+        } else {
+            setDescriptionError('Please enter the description'); // set error if input is empty
+        }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        // Reset validation messages
-        setPartTypeError('');
-        setNameError('');
-        setModelNumberError('');
-        setDescriptionError('');
-        setImageUrlError('');
-
-        // Validate partType, name, modelNumber, and description
+    
+        // Check if fields are empty and set error state
         if (!imageUrl) {
             setImageUrlError('Please enter the image URL');
         }
         
-        if (!partType) {
-            setPartTypeError('Please enter the part type');
+        if (!selectedPartType) {
+            setPartTypeError('Please select a part type');
         }
-
+    
         if (!name) {
             setNameError('Please enter the name');
         }
-
+    
         if (!modelNumber) {
             setModelNumberError('Please enter the model number');
         }
-
+    
         if (!description) {
             setDescriptionError('Please enter the description');
         }
-
-        if (!partTypeError && !nameError && !modelNumberError && !descriptionError && !imageUrlError) {
+    
+        // Only submit the form if no fields are empty
+        if (imageUrl && selectedPartType && name && modelNumber && description) {
             axios.post('http://localhost:3001/createPart', {
-                type: partType,
+                part_category_id: selectedPartType,
                 name: name,
                 model_number: modelNumber,
                 description: description,
-                image_url: imageUrl
-            }).then((response) => {
-                // Handle the response here
+                image_url: imageUrl,
+            })
+            .then(response => {
                 console.log(response);
                 navigate('/main/parts');
-
-            }).catch((error) => {
-                // Handle the error here
-                console.log(error);
+            })
+            .catch(error => {
+                console.error('Error creating part:', error);
             });
         }
     };
 
     return (
         <div className='create-part-container'>
-            <h1>Create Part</h1>
-    <form className='create-part-form' onSubmit={handleSubmit}>
-    <label>
-        Part Type:
-        <select value={partType} onChange={handlePartTypeChange}>
-                    <option value="">Select a part type</option>
-                    <option value="Handlebars">Handlebars</option>
-                    <option value="Brakes">Brakes</option>
-                    <option value="Shifters">Shifters</option>
-                    <option value="Fork">Fork</option>
-                    <option value="Drivetrain">Drivetrain</option>
-                    <option value="Saddle">Saddle</option>
-                    <option value="Pedals">Pedals</option>
-                    <option value="Wheels">Wheels</option>
-                    <option value="Tires">Tires</option>
-                </select>
-        {partTypeError && <p className="error">{partTypeError}</p>}
-    </label>
-                <br />
-                <label>
-                    Name:
-                    <input type="text" value={name} onChange={handleNameChange} />
-                    {nameError && <p className="error">{nameError}</p>}
-                </label>
-                <br />
-                <label>
-                    Model Number:
-                    <input type="text" value={modelNumber} onChange={handleModelNumberChange} />
-                    {modelNumberError && <p className="error">{modelNumberError}</p>}
-                </label>
-                <br />
-                <label>
-                    Description:
-                    <textarea style={{width:'200px'}} value={description} onChange={handleDescriptionChange} />
-                    {descriptionError && <p className="error">{descriptionError}</p>}
-                </label>
-                <br />
-                <label>
-                    Image URL:
-                    <input type="text" value={imageUrl} onChange={handleImageUrlChange} />
-                    {imageUrlError && <p className="error">{imageUrlError}</p>}
-                </label>
-                <br />
-                <button className='btn btn-primary' type="submit">Create</button>
-            </form>
+            <h1 style= {{textAlign:'center'}}>Create Part</h1>
+
+            <div style={{ textAlign: "left" }}>
+                <button style={{
+                    backgroundColor: "#007BFF", /* Blue */
+                    border: "none",
+                    color: "white",
+                    padding: "10px 20px", /* Smaller */
+                    textAlign: "center",
+                    textDecoration: "none",
+                    display: "inline-block",
+                    fontSize: "14px", /* Smaller */
+                    margin: "10px 2px",
+                    cursor: "pointer",
+                    borderRadius: "4px"
+                }} onClick={() => navigate('/main/createPartType')}>Create Part Type</button>
+            </div>
+
+            <div className='create-part-form-container'>
+                <form className='create-part-form' onSubmit={handleSubmit}>
+                    <div className='input-group'>
+                        <label>
+                            Part Type:
+                            <select value={selectedPartType} onChange={handlePartTypeChange}>
+                                <option value="">Select a part type</option>
+                                {partTypes.map(partType => (
+                                    <option key={partType.part_category_id} value={partType.part_category_id}>
+                                    {partType.category_name}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+                            {partTypeError && <p className="error">{partTypeError}</p>}
+                    <div className='input-group'>
+                        <label>
+                            Name:
+                            <input type="text" value={name} onChange={handleNameChange} />
+                        </label>
+                    </div>
+                            {nameError && <p className="error">{nameError}</p>}
+                    <div className='input-group'>
+                        <label>
+                            Model Number:
+                            <input type="text" value={modelNumber} onChange={handleModelNumberChange} />
+                        </label>
+                    </div>
+                            {modelNumberError && <p className="error">{modelNumberError}</p>}
+                    <div className='input-group'>
+                        <label>
+                            Description:
+                            <textarea value={description} onChange={handleDescriptionChange} />
+                        </label>
+                    </div>
+                            {descriptionError && <p className="error">{descriptionError}</p>}
+                    <div className='input-group'>
+                        <label>
+                            Image URL:
+                            <input type="text" value={imageUrl} onChange={handleImageUrlChange} />
+                        </label>
+                    </div>
+                        {imageUrlError && <p className="error">{imageUrlError}</p>}
+                        <button className='btn btn-primary' type="submit">Create</button>
+                    
+                </form>
+            </div>
         </div>
     );
 };

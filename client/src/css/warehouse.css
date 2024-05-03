@@ -1,49 +1,67 @@
 /* Container for the whole page */
-/* Container for the whole page */
-.warehouse-container {
-    padding: 20px;
-    background-color: #f8f9fa;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.warehouses-page {
+   padding: 20px;
 }
 
 /* Header styling */
-/* Header styling */
-.header {
-    padding: 20px;
-    background-color: transparent; /* Remove the background color */
-    color: #333;
-    text-align: center;
-    font-size: 2em;
+.warehouse-header {
     margin-bottom: 20px;
-    border-bottom: 1px solid #dee2e6; /* Add a separator underneath */
-    font-weight: bold; /* Make the text bold */
-    margin-right:10px;
+    border-bottom: 1px solid #000; /* Add this line */
 }
 
-#create-warehouse-btn{
-   margin:10px;
 
+/* Search container styling */
+.warehouse-search-container {
+   display:flex;
+   justify-content: space-between; /* Align elements to the start */
+   align-items: center;
+}
+
+.warehouse-search-container input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+    width: 70%;
+    box-sizing: border-box;
+    margin-right: 10px; /* Add some space between the input and the button */
+}
+
+.warehouse-search-container button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+}
+
+
+.warehouse-search-container button:hover {
+    background-color: #0056b3;
+}
+
+/* Warehouse item container styling */
+.warehouse-item-container {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 /* Warehouse items */
 .item {
-    padding: 10px;
+    flex: 0 0 calc(33.33% - 40px); /* Each item takes up one third of the container width, minus the margins */
+    padding: 20px;
     background-color: #fff;
     border: 1px solid #dee2e6;
     margin: 20px;
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     border-radius: 5px;
 }
-.item-name {
-    font-size: 1.2em;
-    color: #212529;
-}
 
-.item-quantity {
-    color: #6c757d;
+/* Edit button styling */
+button {
+    margin-top: 20px;
+    align-self: center;
 }

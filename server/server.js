@@ -167,7 +167,7 @@ const query = `
     SELECT 
       cso.order_id,
       s.supplier_name,
-      comp.type AS component_type,
+      comp.name AS component_type,
       co.quantity,
       co.date_ordered,
       co.date_arrived,
@@ -221,7 +221,7 @@ const query = `
   });
 
 app.get('/gettingsuppliers', (req, res) => {
-  db.query('select supplier_name,offering_id,price,lead_time,supplier_id,type from supplier_offerings natural join component_type natural join supplier', (err, result) => {
+  db.query('select supplier_name,offering_id,price,lead_time,supplier_id, name from supplier_offerings natural join component_type natural join supplier', (err, result) => {
     if (err) {
       console.log(err)
     } else {
@@ -268,7 +268,7 @@ app.post('/updatePrice', async (req, res) => {
   app.post('/getcomponentid', (req, res) => {
     const  selectedType  = req.body.selectedType;
     console.log(req.body)
-    db.query("Select component_type_id from component_type where type = ?", [selectedType], (err, result) => {
+    db.query("Select component_type_id from component_type where name = ?", [selectedType], (err, result) => {
       if (err) {
         console.error('Error getting component id:', err);
         res.status(500).send('Error getting component id');

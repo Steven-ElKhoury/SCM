@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Table,Typography, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField } from '@mui/material';
+import { Table,Typography, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, TablePagination } from '@mui/material';
 import { styled } from '@mui/system';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
@@ -22,6 +22,8 @@ function Orders() {
     const [search, setSearch] = useState('');
     const [sortField, setSortField] = useState(null);
     const [sortDirection, setSortDirection] = useState('asc');
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
 
 
     useEffect(() => {
@@ -69,42 +71,40 @@ function Orders() {
     return (
         <div>
             <Title variant="h4">Orders</Title>  
-            <TableContainer style= {{overflow:'visible'}} component={Paper}>
-            <TextField label="Search" variant="outlined" value={search} onChange={e => setSearch(e.target.value)} />
-            <StyledTable>
+            <TableContainer  style={{ width: '97%', marginRight: '20px' }} component={Paper}>
+            <TextField placeholder="Search" variant="outlined" value={search} onChange={e => setSearch(e.target.value)} />
                 <Table>
                 <TableHead>
-    <TableRow>
-        <SortableTableCell onClick={() => { setSortField('order_id'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
-            Order ID {sortField === 'order_id' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-        </SortableTableCell>
-        <SortableTableCell onClick={() => { setSortField('component_type'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
-            Component {sortField === 'component_type' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-        </SortableTableCell>
-        <SortableTableCell onClick={() => { setSortField('supplier_name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
-            Supplier {sortField === 'supplier_name' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-        </SortableTableCell>
-        <SortableTableCell onClick={() => { setSortField('quantity'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
-            Quantity {sortField === 'quantity' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-        </SortableTableCell>
-        <SortableTableCell onClick={() => { setSortField('date_ordered'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
-            Date Ordered {sortField === 'date_ordered' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-        </SortableTableCell>
-        <SortableTableCell onClick={() => { setSortField('date_arrived'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
-            Date Arrived {sortField === 'date_arrived' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-        </SortableTableCell>
-        <SortableTableCell onClick={() => { setSortField('lead_time'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
-            Lead Time {sortField === 'lead_time' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-        </SortableTableCell>
-        <SortableTableCell onClick={() => { setSortField('status'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
-            Status {sortField === 'status' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
-        </SortableTableCell>
-        <TableCell>Change Status</TableCell>
-    </TableRow>
-</TableHead>
+                    <TableRow>
+                        <SortableTableCell onClick={() => { setSortField('order_id'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                            Order ID {sortField === 'order_id' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                        </SortableTableCell>
+                        <SortableTableCell onClick={() => { setSortField('component_type'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                            Component {sortField === 'component_type' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                        </SortableTableCell>
+                        <SortableTableCell onClick={() => { setSortField('supplier_name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                            Supplier {sortField === 'supplier_name' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                        </SortableTableCell>
+                        <SortableTableCell onClick={() => { setSortField('quantity'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                            Quantity {sortField === 'quantity' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                        </SortableTableCell>
+                        <SortableTableCell onClick={() => { setSortField('date_ordered'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                            Date Ordered {sortField === 'date_ordered' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                        </SortableTableCell>
+                        <SortableTableCell onClick={() => { setSortField('date_arrived'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                            Date Arrived {sortField === 'date_arrived' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                        </SortableTableCell>
+                        <SortableTableCell onClick={() => { setSortField('lead_time'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                            Lead Time {sortField === 'lead_time' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                        </SortableTableCell>
+                        <SortableTableCell onClick={() => { setSortField('status'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                            Status {sortField === 'status' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                        </SortableTableCell>
+                        <TableCell>Change Status</TableCell>
+                    </TableRow>
+                </TableHead>
                 <TableBody>
                     {sortedAndFilteredOrders.map(order => (
-                        
                         <TableRow key={order.order_id}>
                             <TableCell>{order.order_id}</TableCell>
                             <TableCell>{order.component_type}</TableCell>
@@ -121,7 +121,18 @@ function Orders() {
                     ))}
                 </TableBody>
             </Table>
-            </StyledTable>
+            <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={sortedAndFilteredOrders.length}
+                page={page}
+                onPageChange={(event, newPage) => setPage(newPage)}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={(event) => {
+                    setRowsPerPage(parseInt(event.target.value, 10));
+                    setPage(0);
+                }}
+                />
         </TableContainer>
         </div>
       

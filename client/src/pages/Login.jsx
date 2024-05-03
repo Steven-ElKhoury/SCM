@@ -3,9 +3,10 @@ import Axios from 'axios'
 import Home from './Home'
 import Main from './Main'
 import '../css/Login.css';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 //import '../css/signin.css'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom';
 
 export const Login = (props) => {
   const navigate = useNavigate()
@@ -15,8 +16,15 @@ export const Login = (props) => {
   const [user_ID, setUser_ID] = useState(0)
   const [errorMessage, setErrorMessage] = useState('');
   const [isPending, setisPending] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
+
   const win = window.sessionStorage
   var sessionUser = 0;
+
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   function refreshPage() {
     window.location.reload(false)
@@ -106,15 +114,20 @@ export const Login = (props) => {
        <label className='signlbl' for='email'>
          password:
        </label>
-       <input
-         className='signinput'
-         onChange={(e) => {
-           setPassLog(e.target.value)
-          }}
-          type='password'
-          id='password'
-          required
+       <div className="input-wrapper">
+          <input
+            className='signinput'
+            onChange={(e) => {
+              setPassLog(e.target.value)
+            }}
+            type={showPassword ? 'text' : 'password'}
+            id='password'
+            required
           />
+          <button className="password-toggle-icon" onClick={togglePasswordVisibility} style={{ border: 'none', background: 'none' }}>
+            <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+          </button>
+        </div>
        <button className='sign-btn' onClick={SignIn}>
          Login
        </button>
@@ -125,7 +138,7 @@ export const Login = (props) => {
        className='link-btn sign-btn'
        onClick={() =>     navigate('/register')}
        >
-       Don't have an accoount? Register here
+       Don't have an account? Register here
      </button>
    </div>
   </div>

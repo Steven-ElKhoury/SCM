@@ -31,6 +31,16 @@ const CreateOrder = () => {
   
   // This function could be called when a component is selected
 
+  const handlePlaceOrder = () => {
+    axios.post('http://localhost:3001/orders', { items: cart })
+      .then(response => {
+        console.log('Order placed:', response.data);
+      })
+      .catch(error => {
+        console.error('Error placing order:', error);
+      });
+  };
+
   const handleComponentSelect = (componentId) => {
     const component = components.find(component => component.component_type_id === Number(componentId));
 
@@ -73,7 +83,9 @@ const CreateOrder = () => {
     console.error('No component or supplier selected');
     return;
   }
-  
+
+ 
+
   axios.get(`http://localhost:3001/warehouse/check/${selectedComponent.id}`)
   .then(response => {
     if (response.data.storage < quantity) {
@@ -120,11 +132,12 @@ const CreateOrder = () => {
     </div>
   ) : (
     selectedSupplier && (
-      <div>
+      <div className='order_info' style={{'background-color': 'white'}}>
         <p>Recommended supplier: {selectedSupplier.supplier_name}</p>
         <p>Price: ${selectedSupplier.price}</p>
         <p>Lead Time: {selectedSupplier.lead_time} days</p> {/* Adjust this line as needed */}
-        <input type="number" min="1" value={quantity} onChange={e => setQuantity(e.target.value)} />
+        <label htmlFor="quantity">Quantity: </label>
+        <input type="number" id="quantity" min="1" value={quantity} onChange={e => setQuantity(e.target.value)} />
         <button onClick={handleAddToCart}>Add to cart</button>
         <button onClick={() => setShowAllSuppliers(!showAllSuppliers)}>
           {showAllSuppliers ? 'Hide Others' : 'See Others'}
@@ -153,6 +166,10 @@ const CreateOrder = () => {
     <button className="delete-button" onClick={() => handleDelete(item.id)}>Delete</button>
   </div>
 ))}
+
+{cart.length > 0 && (
+      <button className='add-to-cart-button' onClick={handlePlaceOrder}>Place Order</button>
+)}
 </div>
 </>
   );

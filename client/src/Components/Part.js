@@ -5,7 +5,7 @@ import {useNavigate} from 'react-router-dom';
 import {useLocation} from 'react-router-dom';
 
 
-function Part({id, name, type, description, image, modelNumber, editable}) {
+function Part({id, name, type, description, image, modelNumber, editable, category_id}) {
     const [showDescription, setShowDescription] = React.useState(false);
     const [{basket}, dispatch] = useStateValue();
     const navigate = useNavigate();
@@ -21,6 +21,7 @@ function Part({id, name, type, description, image, modelNumber, editable}) {
                 modelNumber: modelNumber,
                 description: description,
                 image: image,
+                category_id: category_id,
             },
         });
     };
@@ -51,7 +52,7 @@ function Part({id, name, type, description, image, modelNumber, editable}) {
             </div>
             {editable && (
                 <>
-                    <button onClick={() => navigate(`/main/editPart/${id}`, { state: { part: { id, name, type, description, image, modelNumber } }  })} className='part-edit-btn'>Edit</button>
+                    <button onClick={() => navigate(`/main/editPart/${id}`, { state: { part: { id, name, type, category_id , description, image, modelNumber} }  })} className='part-edit-btn'>Edit</button>
                 </>
             )}
         </div>

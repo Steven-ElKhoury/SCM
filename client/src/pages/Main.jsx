@@ -26,6 +26,8 @@ import ViewParts from "./ViewParts";
 import TaskAssignment from "./TaskAssignment.jsx";
 import Purchases from './Purchases';
 import Dashboard from './Dashboard';
+import CreatePartType from './createPartType.jsx';
+import CreateBikeType from './createBikeType.jsx';
 
 export default function Main() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -62,7 +64,8 @@ export default function Main() {
                   <Route path="viewParts/:modelId" element={<ViewParts />} /> {/* Add this line */}
                   <Route path="/purchases" element={<Purchases />} />
                   <Route path="/dashboard" element={<Dashboard />} />
-                  
+                  <Route path="/createPartType" element={<CreatePartType />} />
+                  <Route path="/createBikeType" element={<CreateBikeType/>} />
             </Routes>
         </div>
     </div>

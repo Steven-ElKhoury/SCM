@@ -1,0 +1,44 @@
+.createBikeTypeContainer{
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+.createBikeTypeContainer label{
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.createBikeTypeContainer input{
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+    margin-right: 10px;
+    margin-left: 10px;
+    width: 50%;
+}
+
+.createBikeTypeContainer button{
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+#cancel-button {
+    background-color: red;
+    animation: cancel-button-animation 1s infinite;
+    margin: 10px;
+}
+  
+#cancel-button:hover {
+    background-color: darkred;
+}
+
+.createBikeTypeContainer button:hover{
+    background-color: #0056b3;
+}

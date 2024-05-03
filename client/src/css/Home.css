@@ -33,9 +33,6 @@
     color: #0056b3;
   }
   
-  .container {
-    padding: 20px;
-  }
   
   .chart-card {
     margin-bottom: 20px;
@@ -81,17 +78,14 @@
   }                               
   
 .home-container {
-  background-color: #eef2f8; /* Lighter gray background */
-  padding: 40px 20px; /* Add more padding for spacing */
-  border-radius: 10px; /* Add border radius for a softer look */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for depth */
+  background-color: whitesmoke; /* Adjust the grey shade here */
+  margin: 40px 20px; /* Add more padding for spacing */
 }
 
 /* Header style */
 .header {
   background-color: #f7f9fc; /* Adjust the blue shade here */
   color: #fff;
-  padding: 20px; /* Reduce padding for header */
   text-align: center;
   border-radius: 10px 10px 0 0; /* Rounded corners at the top */
 }
@@ -200,4 +194,8 @@
   
   .button-icon {
     margin-left: 10px;
+  }
+
+  .chart-container{
+    margin: 20px;
   }

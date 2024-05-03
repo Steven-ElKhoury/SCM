@@ -12,9 +12,8 @@ const NewSupplier = ({ existingTypes, supplierfunc }) => {
   const [leadTime,setLeadTime] = useState('');
   const [component_id,setComponent_id] = useState('');
   const [supplier_id,setSupplier_id] = useState('');
-
+  const [parts, setParts] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false); // State to track whether section is expanded
-
   
   const handleAddSupplier = () => {
     // Validation checks can be added here if needed
@@ -33,6 +32,17 @@ const NewSupplier = ({ existingTypes, supplierfunc }) => {
     }
   };
   
+
+
+  useEffect(() => {
+    Axios.get('http://localhost:3001/parts').then((response) => {
+      setParts(response.data);
+    }).catch(error => {
+      console.error('Error fetching parts:', error);
+    });
+  }, []);
+
+
   const addSupplier = (newSupplier) => {
 
     
@@ -70,9 +80,6 @@ const NewSupplier = ({ existingTypes, supplierfunc }) => {
           console.error('Error fetching suppliers:', error);
         });
         console.log("supermario"+supplier_id)
-
-
-
     })
     .catch(error => {
       console.error('Error adding supplier:', error);
@@ -125,8 +132,8 @@ const NewSupplier = ({ existingTypes, supplierfunc }) => {
         onChange={(e) => setSelectedType(e.target.value)}
         >
         <option id='supplier-page' value="">Select Type</option>
-        {existingTypes.map((type, index) => (
-          <option key={index} value={type}>{type}</option>
+        {parts.map((part) => (
+          <option key={part.component_type_id} value={part.name}>{part.name}</option>
           ))}
       </select>
       <button className="submit-btn" id='supplier-page' onClick={handleAddSupplier}>Add Supplier</button>
@@ -181,8 +188,8 @@ const SupplierDetails = ({ supplier, offerings,supplierfunc }) => {
                         <p>Offering ID: {offering.offering_id}</p>
                         <p>Price: ${offering.price}</p>
                         <p>Lead Time: {offering.lead_time} days</p>
-                        <p>Type: {offering.type}</p>
-                        
+                        <p>Type: {offering.name}</p>
+
                         {isManager && (
                         <div>
                             <input
@@ -264,9 +271,7 @@ const Suppliers = () => {
     });
 
   //for add supplier feature
-  const existingTypes = Array.from(new Set(suppliersList.map(supplier => supplier.type)));
-
-
+  const existingTypes = Array.from(new Set(suppliersList.map(supplier => supplier.name)));
 
     return (
         <div className="container" id='supplier-page'>
@@ -274,9 +279,7 @@ const Suppliers = () => {
                     <div className="header">
                         <h1>Suppliers List</h1>
                     </div>
-                                                                                                                                                  <NewSupplier existingTypes={existingTypes} supplierfunc={getSupplier}/>
-
-
+                  <NewSupplier existingTypes={existingTypes} supplierfunc={getSupplier}/>
                     <div className="filters">
                         <select value={selectedSupplier} onChange={(e) => setSelectedSupplier(e.target.value)}>
                             <option value="">Select Supplier</option>
@@ -286,8 +289,8 @@ const Suppliers = () => {
                         </select>
                         <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
                             <option value="">Select Type</option>
-                            {Array.from(new Set(suppliersList.map(supplier => supplier.type))).map((type, index) => (
-                                <option key={index} value={type}>{type}</option>
+                            {Array.from(new Set(suppliersList.map(supplier => supplier.name))).map((name, index) => (
+                                <option key={index} value={name}>{name}</option>
                             ))}
                         </select>
                         <button onClick={() => setSortOrder({ sortBy: 'price', order: sortOrder.sortBy === 'price' && sortOrder.order === 'asc' ? 'desc' : 'asc' })}>

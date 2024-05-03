@@ -2,99 +2,158 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/createWarehouse.css';
 
-
 function CreateStorageUnit() {
-    const [partTypes, setPartTypes] = useState([]);
-    const [selectedPartType, setSelectedPartType] = useState('');
+    const [storageTypes, setStorageTypes] = useState(['Part', 'Product']);
+    const [selectedStorageType, setSelectedStorageType] = useState('');
+    const [selectedType, setSelectedType] = useState('');
     const [name, setName] = useState('');
     const [size, setSize] = useState('');
     const [capacity, setCapacity] = useState('');
-    const [partTypeError, setPartTypeError] = useState(null);
+    const [storageTypeError, setStorageTypeError] = useState(null); // Renamed to storageTypeError
+    const [typeError, setTypeError] = useState(null);
     const [nameError, setNameError] = useState(null);
     const [sizeError, setSizeError] = useState(null);
     const [capacityError, setCapacityError] = useState(null);
+    const [types, setTypes] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:3001/partTypes')
-            .then(response => {
-                setPartTypes(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching part types:', error);
-            });
-    }, []);
+        if (selectedStorageType === 'Part') {
+            axios.get('http://localhost:3001/partTypes')
+                .then(response => {
+                    setTypes(response.data);
+                })
+                .catch(error => {
+                    console.error('Error fetching part types:', error);
+                });
+        } else if (selectedStorageType === 'Product') {
+            axios.get('http://localhost:3001/bikeTypes')
+                .then(response => {
+                    setTypes(response.data);
+                })
+                .catch(error => {
+                    console.error('Error fetching product types:', error);
+                });
+        }
+    }, [selectedStorageType]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        if (!selectedPartType) {
-            setPartTypeError('Please select a part type');
+    
+        // Check if fields are empty and set error state
+        if (!selectedStorageType) {
+            setStorageTypeError('Please select a storage type'); // Use setStorageTypeError here
+        } else {
+            setStorageTypeError(null); // Clear the error if the field is not empty
         }
-
+    
+        if (!selectedType) {
+            setTypeError('Please select a type');
+        } else {
+            setTypeError(null); // Clear the error if the field is not empty
+        }
+    
         if (!name) {
-            setNameError('Please enter the warehouse name');
+            setNameError('Please enter the name');
+        } else {
+            setNameError(null); // Clear the error if the field is not empty
         }
-
+    
         if (!size) {
             setSizeError('Please enter the size');
+        } else {
+            setSizeError(null); // Clear the error if the field is not empty
         }
-
+    
         if (!capacity) {
             setCapacityError('Please enter the capacity');
+        } else {
+            setCapacityError(null); // Clear the error if the field is not empty
         }
-
-        if (!partTypeError && !nameError && !sizeError && !capacityError) {
-            axios.post('http://localhost:3001/create_component_storage', {
-                selectedPartType: selectedPartType, // hon hayda l user type aam neb3ato aal backend
+    
+        // Only submit the form if no fields are empty
+        if (selectedStorageType && selectedType && name && size && capacity) {
+            const url = selectedStorageType === 'Part' ? 'http://localhost:3001/createComponentStorage' : 'http://localhost:3001/createByproductStorage';
+            const typeIdKey = selectedStorageType === 'Part' ? 'part_category_id' : 'bike_category_id';
+           
+            axios.post(url, {
+                [typeIdKey]: selectedType,
                 name: name,
                 size: size,
-                capacity: capacity
+                capacity: capacity,
             })
             .then(response => {
                 console.log(response);
+                // TODO: Navigate to the warehouse page
             })
             .catch(error => {
-                console.error('Error creating storage unit:', error);
+                console.error('Error creating storage:', error);
             });
         }
     };
 
     return (
-        <div id="create-warehouse-container">
-        <h1 id="header">Create Storage Unit</h1>
-        <form id="form" onSubmit={handleSubmit}>
+                <div className='create-warehouse-container'>
+                    <div className='create-warehouse-header'>
+                    <h1>Create Warehouse</h1>
+                    </div>
+                    <form className='create-warehouse-form' onSubmit={handleSubmit}>
+                    <div className='input-group'>
             <label>
-                Part Type:
-                <select id="part-type-select" value={selectedPartType} onChange={e => setSelectedPartType(e.target.value)}>
-                    {partTypes.map(partType => (
-                        <option key={partType.component_type_id} value={partType.component_type_id}>{partType.type}</option>
+                Storage Type:
+                <select value={selectedStorageType} onChange={(e) => {setSelectedStorageType(e.target.value); setStorageTypeError(null);}}>
+                    <option value="">Select a storage type</option>
+                    {storageTypes.map((type, index) => (
+                        <option key={index} value={type}>
+                            {type}
+                        </option>
                     ))}
                 </select>
-                {partTypeError && <p className="error">{partTypeError}</p>}
             </label>
-            <br />
+        </div>
+            {storageTypeError && <p className="error">{storageTypeError}</p>}
+        <div className='input-group'>
+            <label>
+                Type:
+                <select value={selectedType} onChange={(e) => {setSelectedType(e.target.value); setTypeError(null);}}>
+                    <option value="">Select a type</option>
+                    {selectedStorageType === 'Part' ? types.map((type) => (
+                        <option key={type.part_category_id} value={type.part_category_id}>
+                            {type.category_name}
+                        </option>
+                    )) : types.map((type) => (
+                        <option key={type.bike_category_id} value={type.bike_category_id}>
+                            {type.category_name}
+                        </option>
+                    ))}
+                </select>
+            </label>
+        </div>
+            {typeError && <p className="error">{typeError}</p>}
+        <div className='input-group'>
             <label>
                 Name:
-                <input id="name-input" type="text" value={name} onChange={e => setName(e.target.value)} />
-                {nameError && <p className="error">{nameError}</p>}
+                <input type="text" value={name} onChange={(e) => {setName(e.target.value); setNameError(null);}} />
             </label>
-            <br />
+        </div>
+            {nameError && <p className="error">{nameError}</p>}
+        <div className='input-group'>
             <label>
-                Size (in sqm):
-                <input id="size-input" type="number" value={size} onChange={e => setSize(e.target.value)} />
-                {sizeError && <p className="error">{sizeError}</p>}
+                Size:
+                <input type="text" value={size} onChange={(e) => {setSize(e.target.value); setSizeError(null);}} />
             </label>
-            <br />
+        </div>
+            {sizeError && <p className="error">{sizeError}</p>}
+        <div className='input-group'>
             <label>
                 Capacity:
-                <input id="capacity-input" type="number" value={capacity} onChange={e => setCapacity(e.target.value)} />
-                {capacityError && <p className="error">{capacityError}</p>}
+                <input type="text" value={capacity} onChange={(e) => {setCapacity(e.target.value); setCapacityError(null);}} />
             </label>
-            <br />
-            <button id="submit-button" type="submit">Create</button>
-        </form>
-    </div>
+        </div>
+            {capacityError && <p className="error">{capacityError}</p>}
+                <button type="submit">Create</button>
+            </form>
+        </div>
     );
-}
+};
 
 export default CreateStorageUnit;

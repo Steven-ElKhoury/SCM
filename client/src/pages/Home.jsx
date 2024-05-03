@@ -1,21 +1,3 @@
-
-// import '../css/Home.css'
-// import React from 'react';
-
-// const Home = () => {
-//   return (
-//     <>
-//     <h2>Order Now From the comfort of your couch</h2>
-    
-//     <button>
-//       hello
-//     </button>
-//     </>
-//   )
-// }
-
-// export default Home
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -86,7 +68,7 @@ const Home = () => {
         <div className="hero-content">
           <h1>Streamline Your Bike Factory's Supply Chain with [App Name]</h1>
           <p>Empower your bike manufacturing process with our comprehensive supply chain management solution.</p>
-          <Link to="/signup" className="cta-button">
+          <Link to="/register" className="cta-button">
             Get Started <FontAwesomeIcon icon={faArrowRight} className="button-icon" />
           </Link>
         </div>
@@ -185,7 +167,7 @@ const Home = () => {
 
 
     </div>
-      <div className="container">
+      <div className="chart-container">
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <Card className="chart-card">

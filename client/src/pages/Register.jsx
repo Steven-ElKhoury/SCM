@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import Axios from 'axios'
 import '../css/Register.css'
 import InitialTopBar from './InitialTopBar'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 
 export const Register = (props) => {
@@ -10,7 +11,11 @@ export const Register = (props) => {
   const [pass, setPass] = useState('')
   const [name, setName] = useState('')
   //const [exists, setExists] = useState()
-
+  const [showPassword, setShowPassword] = useState(false);
+  
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const navigate = useNavigate()
 
@@ -90,16 +95,20 @@ export const Register = (props) => {
         <label id='register' className='signlbl' htmlfor='pass'>
           password:
         </label>
+        <div className="input-wrapper">
         <input
-
-className='signinput'
-onChange={(e) => {
+          className='signinput'
+          onChange={(e) => {
             setPass(e.target.value)
           }}
-          value={pass}
+          type={showPassword ? 'text' : 'password'}
           id='password'
           required
         />
+        <button className="password-toggle-icon" onClick={togglePasswordVisibility} style={{ border: 'none', background: 'none' }}>
+          <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+        </button>
+      </div>
 
         <button id='register' className='sign-btn' onClick={register} type='submit'>
           Register

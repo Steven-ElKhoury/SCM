@@ -1,5 +1,9 @@
 import {React,useState,useEffect} from 'react'
 import Axios from 'axios';
+import { Table,Typography, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, TablePagination } from '@mui/material';
+import { styled } from '@mui/system';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 
 
 const TaskAssignment = () => {
@@ -12,6 +16,21 @@ const TaskAssignment = () => {
   const [taskDuration,setTaskDuration] = useState(0)
   const [tasksList,setTasksList] = useState([])
   const [selectedCompletion,setSelectedCompletion] = useState();
+  const [search, setSearch] = useState('');
+  const [sortField, setSortField] = useState(null);
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   var sessionUser = sessionStorage.getItem('Employee_ID');
   var isAdmin = sessionStorage.getItem('isadmin');
@@ -51,6 +70,16 @@ const TaskAssignment = () => {
   
   };
 
+  const SortableTableCell = styled(TableCell)({
+    cursor: 'pointer',
+    '&:hover': {
+        color: 'blue',
+    },
+})
+
+
+
+
   const gettasks = () => {
     Axios.get('http://localhost:3001/gettasks').then((response) => {
         setTasksList(response.data);
@@ -83,9 +112,26 @@ useEffect(() => {
 
 console.log("jude"+sessionUser)
 var filteredTasks = selectedEmployeetable ? tasksList.filter(task => task.e_name === selectedEmployeetable) : tasksList;
-    filteredTasks = selectedCompletion ? filteredTasks.filter(task => task.completed == selectedCompletion) : filteredTasks;
+filteredTasks = selectedCompletion ? filteredTasks.filter(task => task.completed == selectedCompletion) : filteredTasks;
+
+// Apply search filter after existing filters
+filteredTasks = filteredTasks.filter(task => task.e_name.toLowerCase().includes(search.toLowerCase()));
 
 
+const handleSort = (field) => {
+  setSortField(field);
+  setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+};
+
+const sortedAndFilteredTasks = [...filteredTasks].sort((a, b) => {
+  if (a[sortField] < b[sortField]) {
+    return sortDirection === 'asc' ? -1 : 1;
+  }
+  if (a[sortField] > b[sortField]) {
+    return sortDirection === 'asc' ? 1 : -1;
+  }
+  return 0;
+});
 
   return (
     <>
@@ -167,8 +213,8 @@ var filteredTasks = selectedEmployeetable ? tasksList.filter(task => task.e_name
         </>
       ))} */}
 
-<h1>Tasks List</h1>
-<div>
+    <h1>Tasks List</h1>
+    <div>
         {isAdmin==1 &&(
           <>
         <label>Select Employee:</label>
@@ -190,37 +236,83 @@ var filteredTasks = selectedEmployeetable ? tasksList.filter(task => task.e_name
         </select>
       </div>
       <br />
-<table style={{ borderCollapse: 'collapse', width: '100%' }}>
-  <thead>
-    <tr>
-      <th style={{ border: '1px solid black', padding: '8px', textAlign: 'left' }}>Task</th>
-      <th style={{ border: '1px solid black', padding: '8px', textAlign: 'left' }}>Duration</th>
-      <th style={{ border: '1px solid black', padding: '8px', textAlign: 'left' }}>Task Assignment ID</th>
-      <th style={{ border: '1px solid black', padding: '8px', textAlign: 'left' }}>Employee Name</th>
-      <th style={{ border: '1px solid black', padding: '8px', textAlign: 'left' }}>Employee Email</th>
-      <th style={{ border: '1px solid black', padding: '8px', textAlign: 'left' }}>Manager Name</th>
-      <th style={{ border: '1px solid black', padding: '8px', textAlign: 'left' }}>Manager Email</th>
-      <th style={{ border: '1px solid black', padding: '8px', textAlign: 'left' }}>Completed</th>
-      <th style={{ border: '1px solid black', padding: '8px', textAlign: 'left' }}>Remove Task</th>
-    </tr>
-  </thead>
-  <tbody>
-    {filteredTasks.map(task => (
-      <tr key={task.task_assignment_id}>
-        <td style={{ border: '1px solid black', padding: '8px' }}>{task.task_type}</td>
-        <td style={{ border: '1px solid black', padding: '8px' }}>{task.estimated_duration}</td>
-        <td style={{ border: '1px solid black', padding: '8px' }}>{task.task_assignment_id}</td>
-        <td style={{ border: '1px solid black', padding: '8px' }}>{task.e_name}</td>
-        <td style={{ border: '1px solid black', padding: '8px' }}>{task.e_email}</td>
-        <td style={{ border: '1px solid black', padding: '8px' }}>{task.m_name}</td>
-        <td style={{ border: '1px solid black', padding: '8px' }}>{task.m_email}</td>
-        <td style={{ border: '1px solid black', padding: '8px' }}>{task.completed}</td>
-        <td style={{ border: '1px solid black', padding: '8px' }}><button onClick={()=>completetask(task.task_id)}>complete task</button></td>
-
-      </tr>
+      <TableContainer style={{ width: '97%', marginRight: '20px' }} component={Paper}>
+      <TextField
+          placeholder="Search"
+          variant="outlined"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        <Table>
+        <TableHead>
+          <TableRow>
+            <SortableTableCell onClick={() => handleSort('task_type')}>
+              Task
+              {sortField === 'task_type' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+            </SortableTableCell>
+            <SortableTableCell onClick={() => handleSort('estimated_duration')}>
+              Duration
+              {sortField === 'estimated_duration' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+            </SortableTableCell>
+            <SortableTableCell onClick={() => handleSort('task_assignment_id')}>
+              Task Assignment ID
+              {sortField === 'task_assignment_id' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+            </SortableTableCell>
+            <SortableTableCell onClick={() => handleSort('e_name')}>
+              Employee Name
+              {sortField === 'e_name' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+            </SortableTableCell>
+            <SortableTableCell onClick={() => handleSort('e_email')}>
+              Employee Email
+              {sortField === 'e_email' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+            </SortableTableCell>
+            <SortableTableCell onClick={() => handleSort('m_name')}>
+              Manager Name
+              {sortField === 'm_name' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+            </SortableTableCell>
+            <SortableTableCell onClick={() => handleSort('m_email')}>
+              Manager Email
+              {sortField === 'm_email' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+            </SortableTableCell>
+            <SortableTableCell onClick={() => handleSort('completed')}>
+              Completed
+              {sortField === 'completed' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+            </SortableTableCell>
+            <TableCell>Remove Task</TableCell>
+          </TableRow>
+        </TableHead>
+<TableBody>
+  {sortedAndFilteredTasks
+    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+    .map(task => (
+      <TableRow key={task.task_assignment_id}>
+        <TableCell>{task.task_type}</TableCell>
+        <TableCell>{task.estimated_duration}</TableCell>
+        <TableCell>{task.task_assignment_id}</TableCell>
+        <TableCell>{task.e_name}</TableCell>
+        <TableCell>{task.e_email}</TableCell>
+        <TableCell>{task.m_name}</TableCell>
+        <TableCell>{task.m_email}</TableCell>
+        <TableCell>{task.completed}</TableCell>
+        <TableCell>
+          <Button variant="contained" color="primary" onClick={() => completetask(task.task_id)}>
+            Complete task
+          </Button>
+        </TableCell>
+      </TableRow>
     ))}
-  </tbody>
-</table>
+</TableBody>
+        </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredTasks.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </TableContainer>
 
     </>
   )

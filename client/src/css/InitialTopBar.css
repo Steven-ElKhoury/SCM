@@ -1,29 +1,32 @@
 .initial-top-top-bar {
-    background-color: #34495e; /* Dark blue */
-    color: #fff; /* White text */
-    padding: 10px 20px;
-  }
-  
+  background-color: var(--top-bar);
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0 5px 5px 0 rgba(0,0,0,0.5);
+  color: #fff; /* White text */
+  padding: 10px 20px;
+}
+
   .initial-top-User {
     display: flex;
     justify-content: flex-end;
   }
   
-  .initial-top-nav__listitem {
-    margin-left: 10px;
-  }
-  
   .initial-top-nav__listitem button {
-    background-color: #2ecc71; /* Green */
+    background-color: darkgrey; /* Green */
     border: none;
-    color: #fff;
+    color: #f0f0f0; /* Lighter color */
     cursor: pointer;
     padding: 8px 15px;
     font-size: 16px;
     border-radius: 5px; /* Rounded corners */
-  }
+    transition: background-color 0.3s ease;
+    margin: 0 5px;
+}
+
+.initial-top-nav__listitem button:hover {
+    background-color: grey; /* Darker color on hover */
+    transform: scale(1.05); /* Slightly larger on hover */
+}
   
-  .initial-top-nav__listitem button:hover {
-    background-color: #27ae60; /* Darker green on hover */
-  }
   

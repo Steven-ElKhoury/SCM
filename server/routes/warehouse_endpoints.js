@@ -13,11 +13,25 @@ const db = mysql.createConnection({
 
 
 
-warehouseRouter.get('/getWarehouses', (req, res) => {
-    db.query('SELECT s.*, c.type FROM component_storage s INNER JOIN component_type c ON s.component_type_id = c.component_type_id', (err, result) => {
+// Endpoint for fetching warehouses from the first table
+warehouseRouter.get('/getPartWarehouses', (req, res) => {
+    db.query('SELECT s.*, c.category_name FROM component_storage s INNER JOIN part_category c ON s.part_category_id = c.part_category_id', (err, result) => {
         if (err) {
-            console.error('Error fetching warehouses:', err);
-            res.status(500).send('Error fetching warehouses');
+            console.error('Error fetching part warehouses:', err);
+            res.status(500).send('Error fetching part warehouses');
+            return;
+        }
+        console.log(result);
+        res.send(result);
+    });
+});
+
+// Endpoint for fetching warehouses from the second table
+warehouseRouter.get('/getProductWarehouses', (req, res) => {
+    db.query('SELECT s.*, c.category_name FROM byproduct_storage s INNER JOIN bike_category c ON s.bike_category_id = c.bike_category_id', (err, result) => {
+        if (err) {
+            console.error('Error fetching product warehouses:', err);
+            res.status(500).send('Error fetching product warehouses');
             return;
         }
         console.log(result);
@@ -26,39 +40,12 @@ warehouseRouter.get('/getWarehouses', (req, res) => {
 });
 
 
-warehouseRouter.post('/create_component_storage', (req, res) => {
+warehouseRouter.post('/createComponentStorage', (req, res) => {
     // Extract data from the request body
-    const { name, capacity, size, selectedPartType } = req.body;
+    const { name, capacity, size, part_category_id } = req.body;
 
-    // Check if a warehouse with the same name already exists
-    db.query('SELECT * FROM component_storage WHERE name = ?', [name], (err, result) => {
-        if (err) {
-            console.error('Error checking warehouse name:', err);
-            res.status(500).send('Error checking warehouse name');
-            return;
-        }
-
-        if (result.length > 0) {
-            console.error('A warehouse with this name already exists');
-            res.status(400).send('A warehouse with this name already exists');
-            return;
-        }
-
-        db.query('SELECT component_type_id FROM component_type WHERE type = ?', [selectedPartType], (err, result) => {
-            if (err) {
-                console.error('Error finding component type:', err);
-                res.status(500).send('Error finding component type');
-                return;
-            }
-
-            if (result.length === 0) {
-                console.error('Component type does not exist');
-                res.status(400).send('Component type does not exist');
-                return;
-            }
-        const componentTypeId = result[0].component_type_id;
         // Insert the new warehouse into the database
-        db.query('INSERT INTO component_storage(name, size, capacity, component_type_id) VALUES (?, ?, ?,?)', [name, size, capacity,componentTypeId], (err, result) => {
+        db.query('INSERT INTO component_storage(component_storage_name, component_storage_size, component_storage_capacity, part_category_id) VALUES (?, ?, ?,?)', [name, size, capacity, part_category_id], (err, result) => {
             if (err) {
                 console.error('Error adding warehouse to database:', err);
                 res.status(500).send('Error adding warehouse');
@@ -67,9 +54,22 @@ warehouseRouter.post('/create_component_storage', (req, res) => {
             console.log('Warehouse added successfully');
             res.status(200).send('Warehouse added successfully');
         });
-        });
     });
-});
+    warehouseRouter.post('/createByproductStorage', (req, res) => {
+        // Extract data from the request body
+        const { name, capacity, size, bike_category_id } = req.body;
+    
+            // Insert the new warehouse into the database
+            db.query('INSERT INTO byproduct_storage(byproduct_storage_name, byproduct_storage_size, byproduct_storage_capacity, bike_category_id) VALUES (?, ?, ?,?)', [name, size, capacity, bike_category_id], (err, result) => {
+                if (err) {
+                    console.error('Error adding warehouse to database:', err);
+                    res.status(500).send('Error adding warehouse');
+                    return;
+                }
+                console.log('Warehouse added successfully');
+                res.status(200).send('Warehouse added successfully');
+            });
+        });
 
 
 warehouseRouter.put('/edit_component_storage/:id', (req, res) => {

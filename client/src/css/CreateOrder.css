@@ -33,7 +33,32 @@
     margin: 4px 2px;
     transition-duration: 0.4s;
   }
+
+  .placeOrder-btn{
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+  }
   
+  .placeOrder-btn:hover {
+    background-color: white;
+    color: #4CAF50;
+    transition-duration: 0.4s;
+  }
+  
+.order_info{
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
   .delete-button:hover {
     background-color: white;
     color: black;
