@@ -22,11 +22,13 @@ const ProductBlueprint = () => {
 
 
   useEffect(() => {
-    axios.get('http://localhost:3001/parts')
+    axios.get('http://localhost:3001/getParts')
       .then(response => {
         setComponents(response.data);
+        console.log('response.data', response.data)
         const uniqueTypes = [...new Set(response.data.map(item => item.type))];
         setComponentTypes(uniqueTypes);
+        console.log('uniqueTypes', uniqueTypes)
       })
       .catch(error => console.error(error));
   }, []);

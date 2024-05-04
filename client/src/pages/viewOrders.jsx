@@ -104,16 +104,16 @@ function Orders() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {sortedAndFilteredOrders.map(order => (
+                {sortedAndFilteredOrders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(order => (
                         <TableRow key={order.order_id}>
-                            <TableCell>{order.order_id}</TableCell>
-                            <TableCell>{order.component_type}</TableCell>
+                            <TableCell>{order.component_order_id}</TableCell>
+                            <TableCell>{order.component_type_name}</TableCell>
                             <TableCell>{order.supplier_name}</TableCell>
                             <TableCell>{order.quantity}</TableCell>
                             <TableCell>{order.date_ordered}</TableCell>
                             <TableCell style={{ color: new Date(order.date_arrived) - new Date(order.date_ordered) > order.lead_time ? 'red' : 'inherit' }}>{order.date_arrived}</TableCell>
                             <TableCell>{order.lead_time}</TableCell>
-                            <TableCell>{order.status}</TableCell>
+                            <TableCell>{order.pending}</TableCell>
                             <TableCell>
                                 <Button variant="contained" color="primary" onClick={() => handleStatusChange(order.order_id, 'Arrived')}>Mark as Arrived</Button>
                             </TableCell>

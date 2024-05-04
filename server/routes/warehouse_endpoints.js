@@ -40,37 +40,37 @@ warehouseRouter.get('/getProductWarehouses', (req, res) => {
 });
 
 
-warehouseRouter.post('/createComponentStorage', (req, res) => {
+warehouseRouter.post('/createWarehouse', (req, res) => {
     // Extract data from the request body
-    const { name, capacity, size, part_category_id } = req.body;
-
-        // Insert the new warehouse into the database
-        db.query('INSERT INTO component_storage(component_storage_name, component_storage_size, component_storage_capacity, part_category_id) VALUES (?, ?, ?,?)', [name, size, capacity, part_category_id], (err, result) => {
-            if (err) {
-                console.error('Error adding warehouse to database:', err);
-                res.status(500).send('Error adding warehouse');
-                return;
-            }
-            console.log('Warehouse added successfully');
-            res.status(200).send('Warehouse added successfully');
-        });
+    const { name, capacity, size, component_type_id } = req.body;
+  
+    // Insert the new warehouse into the database
+    db.query('INSERT INTO component_storage(component_storage_name, component_storage_size, component_storage_capacity, component_type_id, component_storage_current_stock) VALUES (?, ?, ?, ?, 0)', [name, size, capacity, component_type_id], (err, result) => {
+      if (err) {
+        console.error('Error adding warehouse to database:', err);
+        res.status(500).send('Error adding warehouse');
+        return;
+      }
+      console.log('Warehouse added successfully');
+      res.status(200).send('Warehouse added successfully');
     });
-    warehouseRouter.post('/createByproductStorage', (req, res) => {
-        // Extract data from the request body
-        const { name, capacity, size, bike_category_id } = req.body;
-    
-            // Insert the new warehouse into the database
-            db.query('INSERT INTO byproduct_storage(byproduct_storage_name, byproduct_storage_size, byproduct_storage_capacity, bike_category_id) VALUES (?, ?, ?,?)', [name, size, capacity, bike_category_id], (err, result) => {
-                if (err) {
-                    console.error('Error adding warehouse to database:', err);
-                    res.status(500).send('Error adding warehouse');
-                    return;
-                }
-                console.log('Warehouse added successfully');
-                res.status(200).send('Warehouse added successfully');
-            });
-        });
-
+  });
+  
+  warehouseRouter.post('/createByproductStorage', (req, res) => {
+    // Extract data from the request body
+    const { name, capacity, size, bike_category_id } = req.body;
+  
+    // Insert the new warehouse into the database
+    db.query('INSERT INTO byproduct_storage(byproduct_storage_name, byproduct_storage_size, byproduct_storage_capacity, bike_category_id, byproduct_storage_current_stock) VALUES (?, ?, ?, ?, 0)', [name, size, capacity, bike_category_id], (err, result) => {
+      if (err) {
+        console.error('Error adding warehouse to database:', err);
+        res.status(500).send('Error adding warehouse');
+        return;
+      }
+      console.log('Warehouse added successfully');
+      res.status(200).send('Warehouse added successfully');
+    });
+  });
 
 warehouseRouter.put('/edit_component_storage/:id', (req, res) => {
     console.log('edit_component_storage');
@@ -109,20 +109,46 @@ warehouseRouter.delete('/delete_component_storage/:id', (req, res) => {
     });
 });
 
-warehouseRouter.get('/warehouse/check/:id', (req, res) => {
-    const { id } = req.params;
-    db.query('SELECT * FROM component_storage WHERE unit_id = ?', [id], (err, result) => {
+
+
+warehouseRouter.get('/warehouse/check/:component_type_id', (req, res) => {
+    const { component_type_id } = req.params;
+  
+    // First, get the part_category_id from the component_type_id
+    const partCategoryQuery = 'SELECT part_category_id FROM component_type WHERE component_type_id = ?';
+    db.query(partCategoryQuery, [component_type_id], (err, result) => {
       if (err) {
-        console.error('Error fetching warehouse:', err);
-        res.status(500).send('Error fetching warehouse');
+        console.error('Error fetching part category:', err);
+        res.status(500).send('Error fetching part category');
         return;
       }
-      if (result.length === 0) {
-        res.status(404).send('Warehouse not found');
-        return;
-      }
-      const storageUnit = result[0];
-      res.status(200).json({ capacity: storageUnit.capacity });
+  
+      const part_category_id = result[0].part_category_id;
+  
+      // Then, find all warehouses that store this part_category_id
+      const warehouseQuery = `
+        SELECT cs.component_storage_id, cs.capacity, cs.current_stock
+        FROM component_storage AS cs
+        WHERE cs.part_category_id = ?
+      `;
+  
+      db.query(warehouseQuery, [part_category_id], (err, result) => {
+        if (err) {
+          console.error('Error fetching warehouses:', err);
+          res.status(500).send('Error fetching warehouses');
+          return;
+        }
+  
+        const availableWarehouses = result.map(warehouse => ({
+          ...warehouse,
+          remaining_capacity: warehouse.capacity - warehouse.current_stock
+        }));
+  
+        // Compute the total available storage
+        const totalAvailableStorage = availableWarehouses.reduce((total, warehouse) => total + warehouse.remaining_capacity, 0);
+  
+        res.status(200).json({ availableWarehouses, totalAvailableStorage });
+      });
     });
   });
 

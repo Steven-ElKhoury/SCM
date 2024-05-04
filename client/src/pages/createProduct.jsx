@@ -150,7 +150,7 @@ function CreateProduct() {
                     margin: "10px 2px",
                     cursor: "pointer",
                     borderRadius: "4px"
-                }} onClick={() => navigate('/main/createProductType')}>Create Product Type</button>
+                }} onClick={() => navigate('/main/createBikeType')}>Create Product Type</button>
             </div>
 
             <form className='create-product-form' onSubmit={handleSubmit}>

@@ -48,7 +48,6 @@
 
 /* Warehouse items */
 .item {
-    flex: 0 0 calc(33.33% - 40px); /* Each item takes up one third of the container width, minus the margins */
     padding: 20px;
     background-color: #fff;
     border: 1px solid #dee2e6;

@@ -20,6 +20,8 @@ const CreateOrder = () => {
   const [modalMessage, setModalMessage] = useState('');
   const navigate = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [offeringId, setOfferingId] = useState();
+
 
   useEffect(() => {
     // Fetch components from your API
@@ -31,26 +33,45 @@ const CreateOrder = () => {
   
   // This function could be called when a component is selected
 
-  const handlePlaceOrder = () => {
-    axios.post('http://localhost:3001/orders', { items: cart })
-      .then(response => {
-        console.log('Order placed:', response.data);
+  const handleOrderSubmit = () => {
+    const isadmin = sessionStorage.getItem('isadmin');
+    const Employee_ID = sessionStorage.getItem('Employee_ID');
+    console.log(Employee_ID)
+    // Create an array of promises
+    const promises = cart.map(item => {
+      return axios.post('http://localhost:3001/createOrder', {
+        managerId: Number(isadmin) === 1 ? Employee_ID : null,
+        employeeId: Number(isadmin) === 0 ? Employee_ID : null,
+        dateOrdered: new Date(),
+        price: item.price,
+        quantity: item.quantity,
+        offering_id: item.offering_id,
+      });
+    });
+  
+    // Use Promise.all() to make multiple requests
+    Promise.all(promises)
+      .then(() => {
+        console.log('All orders created successfully');
+        // Clear the cart
+        dispatch({ type: 'EMPTY_CART' });
       })
       .catch(error => {
-        console.error('Error placing order:', error);
+        console.error('Error creating orders:', error);
       });
   };
 
   const handleComponentSelect = (componentId) => {
     const component = components.find(component => component.component_type_id === Number(componentId));
-
-    setSelectedComponent({id: component.component_type_id, name: component.type});
+    console.log(component);
+    setSelectedComponent({id: component.component_type_id, name: component.name});
     if (componentId) {
       axios.get(`http://localhost:3001/supplierofferings/${componentId}`)
         .then(response => {
           if (response.data.length === 0) {
             setNoSuppliers(true);
           } else {
+            console.log(response.data);
             setSuppliers(response.data);
             setSelectedSupplier(response.data[0]);
             setNoSuppliers(false);
@@ -58,6 +79,7 @@ const CreateOrder = () => {
         })
         .catch(error => console.error(error));
     }
+    console.log(selectedSupplier);
   };
 
   const handleDelete = (id) => {
@@ -68,8 +90,8 @@ const CreateOrder = () => {
     });
   };
 
-  const handleAddToCart = () => {
-  if (!selectedSupplier) {
+ const handleAddToCart = (supplier) => {
+  if (!supplier) {
     console.error('No supplier selected');
     return;
   }
@@ -79,12 +101,10 @@ const CreateOrder = () => {
     return;
   }
 
-  if (!selectedComponent || !selectedSupplier) {
+  if (!selectedComponent || !supplier) {
     console.error('No component or supplier selected');
     return;
   }
-
- 
 
   axios.get(`http://localhost:3001/warehouse/check/${selectedComponent.id}`)
   .then(response => {
@@ -102,12 +122,13 @@ const CreateOrder = () => {
   dispatch({
     type: 'ADD_TO_CART',
     item: {
-      id: selectedSupplier.id,
-      name: selectedSupplier.supplier_name,
-      price: selectedSupplier.price * quantity,
+      id: supplier.id,
+      name: supplier.supplier_name,
+      price: supplier.price * quantity,
       partName: selectedComponent.name,
-      partID: selectedComponent.id,
+      partID: selectedComponent.component_type_id,
       quantity: quantity,
+      offering_id: supplier.offering_id,
     },
   });
 
@@ -115,6 +136,7 @@ const CreateOrder = () => {
   setSelectedSupplier(null);
   setQuantity(1);
 };
+
   
   return (
 <>
@@ -122,7 +144,7 @@ const CreateOrder = () => {
 <select value={selectedComponent ? selectedComponent.id : ''} onChange={e => handleComponentSelect(e.target.value)}>
   <option value="">Select component</option>
   {components.map(component => (
-    <option key={component.component_type_id} value={component.component_type_id}>{component.type}</option>
+    <option key={component.component_type_id} value={component.component_type_id}>{component.name}</option>
   ))}
 </select>
   {noSuppliers ? (
@@ -138,7 +160,7 @@ const CreateOrder = () => {
         <p>Lead Time: {selectedSupplier.lead_time} days</p> {/* Adjust this line as needed */}
         <label htmlFor="quantity">Quantity: </label>
         <input type="number" id="quantity" min="1" value={quantity} onChange={e => setQuantity(e.target.value)} />
-        <button onClick={handleAddToCart}>Add to cart</button>
+        <button onClick={() => handleAddToCart(selectedSupplier)}>Add to cart</button>
         <button onClick={() => setShowAllSuppliers(!showAllSuppliers)}>
           {showAllSuppliers ? 'Hide Others' : 'See Others'}
         </button>
@@ -155,7 +177,7 @@ const CreateOrder = () => {
       <p>Name: {supplier.supplier_name}</p>
       <p>Price: ${supplier.price}</p>
       <p>Lead Time: {supplier.lead_time} days</p> {/* Adjust this line as needed */}
-      <button className="add-to-cart-button" onClick={() => handleAddToCart()}>Add to cart</button>
+      <button className="add-to-cart-button" onClick={() => handleAddToCart(supplier)}>Add to cart</button>
   </div>
   ))}
 
@@ -168,7 +190,7 @@ const CreateOrder = () => {
 ))}
 
 {cart.length > 0 && (
-      <button className='add-to-cart-button' onClick={handlePlaceOrder}>Place Order</button>
+      <button className='add-to-cart-button' onClick={handleOrderSubmit}>Place Order</button>
 )}
 </div>
 </>

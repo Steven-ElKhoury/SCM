@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import '../css/createWarehouse.css';
 
@@ -15,6 +16,8 @@ function CreateStorageUnit() {
     const [sizeError, setSizeError] = useState(null);
     const [capacityError, setCapacityError] = useState(null);
     const [types, setTypes] = useState([]);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (selectedStorageType === 'Part') {
@@ -83,7 +86,7 @@ function CreateStorageUnit() {
             })
             .then(response => {
                 console.log(response);
-                // TODO: Navigate to the warehouse page
+                navigate('/main/warehouses');
             })
             .catch(error => {
                 console.error('Error creating storage:', error);

@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {useNavigate, useLocation} from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import '../css/editWarehouse.css';
 
 function EditStorageUnit() {
     const navigate = useNavigate();
@@ -11,117 +18,159 @@ function EditStorageUnit() {
     const [name, setName] = useState(unit.name);
     const [size, setSize] = useState(unit.size);
     const [capacity, setCapacity] = useState(unit.capacity);
+    const [currentStock, setCurrentStock] = useState(unit.component_storage_current_stock || unit.byproduct_storage_current_stock);
+    const [storageType, setStorageType] = useState(unit.component_type_id ? 'component' : 'byproduct');
     const [partTypeError, setPartTypeError] = useState(null);
     const [nameError, setNameError] = useState(null);
     const [sizeError, setSizeError] = useState(null);
     const [capacityError, setCapacityError] = useState(null);
+    const [currentStockError, setCurrentStockError] = useState(null);
     const [error, setError] = useState(null);
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+    const storageTypes = ['Part', 'Product'];
+    const [selectedStorageType, setSelectedStorageType] = useState('');
+    const [selectedType, setSelectedType] = useState('');
+    const [storageTypeError, setStorageTypeError] = useState(null);
+    const [typeError, setTypeError] = useState(null);
+    const [types, setTypes] = useState([]);
+
 
     useEffect(() => {
-        axios.get('http://localhost:3001/partTypes')
-            .then(response => {
-                if (Array.isArray(response.data)) {
-                    setPartTypes(response.data);
-                } else {
-                    console.error('Error: expected an array but received', response.data);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching part types:', error);
-            });
-    }, []);
+        if (selectedStorageType === 'Part') {
+            axios.get('http://localhost:3001/partTypes')
+                .then(response => {
+                    setTypes(response.data);
+                })
+                .catch(error => {
+                    console.error('Error fetching part types:', error);
+                });
+        } else if (selectedStorageType === 'Product') {
+            axios.get('http://localhost:3001/bikeTypes')
+                .then(response => {
+                    setTypes(response.data);
+                })
+                .catch(error => {
+                    console.error('Error fetching product types:', error);
+                });
+        }
+    }, [selectedStorageType]);
 
-    function handleEdit(e) {
+
+    const handleEdit = (e) => {
         e.preventDefault();
-    
-        if (!selectedPartType) {
-            setPartTypeError('Please select a part type');
-        }
-    
+
+        // Validate the form
         if (!name) {
-            setNameError('Please enter the warehouse name');
+            setNameError('Please enter the name');
         }
-    
+
         if (!size) {
             setSizeError('Please enter the size');
         }
-    
+
         if (!capacity) {
             setCapacityError('Please enter the capacity');
         }
 
-        if (name === unit.name &&  size === unit.size && selectedPartType === unit.component_type_id && capacity === unit.capacity) {
-            setError('No changes were made');
-            return;
+        if (!currentStock) {
+            setCurrentStockError('Please enter the current stock');
         }
 
-        e.preventDefault();
-
-        if (selectedPartType && name && size && capacity) {
-            axios.put(`http://localhost:3001/edit_component_storage/${unit.unit_id}`, {
+        if (!partTypeError && !nameError && !sizeError && !capacityError && !currentStockError) {
+            // Send a PUT request to the server to update the storage unit
+            axios.put(`http://localhost:3001/editWarehouse/${unit.component_storage_id || unit.byproduct_storage_id}`, {
                 name: name,
                 size: size,
                 capacity: capacity,
-                component_type_id: selectedPartType,
+                current_stock: currentStock,
+                component_type_id: storageType === 'component' ? selectedPartType : null,
+                bike_category_id: storageType === 'byproduct' ? selectedPartType : null,
             })
             .then(response => {
-                console.log(response.data);
+                console.log(response);
                 navigate('/main/warehouses');
             })
             .catch(error => {
-                console.error(error);
-                // Handle the error
+                console.error('Error updating warehouse:', error);
             });
         }
-    }
-    
-    function handleDelete() {
-        // Send a delete request to the server
-        axios.delete(`http://localhost:3001/delete_component_storage/${unit.unit_id}`)
-        .then(response => {
-            console.log(response);
-            navigate('/main/warehouses');
-        })
-        .catch(error => {
-            console.error('Error deleting warehouse:', error);
-        });
-    }
+    };
+
+    const handleDelete = () => {
+        // Send a DELETE request to the server
+        axios.delete(`http://localhost:3001/deleteWarehouse/${unit.component_storage_id || unit.byproduct_storage_id}`)
+            .then(response => {
+                console.log(response);
+                navigate('/main/warehouses');
+            })
+            .catch(error => {
+                console.error('Error deleting warehouse:', error);
+            });
+    };
+
     return (
-        <div id='edit-warehouse-container'>
-            <h1 id='header'>Edit Storage Unit</h1>
-            <form id = 'form' onSubmit={handleEdit}>
+        <div className='edit-warehouse-container'>
+        <div className='edit-warehouse-header'>
+            <h1>Create Warehouse</h1>
+        </div>
+        <form className='edit-warehouse-form' onSubmit={handleEdit}>
+            <div className='input-group'>
                 <label>
-                    Part Type:
-                    <select id='part-type-select' value={selectedPartType} onChange={e => setSelectedPartType(e.target.value)}>
-                        {partTypes.map(partType => (
-                            <option key={partType.component_type_id} value={partType.component_type_id}>{partType.type}</option>
+                    Storage Type:
+                    <select value={selectedStorageType} onChange={(e) => {setSelectedStorageType(e.target.value); setStorageTypeError(null);}}>
+                        <option value="">Select a storage type</option>
+                        {storageTypes.map((type, index) => (
+                            <option key={index} value={type}>
+                                {type}
+                            </option>
                         ))}
                     </select>
-                    {partTypeError && <p className="error">{partTypeError}</p>}
                 </label>
-                <br />
+            </div>
+            {storageTypeError && <p className="error">{storageTypeError}</p>}
+            <div className='input-group'>
+                <label>
+                    Type:
+                    <select value={selectedType} onChange={(e) => {setSelectedType(e.target.value); setTypeError(null);}}>
+                        <option value="">Select a type</option>
+                        {selectedStorageType === 'Part' ? types.map((type) => (
+                            <option key={type.part_category_id} value={type.part_category_id}>
+                                {type.category_name}
+                            </option>
+                        )) : types.map((type) => (
+                            <option key={type.bike_category_id} value={type.bike_category_id}>
+                                {type.category_name}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+            </div>
+            {typeError && <p className="error">{typeError}</p>}
+            <div className='input-group'>
                 <label>
                     Name:
-                    <input type="text" value={name} onChange={e => setName(e.target.value)} />
-                    {nameError && <p className="error">{nameError}</p>}
+                    <input type="text" value={name} onChange={(e) => {setName(e.target.value); setNameError(null);}} />
                 </label>
-                <br />
+            </div>
+            {nameError && <p className="error">{nameError}</p>}
+            <div className='input-group'>
                 <label>
-                    Size (in sqm):
-                    <input type="number" value={size} onChange={e => setSize(e.target.value)} />
-                    {sizeError && <p className="error">{sizeError}</p>}
+                    Size:
+                    <input type="text" value={size} onChange={(e) => {setSize(e.target.value); setSizeError(null);}} />
                 </label>
-                <br />
+            </div>
+            {sizeError && <p className="error">{sizeError}</p>}
+            <div className='input-group'>
                 <label>
                     Capacity:
-                    <input type="number" value={capacity} onChange={e => setCapacity(e.target.value)} />
-                    {capacityError && <p className="error">{capacityError}</p>}
+                    <input type="text" value={capacity} onChange={(e) => {setCapacity(e.target.value); setCapacityError(null);}} />
                 </label>
-                <br />
-                <button id='submit-button' className='btn btn-primary' type="submit">Edit</button>
-                <button id = 'submit-button' className='btn btn-danger' type="button" onClick={handleDelete}>Delete</button>
-            </form>
-        </div>
+            </div>
+            {capacityError && <p className="error">{capacityError}</p>}
+            <button type="submit">Create</button>
+        </form>
+    </div>
     );
 }
 

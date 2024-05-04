@@ -36,66 +36,52 @@ const Warehouses = () => {
     }, []);
 
 
-    return (
-        <div className="warehouses-page">
-            <h1 className="warehouse-header">Warehouses</h1>
+ // Combine the partWarehouses and productWarehouses arrays
+const allWarehouses = [...partWarehouses, ...productWarehouses];
+console.log(allWarehouses);
+
+const filteredWarehouses = allWarehouses.filter(warehouse =>
+  (warehouse.component_storage_name || warehouse.byproduct_storage_name).toLowerCase().includes(searchTerm.toLowerCase()) ||
+  warehouse.category_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  (warehouse.component_storage_size || warehouse.byproduct_storage_size).toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+  (warehouse.component_storage_capacity || warehouse.byproduct_storage_capacity).toString().toLowerCase().includes(searchTerm.toLowerCase())
+);
+
+return (
+  <div className="warehouses-page">
+    <h1 className="warehouse-header">Warehouses</h1>
     <div className="warehouse-search-container">
-        <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search warehouses by name, type, or size" />
-        <button id = 'create-warehouse-btn' type="button" className="btn btn-primary" onClick={() => navigate('/main/createUnit')}>Create Warehouse</button>
+      <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search warehouses by name, type, or size" />
+      <button id='create-warehouse-btn' type="button" className="btn btn-primary" onClick={() => navigate('/main/createUnit')}>Create Warehouse</button>
     </div>
-
-    <div className="warehouse-item-container">        
-    {partWarehouses.map((warehouse, index) => (
-    <div className='item' key={index}>
-        <h2 className="item-name">Storage Unit: {warehouse.component_storage_name}</h2>
-        <p>Part: {warehouse.category_name}</p>
-        <p>Size: {warehouse.component_storage_size} sqm</p>
-        <p>Capacity: {warehouse.component_storage_capacity}</p>
-        <button 
+    <div className="warehouse-item-container">
+      {filteredWarehouses.map((warehouse, index) => (
+        <div className='item' key={index}>
+          <h2 className="item-name">Storage Unit: {warehouse.component_storage_name || warehouse.byproduct_storage_name}</h2>
+          <p>Part: {warehouse.category_name}</p>
+          <p>Size: {warehouse.component_storage_size || warehouse.byproduct_storage_size} sqm</p>
+          <p>Capacity: {warehouse.component_storage_capacity || warehouse.byproduct_storage_capacity}</p>
+          <p>Current Stock: {warehouse.byproduct_storage_current_stock !== undefined ? warehouse.byproduct_storage_current_stock : warehouse.component_storage_current_stock}</p>
+          <button 
             type="button" 
-            onClick={() => navigate(`/main/editUnit/${warehouse.component_storage_id}`, { state: { warehouse } })}
+            onClick={() => navigate(`/main/editUnit/${warehouse.component_storage_id || warehouse.byproduct_storage_id}`, { state: { warehouse } })}
             style={{
-                backgroundColor: 'skyblue',
-                border: 'none',
-                color: 'white',
-                padding: '10px 20px', // Reduced padding
-                textAlign: 'center',
-                textDecoration: 'none',
-                cursor: 'pointer',
+              backgroundColor: 'skyblue',
+              border: 'none',
+              color: 'white',
+              padding: '10px 20px', // Reduced padding
+              textAlign: 'center',
+              textDecoration: 'none',
+              cursor: 'pointer',
             }}
-        >
+          >
             Edit
-        </button>
-    </div>
-))}
-
-{productWarehouses.map((warehouse, index) => (
-    <div className='item' key={index}>
-        <h2 className="item-name">Storage Unit: {warehouse.byproduct_storage_name}</h2>
-        <p>Product: {warehouse.category_name}</p>
-        <p>Size: {warehouse.byproduct_storage_size} sqm</p>
-        <p>Capacity: {warehouse.byproduct_storage_capacity}</p>
-        
-        <button 
-            type="button" 
-            onClick={() => navigate(`/main/editUnit/${warehouse.byproduct_storage_id}`, { state: { warehouse } })}
-            style={{
-                backgroundColor: 'skyblue',
-                border: 'none',
-                color: 'white',
-                padding: '10px 20px', // Reduced padding
-                textAlign: 'center',
-                textDecoration: 'none',
-                cursor: 'pointer'
-            }}
-        >
-            Edit
-        </button>
-    </div>
-))}
+          </button>
         </div>
+      ))}
     </div>
-    );
+  </div>
+);
 };
 
 export default Warehouses;

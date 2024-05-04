@@ -165,36 +165,32 @@ app.get('/getpendingemployees', (req, res) => {
   })
 })
 const query = `
-    SELECT 
-      cso.order_id,
-      s.supplier_name,
-      comp.name AS component_type,
-      co.quantity,
-      co.date_ordered,
-      co.date_arrived,
-      co.price,
-      co.lead_time
-    FROM 
-      component_supplier_order cso
-    JOIN 
-      component_order co ON cso.order_id = co.order_id
-    JOIN 
-      supplier s ON cso.supplier_id = s.supplier_id
-    JOIN 
-      component comp ON cso.component_id = comp.component_id;
-  `;
+  SELECT 
+    cso.*, 
+    so.supplier_id, 
+    so.component_type_id, 
+    s.supplier_name AS supplier_name, 
+    ct.name AS component_type_name
+  FROM 
+    component_supplier_order AS cso
+  JOIN 
+    supplier_offerings AS so ON cso.offering_id = so.offering_id
+  JOIN 
+    supplier AS s ON so.supplier_id = s.supplier_id
+  JOIN 
+    component_type AS ct ON so.component_type_id = ct.component_type_id
+`;
 
-  app.get('/getOrders', (req, res) => {
-    db.query(query, (err, result) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal server error' });
-      } else {
-        console.log("success");
-        res.send(result); 
-      }
-    });
+app.get('/getOrders', (req, res) => {
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+    res.send(result);
   });
+});
 
 
 
@@ -392,7 +388,7 @@ app.post('/updatePrice', async (req, res) => {
     console.log('hello')
     const { componentType } = req.params;
 
-    db.query('SELECT supplier_id, supplier_name, price, lead_time FROM supplier_offerings NATURAL JOIN supplier WHERE component_type_id = ?', [componentType], (err, results) => {
+    db.query('SELECT offering_id,supplier_id, supplier_name, price, lead_time FROM supplier_offerings NATURAL JOIN supplier WHERE component_type_id = ?', [componentType], (err, results) => {
       if (err) {
         console.error(err.message);
         return res.status(500).send('Server error');
@@ -403,6 +399,20 @@ app.post('/updatePrice', async (req, res) => {
   });
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+  app.get('/getParts', (req, res) => {
+    db.query('SELECT *,category_name as type FROM component_type JOIN part_category ON part_category.part_category_id = component_type.part_category_id', (err, results) => {
+      if (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+      }
+  
+      res.json(results);
+    }
+    );
+  });
 
 
   app.get('/blueprintCheck/:modelId', (req, res) => {
@@ -424,9 +434,13 @@ app.post('/updatePrice', async (req, res) => {
 
   app.get('/blueprint/:modelId', (req, res) => {
     const { modelId } = req.params;
-  
+    console.log(modelId);
     const query = `
-      SELECT * FROM blueprint INNER JOIN component_type ON blueprint.component_type_id = component_type.component_type_id
+      SELECT blueprint.*, component_type.*, part_category.part_category_id, part_category.category_name as type
+      FROM blueprint 
+      JOIN component_type ON blueprint.component_type_id = component_type.component_type_id 
+      JOIN part_category ON component_type.part_category_id = part_category.part_category_id 
+      WHERE model_id = ?;
     `;
   
     db.query(query, [modelId], (err, results) => {
@@ -434,11 +448,10 @@ app.post('/updatePrice', async (req, res) => {
         console.error(err.message);
         return res.status(500).send('Server error');
       }
-  
+      console.log(results);
       res.json(results);
     });
   });
-
 
 // Fetch all parts
 app.get('/parts', (req, res) => {
@@ -653,7 +666,12 @@ app.post('/login', (req, res) => {
 
 
 app.get('/getbyProducts', (req, res) => {
-  db.query('SELECT co.*, m.name, m.type FROM customer_order AS co JOIN model AS m ON co.modelID = m.model_id group by co.cust_order_id;', (err, result) => {
+  db.query(`
+    SELECT co.*, m.name, bc.category_name 
+    FROM customer_order AS co 
+    JOIN model AS m ON co.modelID = m.model_id 
+    LEFT JOIN bike_category AS bc ON m.bike_category_id = bc.bike_category_id;
+  `, (err, result) => {
     if (err) {
       console.log(err)
       console.log("fi error")
@@ -665,7 +683,7 @@ app.get('/getbyProducts', (req, res) => {
 
 
 app.get('/gettingByproductList', (req, res) => {
-  db.query('SELECT name FROM model;', (err, result) => {
+  db.query('SELECT model_id, name FROM model;', (err, result) => {
     if (err) {
       console.log(err)
       console.log("gettingByproductList error")
@@ -676,7 +694,7 @@ app.get('/gettingByproductList', (req, res) => {
 })
 
 app.get('/gettingByproductTypeList', (req, res) => {
-  db.query('SELECT type FROM model;', (err, result) => {
+  db.query('SELECT category_name FROM bike_category;', (err, result) => {
     if (err) {
       console.log(err)
       console.log("gettingByproductTypeList error")
@@ -688,8 +706,12 @@ app.get('/gettingByproductTypeList', (req, res) => {
 
  /////////////////////////////////////////// //new purch:
  app.get('/availableQuantityCheck', (req, res) => {
-  byProductName = req.query.byProductName;
-  const query = 'SELECT quantity FROM model WHERE name = ?';
+  const byProductName = req.query.byProductName;
+  const query = `
+      SELECT COUNT(*) as quantity 
+      FROM produced_byproduct 
+      WHERE model_id = ? AND sold = 0
+  `;
 
   db.query(query, [byProductName], (err, result) => {
       if (err) {
@@ -704,6 +726,7 @@ app.get('/gettingByproductTypeList', (req, res) => {
       }
   });
 });
+
 app.post('/update_model', (req, res) => {
   const {byProductName,ByproductQuantity} = req.body;
 
@@ -781,22 +804,22 @@ app.get('/get_byproduct_stock', (req, res) => {
 });
 app.get('/highest_stock_unit_ID', (req, res) => {
   const modelID = req.query.modelID; 
-  const query = 'SELECT unit_id FROM byproduct_storage WHERE model_id = ? ORDER BY current_stock DESC LIMIT 1';
+  const query = 'SELECT byproduct_storage_id FROM byproduct_storage WHERE model_id = ? ORDER BY current_stock DESC LIMIT 1';
 
   db.query(query, [modelID], (err, result) => {
       if (err) {
-          console.error("Error retrieving unit_id of highest stock", err);
-          res.status(500).send('Error retrieving unit_id of highest stock');
+          console.error("Error retrieving id of highest stock", err);
+          res.status(500).send('Error retrieving id of highest stock');
           return;
       }
 
       if (result.length === 0) {
-          res.status(404).send('unit_id of highest stock not found');
+          res.status(404).send('id of highest stock not found');
           return;
       }
 
-      const unit_id = result[0].unit_id;
-      res.send({ unit_id: unit_id });
+      const byproduct_storage_id = result[0].byproduct_storage_id;
+      res.send({ unit_id: byproduct_storage_id });
   });
 });
 
@@ -811,9 +834,9 @@ app.post('/newPurchase', (req, res) => {
     const query = `
     INSERT INTO customer_order (quantity, total_price, date, modelID)
     VALUES (?, 
-            ? * (SELECT price FROM model WHERE name = ?),
+            ? * (SELECT price FROM model WHERE model_id = ?),
             ?,
-            (SELECT model_id FROM model WHERE name = ?));
+            ?);
     SELECT LAST_INSERT_ID() as cust_order_id;
   `;
     
@@ -842,8 +865,8 @@ app.post('/newPurchase', (req, res) => {
   
     const query = `
     UPDATE byproduct_storage
-SET current_stock = current_stock - ?
-WHERE unit_id = ?
+    SET current_stock = current_stock - ?
+    WHERE byproduct_storage_id = ?
   `;
   
     db.query(
@@ -889,6 +912,37 @@ WHERE unit_id = ?
     });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+app.post('/createOrder', (req, res) => {
+  const { managerId, employeeId, dateOrdered, price, quantity, offering_id, userRole } = req.body;
+  const pending = 1;
+
+  console.log(managerId);
+  console.log(employeeId);
+  let query = 'INSERT INTO component_supplier_order(manager_id, employee_id, date_ordered, price, quantity, offering_id, pending) VALUES (?, ?, ?, ?, ?, ?, ?)';
+
+   // Format the date
+   const formattedDate = new Date(dateOrdered).toISOString().slice(0, 19).replace('T', ' ');
+
+  let params = userRole === 'manager' 
+    ? [managerId, null, formattedDate, price, quantity, offering_id, pending] 
+    : [null, employeeId, formattedDate, price, quantity, offering_id, pending];
+
+  db.query(query, params, (err, result) => {
+    if (err) {
+      console.error("Error creating order:", err);
+      res.status(500).send('Error creating order');
+      return;
+    }
+    console.log('Created order successfully');
+    res.send({ message: 'Created order successfully', insertId: result.insertId });
+  });
+});
+
+
+
+
+
 
 
 app.listen(3001, () => {

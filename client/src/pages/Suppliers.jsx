@@ -245,11 +245,11 @@ const Suppliers = () => {
     // Filter and sort suppliers based on selected criteria
     const filteredSuppliers = suppliersList.filter(supplier => {
         if (selectedSupplier && selectedType) {
-            return supplier.supplier_name === selectedSupplier && supplier.type === selectedType;
+            return supplier.supplier_name === selectedSupplier && supplier.name === selectedType;
         } else if (selectedSupplier) {
             return supplier.supplier_name === selectedSupplier;
         } else if (selectedType) {
-            return supplier.type === selectedType;
+            return supplier.name === selectedType;
         } else {
             return true;
         }
