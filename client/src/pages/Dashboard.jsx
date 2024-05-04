@@ -5,14 +5,16 @@ import axios from 'axios';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faBox, faTools } from '@fortawesome/free-solid-svg-icons';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,ResponsiveContainer } from 'recharts';
 
 const Dashboard = () => {
   // Sample data arrays
   const [suppliersData, setSuppliersData] = useState([]);
   const [ordersData, setOrdersData] = useState([]);
+  const [OurordersData, setOurOrdersData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const [totalExpenses, setTotalExpenses] = useState(0);
   
   const inventoryData = [
     { unit: 'Unit A', Handlebars: 20, Frames: 50, Saddles: 30, Chains: 0, Wheels: 0, Pedals: 0, Forks: 0, Brakes: 0, Tires: 0, 'Mountain Bike': 0, BMX: 0, 'Hybrid Bike': 0, 'Road Bike': 0 },
@@ -85,6 +87,61 @@ const Dashboard = () => {
   }, []);
   
 
+
+  useEffect(() => {
+    const fetchOurOrders = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/getOrders');
+        console.log('orders data:', response.data); // Log the response data
+        const OurordersData = response.data.map(order => ({
+          date: new Date(order.date_ordered), // Assuming date format is compatible with Date constructor
+          quantity: order.quantity,
+          total_price: order.price !== null ? parseFloat(order.price) : 0
+        }));
+  
+        // Filter orders for a specific year (e.g., 2024)
+        //const currentYear = new Date().getFullYear(); // Get current year
+        const currentYear = 2024;
+        const filteredOurOrdersData = OurordersData.filter(order => order.date.getFullYear() === currentYear);
+  
+        // Generate monthly summary
+        const monthlySummary = filteredOurOrdersData.reduce((summary, order) => {
+          const month = order.date.getMonth(); // Month index (0-11)
+          const monthKey = `${currentYear}-${month + 1}`; // Key format: 'YYYY-MM'
+  
+          if (!summary[monthKey]) {
+            summary[monthKey] = { orders: 0, expenses: 0 };
+          }
+  
+          summary[monthKey].orders++;
+          summary[monthKey].expenses += order.total_price;
+  
+          return summary;
+        }, {});
+  
+        // Convert monthly summary to array of objects
+        const ordersByMonth = Object.keys(monthlySummary).map(monthKey => ({
+          month: monthKey,
+          orders: monthlySummary[monthKey].orders,
+          expenses: monthlySummary[monthKey].expenses
+        }));
+  
+        setOurOrdersData(ordersByMonth);
+        setLoading(false);
+  
+        // Calculate total Expenses
+        const totalExpenses = filteredOurOrdersData.reduce((total, order) => total + parseFloat(order.total_price), 0).toFixed(2);
+        console.log('Total  Expenses:', totalExpenses);
+        setTotalExpenses(totalExpenses);
+      } catch (error) {
+        console.error('Error fetching customer orders:', error);
+        setLoading(false);
+      }
+    };
+  
+    fetchOurOrders();
+  }, []);
+
   useEffect(() => {
     const fetchSuppliersData = async () => {
       try {
@@ -139,20 +196,21 @@ const Dashboard = () => {
       <div className="graphs">
         {/* Orders Section */}
         <div className="chart-container" id="orders-section">
-  <div className="chart">
-    <h2>Orders Overview</h2>
-    <BarChart width={800} height={400} data={ordersData}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="month" />
-      <YAxis />
-      <Tooltip />
-      <Legend />
-      <Bar dataKey="orders" fill="#ffd166" name="Total Orders" />
-      <Bar dataKey="revenue" fill="#06d6a0" name="Total Revenue" />
-    </BarChart>
-  </div>
+        <div className="chart">
+  <h2>Customers Orders and Revenue Overview</h2>
+  <BarChart width={800} height={400} data={ordersData}>
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="month" />
+    <YAxis yAxisId="left" />
+    <YAxis yAxisId="right" orientation="right" />
+    <Tooltip />
+    <Legend />
+    <Bar yAxisId="left" dataKey="orders" fill="#008B8B" name="Total Orders" />
+    <Bar yAxisId="right" dataKey="revenue" fill="#06d6a0" name="Total Revenue" />
+  </BarChart>
+</div>
   <div className="stat-box-container">
-    <div className="stat-box orders" onClick={() => scrollToSection('orders-section')} style={{ backgroundColor: '#ffd166' }}>
+    <div className="stat-box orders" onClick={() => scrollToSection('orders-section')} style={{ backgroundColor: '#008B8B' }}>
       <FontAwesomeIcon icon={faShoppingCart} className="stat-icon" />
       <div className="stat-content">
         <h3>Total Orders</h3>
@@ -164,6 +222,40 @@ const Dashboard = () => {
       <div className="stat-content">
         <h3>Total Revenue</h3>
         <p>${totalRevenue}</p>
+      </div>
+    </div>
+  
+          </div>
+        </div>
+        {/* Our orders Section */}
+        <div className="chart-container" id="orders-section">
+  
+  <div className="chart">
+  <h2>Our Orders and Expenses Overview</h2>
+  <BarChart width={800} height={400} data={OurordersData}>
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="month" />
+    <YAxis yAxisId="left" />
+    <YAxis yAxisId="right" orientation="right" />
+    <Tooltip />
+    <Legend />
+    <Bar yAxisId="left" dataKey="orders" fill="#007B99" name="Total Orders" />
+    <Bar yAxisId="right" dataKey="expenses" fill="#FF6B6B" name="Total Expenses" />
+  </BarChart>
+</div>
+  <div className="stat-box-container">
+    <div className="stat-box orders" onClick={() => scrollToSection('orders-section')} style={{ backgroundColor: '#007B99' }}>
+      <FontAwesomeIcon icon={faShoppingCart} className="stat-icon" />
+      <div className="stat-content">
+        <h3>Total Orders</h3>
+        <p>{OurordersData.reduce((total, data) => total + data.orders, 0)}</p>
+      </div>
+    </div>
+    <div className="stat-box revenue" onClick={() => scrollToSection('orders-section')} style={{ backgroundColor: '#FF6B6B' }}>
+      <FontAwesomeIcon icon={faShoppingCart} className="stat-icon" />
+      <div className="stat-content">
+        <h3>Total Expenses</h3> 
+        <p>${totalExpenses}</p>
       </div>
     </div>
   

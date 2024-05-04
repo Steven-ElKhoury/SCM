@@ -190,11 +190,11 @@ const Orders = () => {
             ) : (
                 <ul className="orders-list">
                     {sortedOrders.map(order => (
-                        <li key={order.order_id} className="order-item">
+                        <li key={order.component_order_id} className="order-item">
                             <div className="order-details">
                                 <FontAwesomeIcon icon={faBicycle} className="order-icon" />
                                 <div className="order-info">
-                                    <h2>Order ID: {order.order_id}</h2>
+                                    <h2>Order ID: {order.component_order_id}</h2>
                                     <p>Supplier Name: {order.supplier_name}</p>
                                     <p>Component Type: {order.component_type_name}</p>
                                     <p>Quantity: {order.quantity}</p>

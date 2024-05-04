@@ -165,20 +165,22 @@ app.get('/getpendingemployees', (req, res) => {
   })
 })
 const query = `
-  SELECT 
-    cso.*, 
-    so.supplier_id, 
-    so.component_type_id, 
-    s.supplier_name AS supplier_name, 
-    ct.name AS component_type_name
-  FROM 
-    component_supplier_order AS cso
-  JOIN 
-    supplier_offerings AS so ON cso.offering_id = so.offering_id
-  JOIN 
-    supplier AS s ON so.supplier_id = s.supplier_id
-  JOIN 
-    component_type AS ct ON so.component_type_id = ct.component_type_id
+SELECT 
+cso.*, 
+so.supplier_id, 
+so.component_type_id, 
+so.lead_time,
+s.supplier_name AS supplier_name, 
+ct.name AS component_type_name
+FROM 
+component_supplier_order AS cso
+JOIN 
+supplier_offerings AS so ON cso.offering_id = so.offering_id
+JOIN 
+supplier AS s ON so.supplier_id = s.supplier_id
+JOIN 
+component_type AS ct ON so.component_type_id = ct.component_type_id
+
 `;
 
 app.get('/getOrders', (req, res) => {
