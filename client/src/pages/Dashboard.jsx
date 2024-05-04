@@ -128,7 +128,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
       <div className="header">
-        <h1>Bike Factory Supply Chain Management Dashboard</h1>
+        <h1 className="h1Dashboard">Bike Factory Supply Chain Management Dashboard</h1>
         <div className="buttons">
           <button className="button orders" onClick={() => scrollToSection('orders-section')}>Orders</button>
           <button className="button inventory" onClick={() => scrollToSection('inventory-section')}>Inventory</button>

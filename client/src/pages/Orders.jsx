@@ -48,7 +48,7 @@ const Orders = () => {
                 // Extract suppliers and components from orders
                 const uniqueSuppliers = [...new Set(formattedOrders.map(order => order.supplier_name))];
                 setSuppliers(uniqueSuppliers);
-                const uniqueComponents = [...new Set(formattedOrders.map(order => order.component_type))];
+                const uniqueComponents = [...new Set(formattedOrders.map(order => order.component_type_name))];
                 setComponents(uniqueComponents);
             })
             .catch(error => {
@@ -73,7 +73,7 @@ const Orders = () => {
             (!searchPrice || checkPriceRange(order.price, searchPrice)) &&
             (!searchLeadTime || checkLeadTimeRange(order.lead_time, searchLeadTime)) &&
             (!searchSupplier || order.supplier_name === searchSupplier) &&
-            (!searchComponent || order.component_type === searchComponent)
+            (!searchComponent || order.component_type_name === searchComponent)
         );
     };
 
@@ -196,7 +196,7 @@ const Orders = () => {
                                 <div className="order-info">
                                     <h2>Order ID: {order.order_id}</h2>
                                     <p>Supplier Name: {order.supplier_name}</p>
-                                    <p>Component Type: {order.component_type}</p>
+                                    <p>Component Type: {order.component_type_name}</p>
                                     <p>Quantity: {order.quantity}</p>
                                     <p>Price: ${order.price}</p>
                                     <p>Date Ordered: {order.date_ordered}</p>
