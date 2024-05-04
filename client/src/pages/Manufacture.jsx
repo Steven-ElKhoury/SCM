@@ -1,127 +1,63 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import OrderReceipt from '../Components/OrderReceipt';
 import '../css/Manufacture.css';
 
-function Manufacture() {/*
+const collapseStyle = {
+    maxHeight: '0px',
+    overflow: 'hidden',
+    transition: 'max-height 0.5s ease-in-out',
+};
+
+const expandStyle = {
+    maxHeight: '500px',
+    overflow: 'hidden',
+    transition: 'max-height 0.5s ease-in-out',
+};
+
+
+function Manufacture() {
     const navigate = useNavigate();
-    const [byProducts, setbyProducts] = useState([]);
-    
-
-
+    const [ByproductQuantity, setByproductQuantity] = useState([]);
+    const [selectedName, setselectedName] = useState([]);
+    const [isExpanded, setIsExpanded] = useState(false); 
+    const [ByproductList, setByproductList] = useState([]);
     useEffect(() => {
-        getByproductList();
-      }, []);
-    const getByproductList = () => {
+        console.log("Manufacture component mounted");
+    }, []);
+    useEffect(() => {
         axios.get('http://localhost:3001/gettingByproductList').then((response) => {
             setByproductList(response.data);
         }).catch(error => {
             console.error('Error fetching Byproducts: ', error);
         });
-    }
-
-
-    
-
-    const [ByproductTypeList, setByproductTypeList] = useState([]);
-
-    useEffect(() => {
-        getByproductTypeList();
-      }, []);
-    const getByproductTypeList = () => {
-        axios.get('http://localhost:3001/gettingByproductTypeList').then((response) => {
-            setByproductTypeList(response.data);
-        }).catch(error => {
-            console.error('Error fetching Byproduct Types: ', error);
-        });
-    }
-
-
-
-
-    const [sortDirection, setSortDirection] = useState('ascending'); // Default to ascending
-
-    useEffect(() => {
-        axios.get('http://localhost:3001/getbyProducts')
-            .then((response) => {
-                const sortedByProducts = response.data.sort((a, b) => {
-                    let comparison = 0;
-                    if (sortKey === 'total_price' || sortKey === 'quantity') {
-                        comparison = parseFloat(a[sortKey]) - parseFloat(b[sortKey]);
-                    } else if (sortKey === 'date') {
-                        comparison = new Date(a.date) - new Date(b.date);
-                    } else {
-                        comparison = a[sortKey] - b[sortKey];
-                    }
-    
-                    return sortDirection === 'ascending' ? comparison : -comparison;
-                });
-                setbyProducts(sortedByProducts);
-            })
-            .catch((error) => {
-                console.error('Error fetching byproducts:', error);
-            });
-    }, [sortKey, sortDirection]);
-    
-    
-
-
-
-
-
-
-
-
-                        const existingByproductNames = Array.from(new Set(ByproductList.map(Byproduct => Byproduct.name)));
-                        const existingByproductType = Array.from(new Set(ByproductTypeList.map(ByproductType => ByproductType.type)));
-  
-  
-const handleAddPurchase = (event) => {
+    }, []);
+const handleManufacture = (event) => {
     event.preventDefault();
 
         axios.post('http://localhost:3001/newPurchase', {
-            //byProductName: byProductName,
-            byProductName: selectedName,
-            ByproductQuantity: ByproductQuantity,
-            purchaseDate: purchaseDate 
     })
               .then(response => {
                   console.log("added Purch")
                 })
                 .catch(error => {
                   console.error('Error adding purch :', error);
-                });
+                });}
                 
-                
-        axios.post('http://localhost:3001/update_byproduct_storage', {
-                byProductName: selectedName,
-                ByproductQuantity: ByproductQuantity
-                
-            })
-                      .then(response => {
-                          console.log("added Purch")
-                        })
-                        .catch(error => {
-                          console.error('Error adding purch :', error);
-                        });              
-
-            }
-            console.log(byProducts)
-
     return (
         <>
-        
-
-        <div className="new-Purchase">
-    <h2 className="section-header" id="Purchase-page"  onClick={() => setIsExpanded(!isExpanded)}>Add New Order {isExpanded ? '-' : '+'}</h2>
-      {isExpanded && ( // Render the form only if the section is expanded
-      <form className='form-container' id='Purchase-page' onSubmit={handleAddPurchase}>
-        <div className='form-container' id='Purchase-page'>
+        <div className="new-bike">
+        <button className="section-header" onClick={() => setIsExpanded(!isExpanded)}>
+            {console.log(isExpanded)}
+        Manufacture New Bike {/*isExpanded ? '-':'+'*/}
+        </button>
+        {isExpanded && (
+      <form className='form-container' id='Manufacture-page' onSubmit={handleManufacture}>
+        {/*<div className='form-container' id='Manufacture-page'>
       
         <input
         type="number"
-        id="Purchase-page"
+        id="Manufacture-page"
         placeholder="Quantity"
         value={ByproductQuantity}
         onChange={(e) => setByproductQuantity(e.target.value)}
@@ -132,116 +68,19 @@ const handleAddPurchase = (event) => {
         value={selectedName}
         onChange={(e) => setselectedName(e.target.value)}
         >
-        <option id='Purchase-page' value="">Select Name</option>
-        {existingByproductNames.map((type, index) => (
+        <option id='Manufacture-page' value="">Select Name</option>
+        {ByproductList.map((type, index) => (
           <option key={index} value={type}>{type}</option>
           ))}
       </select>
-
-      <input
-        type="date"
-        placeholder="Purchase Date"
-        value={purchaseDate}
-        onChange={(e) => setPurchaseDate(e.target.value)}
-      />   
             
-      </div>
-      <button type="submit">Add Purchase</button>
+      </div>*/}
+      <button type="submit">Manufacture Bike</button>
       </form>
 
       )}
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <div className="byProduct-container">
-            <header className="byProduct-header">
-                <h2>Customer Orders</h2>
-            </header>
-            
-            <div className="sort-container">
-    <div className="sort-by">
-        <label htmlFor="sort-select">Sort By: </label>
-        <select id="sort-select" value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
-            <option value="cust_order_id">Order ID</option>
-            <option value="total_price">Price</option>
-            <option value="date">Date</option>
-            <option value="quantity">Quantity</option>
-        </select>
-    </div>
-    <div className="sort-direction">
-        <label>
-            <input
-                type="radio"
-                value="ascending"
-                checked={sortDirection === 'ascending'}
-                onChange={() => setSortDirection('ascending')}
-            />
-            Ascending
-        </label>
-        <label>
-            <input
-                type="radio"
-                value="descending"
-                checked={sortDirection === 'descending'}
-                onChange={() => setSortDirection('descending')}
-            />
-            Descending
-        </label>
-    </div>
-</div>
-
-
-
-
-            <div className="byProduct-content">
-                <div className="byProduct-grid">
-                    {byProducts.map((byProducts) => (
-                        <div key={byProducts.cust_order_id} className="byProduct-card-container">
-                            <div className="byProduct-card">
-                                <div className="byProduct-card-content">
-                                    <h2>Customer Order ID #{byProducts.cust_order_id}</h2>
-                                    <h3>Bike Model #{byProducts.modelID}</h3>
-                                    <p>{byProducts.name}</p>
-                                    <p>Type: {byProducts.type}</p>
-                                    <h3>Quantity: {byProducts.quantity}</h3>
-                                    <h3>Total: ${byProducts.total_price}</h3>
-                                    <p>Date ordered: {formatDate(byProducts.date)}</p>
-                                    <BlobProvider document={<OrderReceipt order={byProducts} />}>
-                                            {({ blob, url, loading, error }) => {
-                                                if (loading) {
-                                                    return <div>Loading...</div>;
-                                                } else if (error) {
-                                                    return <div>An error occurred while generating the PDF.</div>;
-                                                } else {
-                                                    return <a href={url} target="_blank" rel="noopener noreferrer">View receipt</a>;
-                                                }
-                                            }}
-                                        </BlobProvider>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-            
-        </div>
-
-
-
         </>
-    );*/
+    );
 }
-
 export default Manufacture;

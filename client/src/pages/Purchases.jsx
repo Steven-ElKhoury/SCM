@@ -11,7 +11,7 @@ function Purchases() {
     const [byProductName, setbyProductName] = useState([]);
     const [ByproductQuantity, setByproductQuantity] = useState([]);
     const [isExpanded, setIsExpanded] = useState(false); // State to track whether section is expanded
-    const [selectedName, setselectedName] = useState([]);
+    const [selectedModelID, setselectedModelID] = useState([]);
     const [ByproductList, setByproductList] = useState([]);
     const [selectedType, setselectedType] = useState([]);
     const [purchaseDate, setPurchaseDate] = useState('');
@@ -20,7 +20,7 @@ function Purchases() {
     const [ModelID, setModelID] = useState(null);
     const [ByproductTypeList, setByproductTypeList] = useState([]);
     const [sortDirection, setSortDirection] = useState('ascending'); // Default to ascending
-
+    const [highest_stock_unitID, sethighest_stock_unitID] = useState([]);
 
     const formatDate = (dateStr) => {
         const date = new Date(dateStr);
@@ -43,7 +43,7 @@ function Purchases() {
             console.error('Error fetching Byproduct Types: ', error);
         });
     }, []);
-    
+
 
     useEffect(() => {
         axios.get('http://localhost:3001/getbyProducts')
@@ -72,138 +72,113 @@ function Purchases() {
     /////////////////////////purch:
     const handleAddPurchase = async (event) => {
         event.preventDefault();
+        let stock;
+        let higheststock_unitID;
         const parsedQuantity = parseInt(ByproductQuantity, 10);
-        const availableQuantityCheck = await axios.get(`http://localhost:3001/availableQuantityCheck`, {params: { byProductName: selectedName }}) 
+
+        const availableQuantityCheck = await axios.get(`http://localhost:3001/availableQuantityCheck`, { params: { modelID: selectedModelID } })
         let quantityy = null;
         if (availableQuantityCheck.data.quantity) {
             quantityy = availableQuantityCheck.data.quantity;
-            
+
         }
-        if(quantityy>parsedQuantity){
-        try {
-            // //get model id by name
-            // const model__ID = await axios.get(`http://localhost:3001/getModelIdByName`, { params: { name: selectedName } })
-            // const modelIDD = model__ID.data.modelId;
-        
-            //update customer order table with values
-            const newPurchase = await axios.post('http://localhost:3001/newPurchase', {
-                byProductName: selectedName,
-                ByproductQuantity: parsedQuantity,
-                purchaseDate: purchaseDate
-            })
-            const custOrderIdd = newPurchase.data.custOrderId;
-           /* .then(response => {
-                console.log("added Purch")
-                setcustOrderId(response.data.custOrderId) //not updating fast enough
-                
-            })
-            .catch(error => {
-                console.error('Error adding purch :', error);
-            });*/
-
-        //reduce quantity of the model
-        await axios.post('http://localhost:3001/update_model', {byProductName: selectedName , ByproductQuantity: parsedQuantity})
-            .then(response => {
-                console.log("model quantity reduced")
-            })
-        .catch(error => {
-            console.error('Error reducing model quantity :', error);
-        });
-        
-        //reduce stock from byproduct storage
-        let quantityLeft = parsedQuantity;
-        console.log("reached!!!!!!!!!!")
-
-        await recursiveUpdateByProductStorage(quantityLeft);  // Call the recursive function here
-
-        async function recursiveUpdateByProductStorage(quantityLeft) {
-            
-            try {console.log("reached????????")
-                // Base case: if the quantity left to process is 0, stop recursion
-                if (quantityLeft <= 0) {
-                    console.log("Recursion complete, no quantity left to process.");
-                    return;
-                }
-                const storage_stock = await axios.get(`http://localhost:3001/get_byproduct_stock`, { params: { modelID: selectedName } })
-                const stock = storage_stock.data.stock;
-                console.log(stock)
-                console.log("stockkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
-                const currentQuantity = Math.min(quantityLeft, stock);
-            
-                const highest_stock_unit_ID = await axios.get('http://localhost:3001/highest_stock_unit_ID', { params: { modelID: selectedName } })
-
-                console.log(highest_stock_unit_ID.data.unit_id)
-                console.log("unitttt iddddddddddddddddd")
-
-                if (highest_stock_unit_ID.data.unit_id) {
-                    const unit_id = highest_stock_unit_ID.data.unit_id;
-                console.log(highest_stock_unit_ID)
-                console.log("uppppppppppppppppppp")
-
-                const update_byproduct_storage = await axios.post('http://localhost:3001/update_byproduct_storage', {
-                    unitId :unit_id,
-                    ByproductQuantity: currentQuantity
-                    
+        if (quantityy >= parsedQuantity) {
+            try {
+                const newPurchase = await axios.post('http://localhost:3001/newPurchase', {
+                    modelID: selectedModelID,
+                    ByproductQuantity: parsedQuantity,
+                    purchaseDate: purchaseDate
                 })
+                const custOrderIdd = newPurchase.data.custOrderId;
+
+                //reduce quantity of the model
+                await axios.post('http://localhost:3001/update_model', { modelID: selectedModelID, ByproductQuantity: parsedQuantity })
                     .then(response => {
-                        console.log("byproduct_storage stock reduced")
+                        console.log("model quantity reduced")
                     })
                     .catch(error => {
-                        console.error('Error adding purch :', error);
+                        console.error('Error reducing model quantity :', error);
                     });
 
-                    console.log("Stock updated successfully.");
-
-                }
-                else {
-                    console.log("No unit found for given model_id.");
-                }
                 
-                await recursiveUpdateByProductStorage(quantityLeft - currentQuantity);
+                console.log("reached!!!!!!!!!!")
+                await recursiveUpdateByProductStorage(parsedQuantity);  
+                async function recursiveUpdateByProductStorage(quantityLeft) {
+                    try {
+                        console.log("reached????????")
+                        // Base case: if the quantity left to process is 0, stop recursion
+                        if (quantityLeft <= 0) {
+                            console.log("Recursion complete, no quantity left to process.");
+                            return;
+                        }
 
-            }catch (error) {
-                console.error('Error during recursive byproduct stock update:', error);
+                        const highest_stock_unit_ID = await axios.get('http://localhost:3001/highest_stock_unit_ID', { params: { modelID: selectedModelID } })
+                        stock = highest_stock_unit_ID.data.stock
+                        console.log("stock of highest_stock_unitID: ",stock)
+
+                        const currentQuantity = Math.min(quantityLeft, stock);
+
+                        higheststock_unitID = highest_stock_unit_ID.data.unit_id
+                        console.log("highest stock unit id: ", higheststock_unitID)
+
+                        if (highest_stock_unit_ID.data.unit_id) {
+//reduce stock from byproduct storage
+                            const update_byproduct_storage = await axios.post('http://localhost:3001/update_byproduct_storage', {
+                                unitId: higheststock_unitID,
+                                ByproductQuantity: currentQuantity
+                            })
+                                .then(response => {
+                                    console.log("byproduct_storage stock reduced")
+                                })
+                                .catch(error => {
+                                    console.error('Error in update_byproduct_storage :', error);
+                                });
+                            console.log("update_byproduct_storage updated successfully.");
+//update unit ids from produced_byproduct
+                            await axios.post('http://localhost:3001/update_produced_byproduct', {
+                                ModelID: selectedModelID, 
+                                custOrderId: custOrderIdd,
+                                ByproductQuantity: currentQuantity,
+                                unit_id: higheststock_unitID
+                            })
+                                .then(response => {
+                                    console.log("updated: update_produced_byproduct")
+                                })
+                                .catch(error => {
+                                    console.error('Error in update_produced_byproduct :', error);
+                                });
+                        }
+                        else {
+                            console.log("Error in update_byproduct_storage");
+                        }
+
+                        await recursiveUpdateByProductStorage(quantityLeft - currentQuantity);
+                        
+                    } catch (error) {
+                        console.error('Error during recursive byproduct stock update:', error);
+                    }
+                }
+            } catch (error) {
+                console.error('Error during purchase process:', error);
             }
         }
-
-
-//update byproduct and set items to be sold and belonging to a customer order
-console.log("ModelIDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
-console.log(selectedName)
-console.log(ModelID) // the state takes one more render to update!
-
-        await axios.post('http://localhost:3001/update_produced_byproduct', { 
-        ModelID:selectedName, //use local variable instead
-        custOrderId : custOrderIdd,
-        ByproductQuantity: parsedQuantity
-
-        })
-            .then(response => {
-                console.log("added Purch")
-            })
-            .catch(error => {
-                console.error('Error adding purch :', error);
-            });
-
-    } catch(error){
-        console.error('Error during purchase process:', error);
+        else {
+            alert("Quantity of the order is more than what is available, Manufacture more Byproducts!")
+            navigate('/main/manufacture'); 
+        }
     }
-}
-    else{
-        console.log("Quantity of the order is more than what is available, Manufacture more Byproducts!")
-    }
-}
+
     return (
         <>
             <div className="purchases-container">
                 <div className="new-Purchase">
                     <h2 className="section-header" id="Purchase-page" onClick={() => setIsExpanded(!isExpanded)}>Add New Order {isExpanded ? '-' : '+'}</h2>
-                    {isExpanded && ( // Render the form only if the section is expanded
+                    {isExpanded && (
                         <form className='form-container' id='Purchase-page' onSubmit={handleAddPurchase}>
                             <div className='form-container' id='Purchase-page'>
                                 <select className='select-name'
-                                    value={selectedName}
-                                    onChange={(e) => setselectedName(e.target.value)}
+                                    value={selectedModelID}
+                                    onChange={(e) => setselectedModelID(e.target.value)}
                                 >
                                     <option id='Purchase-page' value="">Select Name</option>
                                     {ByproductList.map((type, index) => (

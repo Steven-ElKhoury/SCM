@@ -708,16 +708,16 @@ app.get('/gettingByproductTypeList', (req, res) => {
 
  /////////////////////////////////////////// //new purch:
  app.get('/availableQuantityCheck', (req, res) => {
-  const byProductName = req.query.byProductName;
+  const modelID = req.query.byProductName;
   const query = `
-      SELECT COUNT(*) as quantity 
-      FROM produced_byproduct 
-      WHERE model_id = ? AND sold = 0
+  SELECT COUNT(*) as quantity 
+  FROM produced_byproduct 
+  WHERE model_id = 2 AND sold = 0;
   `;
 
-  db.query(query, [byProductName], (err, result) => {
+  db.query(query, [modelID], (err, result) => {
       if (err) {
-          console.error("Error retrieving quantity from name in model:", err);
+          console.error("Error retrieving quantity from model id in model:", err);
           res.status(500).send('Error retrieving quantity');
           return;
       }
@@ -729,22 +729,55 @@ app.get('/gettingByproductTypeList', (req, res) => {
   });
 });
 
-app.post('/update_model', (req, res) => {
-  const {byProductName,ByproductQuantity} = req.body;
+app.post('/newPurchase', (req, res) => {
+  const { modelID, ByproductQuantity, purchaseDate } = req.body;
 
-  console.log("Reducing model quantity...");
+  
   console.log(ByproductQuantity);
-  console.log(byProductName);
+  console.log("Processing new purchase...");
+
   
   const query = `
-  UPDATE model
-  SET quantity = quantity - ?
-  WHERE name = ?
+  INSERT INTO customer_order (quantity, total_price, date, modelID)
+  VALUES (?, 
+          ? * (SELECT price FROM model WHERE model_id = ?),
+          ?,
+          ?);
+  SELECT LAST_INSERT_ID() as cust_order_id;
 `;
   
   db.query( 
     query,
-    [ByproductQuantity,byProductName], 
+    [ByproductQuantity,ByproductQuantity,modelID,purchaseDate,modelID], 
+    (err, result) => {
+      if (err) {
+        console.error("Error inserting new purchase: ", err);
+        res.status(500).send('Error inserting values');
+      } else {
+      const custOrderId = result[1][0].cust_order_id; 
+      console.log('New Customer Order ID:', custOrderId);
+      res.send({ custOrderId: custOrderId, message: 'Values Inserted Successfully' });
+      }
+    }
+  );
+});
+
+app.post('/update_model', (req, res) => {
+  const {modelID,ByproductQuantity} = req.body;
+
+  console.log("Reducing model quantity...");
+  console.log(ByproductQuantity);
+  console.log(modelID);
+  
+  const query = `
+  UPDATE model
+  SET quantity = quantity - ?
+  WHERE model_id = ?
+`;
+  
+  db.query( 
+    query,
+    [ByproductQuantity,modelID], 
     (err, result) => {
       if (err) {
         console.error("Error updating product quantity:", err);
@@ -763,7 +796,7 @@ app.post('/update_model', (req, res) => {
   );
 });
 
-
+/*
 app.get('/getModelIdByName', (req, res) => {
   const modelName = req.query.name;  // Get the model name from query parameters
   const query = 'SELECT model_id FROM model WHERE name = ?';
@@ -784,9 +817,10 @@ app.get('/getModelIdByName', (req, res) => {
       res.send({ modelId: modelId });
   });
 });
+*/
 app.get('/get_byproduct_stock', (req, res) => {
   const modelID = req.query.modelID; 
-  const query = 'SELECT current_stock FROM byproduct_storage WHERE model_id = ? ORDER BY current_stock DESC LIMIT 1';
+  const query = 'SELECT byproduct_storage_current_stock FROM byproduct_storage WHERE model_id = ? ORDER BY byproduct_storage_current_stock DESC LIMIT 1';
 
   db.query(query, [modelID], (err, result) => {
       if (err) {
@@ -806,11 +840,18 @@ app.get('/get_byproduct_stock', (req, res) => {
 });
 app.get('/highest_stock_unit_ID', (req, res) => {
   const modelID = req.query.modelID; 
-  const query = 'SELECT byproduct_storage_id FROM byproduct_storage WHERE model_id = ? ORDER BY current_stock DESC LIMIT 1';
+  const query = `
+      SELECT byproduct_storage_id,COUNT(*) as stock 
+      FROM produced_byproduct 
+      WHERE model_id = ? AND sold = 0
+      group by byproduct_storage_id
+      order by stock desc
+      limit 1;
+`;
 
   db.query(query, [modelID], (err, result) => {
       if (err) {
-          console.error("Error retrieving id of highest stock", err);
+          console.error("Error retrieving unit id of highest stock", err);
           res.status(500).send('Error retrieving id of highest stock');
           return;
       }
@@ -821,45 +862,13 @@ app.get('/highest_stock_unit_ID', (req, res) => {
       }
 
       const byproduct_storage_id = result[0].byproduct_storage_id;
-      res.send({ unit_id: byproduct_storage_id });
+      const stock = result[0].stock;
+      res.send({ unit_id: byproduct_storage_id ,
+        stock: stock
+      });
   });
 });
 
-app.post('/newPurchase', (req, res) => {
-    const { byProductName, ByproductQuantity, purchaseDate } = req.body;
-  
-    
-    console.log(ByproductQuantity);
-    console.log("Processing new purchase...");
-  
-    
-    const query = `
-    INSERT INTO customer_order (quantity, total_price, date, modelID)
-    VALUES (?, 
-            ? * (SELECT price FROM model WHERE model_id = ?),
-            ?,
-            ?);
-    SELECT LAST_INSERT_ID() as cust_order_id;
-  `;
-    
-    db.query( 
-      query,
-      [ByproductQuantity,ByproductQuantity,byProductName,purchaseDate,byProductName], 
-      (err, result) => {
-        if (err) {
-          console.error("Error inserting new purchase: ", err);
-          res.status(500).send('Error inserting values');
-        } else {
-        const custOrderId = result[1][0].cust_order_id; 
-        console.log('New Customer Order ID:', custOrderId);
-        res.send({ custOrderId: custOrderId, message: 'Values Inserted Successfully' });
-        }
-      }
-    );
-  });
-  
-
-  
   app.post('/update_byproduct_storage', (req, res) => {
     const { unitId, ByproductQuantity  } = req.body;
   
@@ -867,7 +876,7 @@ app.post('/newPurchase', (req, res) => {
   
     const query = `
     UPDATE byproduct_storage
-    SET current_stock = current_stock - ?
+    SET byproduct_storage_current_stock = byproduct_storage_current_stock - ?
     WHERE byproduct_storage_id = ?
   `;
   
@@ -888,21 +897,24 @@ app.post('/newPurchase', (req, res) => {
 
 
   app.post('/update_produced_byproduct', (req, res) => {
-    const { ModelID, custOrderId, ByproductQuantity } = req.body;
+    const { ModelID, custOrderId, ByproductQuantity,unit_id } = req.body;
+    //in order to get the sold products we can do a query where byproduct_storage_id=null
+    console.log(unit_id)
+    console.log("usssssssssssssssssssssssssssssnit_id")
         const updateQuery = `
         UPDATE produced_byproduct
-        SET cus_orderID = ?,  sold = 1
+        SET cus_orderID = ?,  sold = 1 , byproduct_storage_id = null
         WHERE byproduct_id IN (
             SELECT byproduct_id FROM (
                 SELECT byproduct_id FROM produced_byproduct
-                WHERE sold = 0 AND cus_orderID IS NULL AND model_id = ?
+                WHERE sold = 0 AND cus_orderID IS NULL AND model_id = ? AND byproduct_storage_id = ?
                 ORDER BY byproduct_id ASC
                 LIMIT ?
-            ) AS subquery
+            ) AS subquery 
         )
         `;
 
-        db.query(updateQuery, [custOrderId, ModelID, ByproductQuantity], (err, updateResults) => {
+        db.query(updateQuery, [custOrderId, ModelID, unit_id, ByproductQuantity], (err, updateResults) => {
             if (err) {
                 console.error("Error updating order by product:", err);
                 res.status(500).send('Error updating order by product');
