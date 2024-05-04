@@ -107,16 +107,14 @@ const CreateOrder = () => {
   }
 
   axios.get(`http://localhost:3001/warehouse/check/${selectedComponent.id}`)
-  .then(response => {
-    if (response.data.storage < quantity) {
-      setModalMessage(`There's not enough storage in the warehouse. Remaining capacity: ${response.data.storage}.`);
-      setModalIsOpen(true);
-      return;
-    }
-  }).catch(error =>{
-    setModalMessage('There is no storage unit for this component. Please create a storage unit first.');
+.then(response => {
+  const { totalAvailableStorage } = response.data;
+  console.log(totalAvailableStorage);
+  if (totalAvailableStorage < quantity) {
+    setModalMessage(`There's not enough storage in the warehouse. Remaining capacity: ${totalAvailableStorage}.`);
     setModalIsOpen(true);
-  })
+    return;
+  }
 
   // Dispatch an action to add the order to the cart
   dispatch({
@@ -135,7 +133,12 @@ const CreateOrder = () => {
   setSelectedComponent(null);
   setSelectedSupplier(null);
   setQuantity(1);
-};
+})
+.catch(error => {
+  setModalMessage('There is no storage unit for this component. Please create a storage unit first.');
+  setModalIsOpen(true);
+});
+ };
 
   
   return (
@@ -193,6 +196,28 @@ const CreateOrder = () => {
       <button className='add-to-cart-button' onClick={handleOrderSubmit}>Place Order</button>
 )}
 </div>
+  <Modal 
+    isOpen={modalIsOpen} 
+    onRequestClose={() => setModalIsOpen(false)}
+    style={{
+      content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        width: '50%', // Adjust the width
+        height: '50%', // Adjust the height
+        padding: '20px', // Adjust the padding
+        backgroundColor: '#f5f5f5', // Adjust the background color
+        borderRadius: '10px', // Adjust the border radius
+      },
+    }}
+  >
+    <h2>Notification</h2>
+    <p style ={{'color':'red'}}>{modalMessage}</p>
+  </Modal>
 </>
   );
 };

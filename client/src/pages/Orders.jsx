@@ -137,6 +137,13 @@ const Orders = () => {
     return (
         <div className="orders-container">
             <button className='create-order' onClick={() => navigate('/main/createOrder')}>Create Order</button>
+            <button 
+                className='order-button view-orders' 
+                onClick={() => navigate('/main/viewOrders')}
+                style={{  }}
+            >
+                View Orders
+            </button>
             <h1 className="orders-title">Previous Orders</h1>
             <div className="search-container">
                 {/* Sorting dropdown */}
@@ -199,8 +206,8 @@ const Orders = () => {
                                     <p>Component Type: {order.component_type_name}</p>
                                     <p>Quantity: {order.quantity}</p>
                                     <p>Price: ${order.price}</p>
-                                    <p>Date Ordered: {order.date_ordered}</p>
-                                    <p>Date Arrived: {order.date_arrived}</p>
+                                    <p>Date Ordered: {order.date_ordered ? new Date(Date.parse(order.date_ordered)).toLocaleDateString() : 'Not available'}</p>
+                                    <p>Date Arrived: {order.date_arrived ? new Date(Date.parse(order.date_arrived)).toLocaleDateString() : 'Not available'}</p>
                                     <p>Lead Time: {order.lead_time} days</p>
                                 </div>
                             </div>

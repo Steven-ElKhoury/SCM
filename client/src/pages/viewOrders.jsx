@@ -27,7 +27,7 @@ function Orders() {
 
 
     useEffect(() => {
-        axios.get('http://localhost:3001/getOrders')
+        axios.get('http://localhost:3001/getAllOrders')
             .then(response => {
                 setOrders(response.data);
             })
@@ -36,15 +36,19 @@ function Orders() {
             });
     }, []);
 
-    function handleStatusChange(orderId, newStatus) {
-        axios.put(`http://localhost:3001/orders/${orderId}`, { status: newStatus })
+    function handleStatusChange(orderId) {
+        axios.put(`http://localhost:3001/orders/${orderId}`)
+          .then(response => {
+            axios.get('http://localhost:3001/getAllOrders')
             .then(response => {
-                setOrders(orders.map(order => order.id === orderId ? { ...order, status: newStatus } : order));
-            })
-            .catch(error => {
-                console.error('Error updating order status:', error);
-            });
-    }
+                setOrders(response.data);
+            })  
+          })
+          .catch(error => {
+            console.error('Error updating order status:', error);
+          });
+        
+      }
 
     const SortableTableCell = styled(TableCell)({
         cursor: 'pointer',
@@ -54,10 +58,15 @@ function Orders() {
     })
 
     const filteredOrders = orders.filter(order => 
-        order.component_type && order.component_type.toLowerCase().includes(search.toLowerCase()) ||
-        order.supplier_name && order.supplier_name.toLowerCase().includes(search.toLowerCase())
-    ); 
-
+        order.component_type_name && order.component_type_name.toLowerCase().includes(search.toLowerCase()) ||
+        order.supplier_name && order.supplier_name.toLowerCase().includes(search.toLowerCase()) ||
+        order.pending.toString().includes(search) ||
+        order.quantity.toString().includes(search) ||
+        order.date_ordered && order.date_ordered.toLowerCase().includes(search.toLowerCase()) ||
+        order.date_arrived && order.date_arrived.toLowerCase().includes(search.toLowerCase()) ||
+        order.lead_time.toString().includes(search)
+        // Add more fields as needed
+      );
     const sortedAndFilteredOrders = [...filteredOrders].sort((a, b) => {
         if (a[sortField] < b[sortField]) {
             return sortDirection === 'asc' ? -1 : 1;
@@ -115,7 +124,7 @@ function Orders() {
                             <TableCell>{order.lead_time}</TableCell>
                             <TableCell>{order.pending}</TableCell>
                             <TableCell>
-                                <Button variant="contained" color="primary" onClick={() => handleStatusChange(order.order_id, 'Arrived')}>Mark as Arrived</Button>
+                                <Button variant="contained" color="primary" onClick={() => handleStatusChange(order.component_order_id, 'Arrived')}>Mark as Arrived</Button>
                             </TableCell>
                         </TableRow>
                     ))}

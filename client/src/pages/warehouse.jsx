@@ -37,8 +37,12 @@ const Warehouses = () => {
 
 
  // Combine the partWarehouses and productWarehouses arrays
-const allWarehouses = [...partWarehouses, ...productWarehouses];
-console.log(allWarehouses);
+ // Add a 'type' property to each warehouse
+const partWarehousesWithType = partWarehouses.map(warehouse => ({ ...warehouse, type: 'Part' }));
+const productWarehousesWithType = productWarehouses.map(warehouse => ({ ...warehouse, type: 'Product' }));
+
+// Combine the partWarehouses and productWarehouses arrays
+const allWarehouses = [...partWarehousesWithType, ...productWarehousesWithType];
 
 const filteredWarehouses = allWarehouses.filter(warehouse =>
   (warehouse.component_storage_name || warehouse.byproduct_storage_name).toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -58,7 +62,7 @@ return (
       {filteredWarehouses.map((warehouse, index) => (
         <div className='item' key={index}>
           <h2 className="item-name">Storage Unit: {warehouse.component_storage_name || warehouse.byproduct_storage_name}</h2>
-          <p>Part: {warehouse.category_name}</p>
+          <p>{warehouse.type}: {warehouse.category_name}</p>
           <p>Size: {warehouse.component_storage_size || warehouse.byproduct_storage_size} sqm</p>
           <p>Capacity: {warehouse.component_storage_capacity || warehouse.byproduct_storage_capacity}</p>
           <p>Current Stock: {warehouse.byproduct_storage_current_stock !== undefined ? warehouse.byproduct_storage_current_stock : warehouse.component_storage_current_stock}</p>
