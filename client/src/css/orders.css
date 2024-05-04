@@ -82,3 +82,19 @@
     margin-left: 5px;
     color: #666; /* Change the color as desired */
 }
+.create-order,
+.view-orders {
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  margin: 10px;
+}
+
+.create-order:hover,
+.view-orders:hover {
+  background-color: #0056b3;
+}

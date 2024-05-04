@@ -164,7 +164,7 @@ app.get('/getpendingemployees', (req, res) => {
     }
   })
 })
-const query = `
+const query1 = `
 SELECT 
 cso.*, 
 so.supplier_id, 
@@ -183,8 +183,8 @@ component_type AS ct ON so.component_type_id = ct.component_type_id
 
 `;
 
-app.get('/getOrders', (req, res) => {
-  db.query(query, (err, result) => {
+app.get('/getAllOrders', (req, res) => {
+  db.query(query1, (err, result) => {
     if (err) {
       console.error(err);
       res.status(500).json({ error: 'Internal server error' });
@@ -195,6 +195,34 @@ app.get('/getOrders', (req, res) => {
 });
 
 
+const query = `
+SELECT 
+cso.*, 
+so.supplier_id, 
+so.component_type_id, 
+so.lead_time,
+s.supplier_name AS supplier_name, 
+ct.name AS component_type_name
+FROM 
+component_supplier_order AS cso
+JOIN 
+supplier_offerings AS so ON cso.offering_id = so.offering_id
+JOIN 
+supplier AS s ON so.supplier_id = s.supplier_id
+JOIN 
+component_type AS ct ON so.component_type_id = ct.component_type_id where pending = 0
+`;
+
+app.get('/getOrders', (req, res) => {
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+    res.send(result);
+  });
+});
 
   app.get('/getSuppliers', (req, res) => {
     db.query("SELECT *FROM supplier", (err, result) => {

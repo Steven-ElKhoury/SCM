@@ -32,7 +32,9 @@
     margin-top: 20px;
 }
 
-
+.createPartTypeContainer button:hover{
+    background-color: #0056b3;
+}
 
 #cancel-button {
     background-color: red;
@@ -44,6 +46,3 @@
     background-color: darkred;
   }
 
-.createPartTypeContainer button:hover{
-    background-color: #0056b3;
-}

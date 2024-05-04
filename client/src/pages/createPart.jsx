@@ -117,8 +117,9 @@ function CreatePart() {
 
     return (
         <div className='create-part-container'>
+            <div className='create-part-header'>
             <h1 style= {{textAlign:'center'}}>Create Part</h1>
-
+            </div>
             <div style={{ textAlign: "left" }}>
                 <button style={{
                     backgroundColor: "#007BFF", /* Blue */
