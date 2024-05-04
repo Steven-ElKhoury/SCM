@@ -280,12 +280,16 @@ warehouseRouter.put('/orders/:orderId', (req, res) => {
           break;
         }
         console.log(warehouse);
-
+        console.log(remainingQuantity);
         const storageCapacity = warehouse.component_storage_capacity;
-        console.log(storageCapacity);
-        const quantityToStore = Math.min(storageCapacity, remainingQuantity);
-        console.log(quantityToStore);
+        const currentStock = warehouse.component_storage_current_stock;
 
+        let remainingCapacity = storageCapacity - currentStock;
+        console.log(remainingCapacity);
+        const quantityToStore = Math.min(remainingCapacity, remainingQuantity);
+        console.log(quantityToStore);
+        remainingQuantity -= quantityToStore;
+        
     // Create the components
 const componentPromises = [];
 for (let i = 0; i < quantityToStore; i++) {
@@ -312,9 +316,9 @@ Promise.all(componentPromises)
         console.error('Error updating warehouse stock:', error);
         return res.status(500).json({ error: 'Internal server error' });
       }
-
-      remainingQuantity -= quantityToStore;
     });
+    
+    console.log(remainingQuantity);
   })
   .catch(error => {
     return res.status(500).json({ error: 'Internal server error' });
