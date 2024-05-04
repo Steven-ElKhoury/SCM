@@ -9,14 +9,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import '../css/Home.css';
 
 const Home = () => {
-  // Placeholder data for the radar chart
-  const radarData = [
-    { subject: 'Sales', A: 120, B: 110, fullMark: 150 },
-    { subject: 'Marketing', A: 98, B: 130, fullMark: 150 },
-    { subject: 'Development', A: 86, B: 130, fullMark: 150 },
-    { subject: 'Customer Support', A: 99, B: 100, fullMark: 150 },
-    { subject: 'HR', A: 85, B: 90, fullMark: 150 },
-  ];
+  
+  
 
   // Placeholder data for other charts
   const productionData = [
@@ -46,7 +40,7 @@ const Home = () => {
       <div className="header">
         <div className="header-content">
           <Typography variant="h2" className="title animated-title">
-            Welcome to Bike Factory SCM
+            Welcome to Bike Chain Our Bike Factory SCM
           </Typography>
           <Typography variant="body1" className="subtitle">
             Your one-stop solution for bike manufacturing supply chain management
@@ -55,9 +49,7 @@ const Home = () => {
             <Link to="/about" className="link">
               About Us
             </Link>
-            <Link to="/contact" className="link">
-              Contact Us
-            </Link>
+            
           </div>
         </div>
       </div>
@@ -66,7 +58,7 @@ const Home = () => {
 
       <section className="hero">
         <div className="hero-content">
-          <h1>Streamline Your Bike Factory's Supply Chain with [App Name]</h1>
+          <h1>Streamline Your Bike Factory's Supply Chain with Bike Chain</h1>
           <p>Empower your bike manufacturing process with our comprehensive supply chain management solution.</p>
           <Link to="/register" className="cta-button">
             Get Started <FontAwesomeIcon icon={faArrowRight} className="button-icon" />
@@ -165,6 +157,18 @@ const Home = () => {
       </section>
     </div>
 
+    <section className="graph-benefits">
+      <div className="graph-benefits-container">
+        <h2>Utilize Graphs and Analytics for Factory Optimization</h2>
+        <p>Our supply chain management solution offers comprehensive graphs and analytics that can be utilized to optimize your factory operations:</p>
+        <ul>
+          <li>Track production trends to identify patterns and areas for improvement.</li>
+          <li>Monitor supplier performance and order volumes to ensure timely procurement.</li>
+          <li>Analyze inventory levels to prevent stockouts and reduce carrying costs.</li>
+          {/* Add more points as needed */}
+        </ul>
+      </div>
+    </section>
 
     </div>
       <div className="chart-container">
@@ -213,36 +217,13 @@ const Home = () => {
 
           {/* Add other charts here */}
 
-          <Grid item xs={12} md={6}>
-            <Card className="chart-card">
-              <CardContent>
-                <Typography variant="h5" className="chart-title">Radar Chart</Typography>
-                <ResponsiveContainer width="100%" height={300}>
-                  <RadarChart outerRadius={150} width={300} height={300} data={radarData}>
-                    <PolarGrid />
-                    <PolarAngleAxis dataKey="subject" />
-                    <PolarRadiusAxis />
-                    <Tooltip />
-                    <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-                  </RadarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </Grid>
+          
         </Grid>
       </div>
 
-      <div className="introduction">
-        <Typography variant="h3">Introduction</Typography>
-        <Typography variant="body1">
-          Welcome to Bike Factory SCM, your premier solution for managing your bike manufacturing supply chain. With our comprehensive suite of tools and analytics, you can optimize your production processes, track supplier performance, manage inventory, and much more.
-        </Typography>
-      </div>
+     
     </div>
   );
 };
 
 export default Home;
-
-
-
