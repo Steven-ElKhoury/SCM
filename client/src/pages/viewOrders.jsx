@@ -67,16 +67,18 @@ function Orders() {
         order.lead_time.toString().includes(search)
         // Add more fields as needed
       );
-    const sortedAndFilteredOrders = [...filteredOrders].sort((a, b) => {
-        if (a[sortField] < b[sortField]) {
-            return sortDirection === 'asc' ? -1 : 1;
+      const sortedAndFilteredOrders = [...filteredOrders].sort((a, b) => {
+        let aValue = a[sortField] || '';
+        let bValue = b[sortField] || '';
+      
+        if (aValue < bValue) {
+          return sortDirection === 'asc' ? -1 : 1;
         }
-        if (a[sortField] > b[sortField]) {
-            return sortDirection === 'asc' ? 1 : -1;
+        if (aValue > bValue) {
+          return sortDirection === 'asc' ? 1 : -1;
         }
         return 0;
-    });
-   
+      });
     return (
         <div>
             <Title variant="h4">Orders</Title>  
@@ -85,11 +87,11 @@ function Orders() {
                 <Table>
                 <TableHead>
                     <TableRow>
-                        <SortableTableCell onClick={() => { setSortField('order_id'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
-                            Order ID {sortField === 'order_id' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                        <SortableTableCell onClick={() => { setSortField('component_order_id'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                            Order ID {sortField === 'component_order_id' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                         </SortableTableCell>
-                        <SortableTableCell onClick={() => { setSortField('component_type'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
-                            Component {sortField === 'component_type' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                        <SortableTableCell onClick={() => { setSortField('component_type_name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                            Component {sortField === 'component_type_name' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                         </SortableTableCell>
                         <SortableTableCell onClick={() => { setSortField('supplier_name'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
                             Supplier {sortField === 'supplier_name' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}

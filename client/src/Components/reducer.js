@@ -63,8 +63,10 @@ const reducer = (state, action) => {
             // Logic for removing item from blueprint
             // we cloned the blueprint
             let newblueprint = [...state.blueprint];
+            console.log('payload',action.payload)
+            console.log(action.uniqueId)
             // we check to see if product exists
-            const index = state.blueprint.findIndex((blueprintItem) => blueprintItem.id === action.id);
+            const index = state.blueprint.findIndex((blueprintItem) => blueprintItem.uniqueId === action.id);
             if (index >= 0) {
                 // item exists in blueprint, remove it...
                 newblueprint.splice(index, 1);
@@ -76,7 +78,7 @@ const reducer = (state, action) => {
         case 'REMOVE_FROM_BLUEPRINT_EDIT':
             return {
                 ...state,
-                blueprint: state.blueprint.filter(part => part.component_type_id !== action.payload),
+                blueprint: state.blueprint.filter(part => part.uniqueId !== action.payload),
              };        
 
             

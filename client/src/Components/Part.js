@@ -5,17 +5,17 @@ import {useNavigate} from 'react-router-dom';
 import {useLocation} from 'react-router-dom';
 
 
-function Part({id, name, type, description, image, modelNumber, editable, category_id}) {
+function Part({id, uniqueId, name, type, description, image, modelNumber, editable, category_id}) {
     const [showDescription, setShowDescription] = React.useState(false);
     const [{basket}, dispatch] = useStateValue();
     const navigate = useNavigate();
-
     const addToBlueprint = () => {
         // Dispatch the item into the data layer
         dispatch({
             type: 'ADD_TO_blueprint',
             item: {
                 id: id,
+                uniqueId:uniqueId,
                 name: name,
                 type: type,
                 modelNumber: modelNumber,
@@ -48,6 +48,7 @@ function Part({id, name, type, description, image, modelNumber, editable, catego
                     </>
                 ) : (
                     <p className='toggle-description' onClick={toggleDescription}>Read More</p>
+                    
                 )}
             </div>
             {editable && (

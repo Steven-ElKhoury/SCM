@@ -19,7 +19,8 @@ const ViewParts = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedTypeComponents, setSelectedTypeComponents] = useState([]);
   const { modelId } = useParams();
-
+  const [counterState, setCounterState] = useState(0);
+  let counter = 0;
 
   useEffect(() => {
     dispatch({ type: 'EMPTY_BLUEPRINT' });
@@ -33,13 +34,26 @@ const ViewParts = () => {
       })
       .catch(error => console.error(error));
      
+      // axios.get(`http://localhost:3001/blueprint/${modelId}`)
+      // .then(response => {
+      //   response.data.forEach(part => {
+      //     dispatch({ type: 'ADD_TO_BLUEPRINT_EDIT', payload: part });
+      //   });
+      // })
       axios.get(`http://localhost:3001/blueprint/${modelId}`)
-      .then(response => {
-        response.data.forEach(part => {
-          dispatch({ type: 'ADD_TO_BLUEPRINT_EDIT', payload: part });
-        });
-      })
-      .catch(error => console.error(error));     
+        .then(response => {
+          response.data.forEach(part => {
+            // Generate a unique id for each part
+            const uniqueId = counter++;
+            setCounterState(counter); 
+            // Add the unique id to the part
+            part.uniqueId = uniqueId;
+
+            dispatch({ type: 'ADD_TO_BLUEPRINT_EDIT', payload: part });
+          });
+        })
+
+      .catch(error => console.error(error));    
   }, []);
 
   const handleComponentSelect = (componentId) => {
@@ -58,28 +72,34 @@ const ViewParts = () => {
       console.error('Quantity must be greater than 0');
       return;
     }  
-    // Check if a part of the selected type already exists in the blueprint
-    const existingPart = blueprint.find(part => part.type === component.type);
+    // Generate a unique id for the new item
+    counter = counterState;
+    const uniqueId = counter++;
+    setCounterState(counter);
 
-    if (existingPart) {
-      // If it does, update the quantity of that part
-      dispatch({
-        type: 'UPDATE_PART_IN_BLUEPRINT',
-        item: {
-          id: component.component_type_id,
-          name: component.name,
-          type: component.type,
-          description: component.description,
-          image_url: component.image_url,
-          model_number: component.model_number,    
-        },
-      });
-    } else {
+    // Check if a part of the selected type already exists in the blueprint
+    // const existingPart = blueprint.find(part => part.type === component.type);
+
+    // if (existingPart) {
+    //   // If it does, update the quantity of that part
+    //   dispatch({
+    //     type: 'UPDATE_PART_IN_BLUEPRINT',
+    //     item: {
+    //       id: component.component_type_id,
+    //       name: component.name,
+    //       type: component.type,
+    //       description: component.description,
+    //       image_url: component.image_url,
+    //       model_number: component.model_number,    
+    //     },
+    //   });
+    // } else {
       // If it doesn't, add a new part to the blueprint
       console.log('selectedComponent', component);
       dispatch({
         type: 'ADD_TO_BLUEPRINT',
         item: {
+          uniqueId: uniqueId,
           id: component.component_type_id,
           name: component.name,
           type: component.type,
@@ -88,7 +108,6 @@ const ViewParts = () => {
           model_number: component.model_number,    
         },
       });
-    }
   
     setSelectedComponent(null);
     setQuantity(1);
@@ -99,28 +118,34 @@ const ViewParts = () => {
       console.error('Quantity must be greater than 0');
       return;
     }  
-    // Check if a part of the selected type already exists in the blueprint
-    const existingPart = blueprint.find(part => part.type === component.type);
+    // Generate a unique id for the new item
+    counter = counterState;
+    const uniqueId = counter++;
+    setCounterState(counter);
+    // // Check if a part of the selected type already exists in the blueprint
+    // const existingPart = blueprint.find(part => part.type === component.type);
 
-    if (existingPart) {
-      // If it does, update the quantity of that part
-      dispatch({
-        type: 'UPDATE_PART_IN_BLUEPRINT',
-        item: {
-          id: component.component_type_id,
-          name: component.name,
-          type: component.type,
-          description: component.description,
-          image_url: component.image_url,
-          model_number: component.model_number,    
-        },
-      });
-    } else {
+    // if (existingPart) {
+    //   // If it does, update the quantity of that part
+    //   dispatch({
+    //     type: 'UPDATE_PART_IN_BLUEPRINT',
+    //     item: {
+    //       id: component.component_type_id,
+    //       name: component.name,
+    //       type: component.type,
+    //       description: component.description,
+    //       image_url: component.image_url,
+    //       model_number: component.model_number,    
+    //     },
+    //   });
+    // } else {
       // If it doesn't, add a new part to the blueprint
       console.log('selectedComponent', component);
+
       dispatch({
         type: 'ADD_TO_BLUEPRINT_EDIT',
         item: {
+          uniqueId: uniqueId,
           id: component.component_type_id,
           name: component.name,
           type: component.type,
@@ -129,15 +154,18 @@ const ViewParts = () => {
           model_number: component.model_number,    
         },
       });
-    }
   
     setSelectedComponent(null);
     setQuantity(1);
   };
 
 
-  const handleRemovePart = (componentTypeId) => {
-    dispatch({ type: 'REMOVE_FROM_BLUEPRINT_EDIT', payload: componentTypeId });
+  // const handleRemovePart = (componentTypeId) => {
+  //   dispatch({ type: 'REMOVE_FROM_BLUEPRINT_EDIT', payload: componentTypeId });
+  // };
+  
+  const handleRemovePart = (uniqueId) => {
+    dispatch({ type: 'REMOVE_FROM_BLUEPRINT_EDIT', payload: uniqueId });
   };
   
   const handleConfirmParts = () => {
@@ -192,6 +220,7 @@ const ViewParts = () => {
   <Part 
     key={index} 
     id={component.id} 
+    uniqueId={component.uniqueId}
     name={component.name} 
     type={component.type} 
     description={component.description} 
@@ -199,7 +228,7 @@ const ViewParts = () => {
     modelNumber={component.model_number} 
     editable={false} 
   />
-  <button onClick={() => handleRemovePart(component.component_type_id)}>Remove</button>
+  <button onClick={() => handleRemovePart(component.uniqueId)}>Remove</button>
   </div>
 ))}
   </div>
@@ -219,6 +248,7 @@ const ViewParts = () => {
   <Part 
     key={index} 
     id={component.component_type_id} 
+    uniqueId = {component.uniqueId}
     name={component.name} 
     type={component.type} 
     description={component.description} 
