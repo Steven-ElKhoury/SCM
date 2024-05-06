@@ -734,7 +734,7 @@ app.get('/gettingByproductTypeList', (req, res) => {
   })
 })
 
- /////////////////////////////////////////// //new purch:
+ /////new purch: update tables
  app.get('/availableQuantityCheck', (req, res) => {
   const modelID = req.query.byProductName;
   const query = `
@@ -824,28 +824,6 @@ app.post('/update_model', (req, res) => {
   );
 });
 
-/*
-app.get('/getModelIdByName', (req, res) => {
-  const modelName = req.query.name;  // Get the model name from query parameters
-  const query = 'SELECT model_id FROM model WHERE name = ?';
-
-  db.query(query, [modelName], (err, result) => {
-      if (err) {
-          console.error("Error retrieving model ID:", err);
-          res.status(500).send('Error retrieving model ID');
-          return;
-      }
-
-      if (result.length === 0) {
-          res.status(404).send('Model not found');
-          return;
-      }
-
-      const modelId = result[0].model_id;
-      res.send({ modelId: modelId });
-  });
-});
-*/
 app.get('/get_byproduct_stock', (req, res) => {
   const modelID = req.query.modelID; 
   const query = 'SELECT byproduct_storage_current_stock FROM byproduct_storage WHERE model_id = ? ORDER BY byproduct_storage_current_stock DESC LIMIT 1';
@@ -952,8 +930,387 @@ app.get('/highest_stock_unit_ID', (req, res) => {
             res.send({ message: 'Updated order by product successfully', affectedRows: updateResults.affectedRows });
         });
     });
+//////////////////////////////////////////////////manufacture////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+app.get('/getAllModels', (req, res) => {
+  const query = `
+  SELECT m.model_id, m.name, m.quantity, bc.category_name
+  FROM model m INNER JOIN bike_category bc ON m.bike_category_id = bc.bike_category_id;
+`;
+  db.query(query, (err, result) => {
+      if (err) {
+          console.error("Error retrieving models", err);
+          res.status(500).send('Error retrieving models');
+          return;
+      }
+
+      if (result.length === 0) {
+          res.status(404).send('Error retrieving models: not found');
+          return;
+      }
+      res.send(result);
+  });
+});
+
+//update tables:
+app.get('/availableStorage', (req, res) => {
+  const model_id = req.query.model_id;
+  const query = `
+  SELECT SUM(byproduct_storage_capacity - byproduct_storage_current_stock) AS available_space
+  FROM byproduct_storage
+  WHERE bike_category_id = (
+      SELECT bike_category_id
+      FROM model
+      WHERE model_id = ?
+  );
+  `;
+
+  db.query(query, [model_id], (err, results) => {
+      if (err) {
+          console.error("Error retrieving available storage space", err);
+          return res.status(500).send('Error retrieving available storage space');
+      }
+      res.send({ availableSpace: results[0].available_space || 0 });
+  });
+});
+
+
+app.post('/updateModel', (req, res) => {
+  const { modelID, quantity } = req.body;
+
+  // Update model quantity
+  const updateModelQuery = `
+      UPDATE model
+      SET quantity = quantity + ?
+      WHERE model_id = ?;
+  `;
+
+  db.query(updateModelQuery, [quantity, modelID], (err, modelResults) => {
+      if (err) {
+          console.error("Error updating model quantity:", err);
+          return res.status(500).send('Error updating model quantity');
+      }
+      res.send({ message: 'Updated model quantity successfully', affectedRows: modelResults.affectedRows });
+      });
+  });
+
+    app.get('/highest_capacity_unit_ID', (req, res) => {
+      const modelID = req.query.modelID; 
+      const query = `
+      SELECT 
+      bs.byproduct_storage_id,
+      (bs.byproduct_storage_capacity - bs.byproduct_storage_current_stock) AS available_space
+  FROM 
+      byproduct_storage bs
+  JOIN 
+      (SELECT bike_category_id FROM model WHERE model_id = ?) AS m
+  ON 
+      bs.bike_category_id = m.bike_category_id
+  ORDER BY 
+      available_space DESC
+  LIMIT 1;
+    `;
+    
+      db.query(query, [modelID], (err, result) => {
+          if (err) {
+              console.error("Error retrieving unit id of highest capacity", err);
+              res.status(500).send('Error retrieving id of highest capacity');
+              return;
+          }
+    
+          if (result.length === 0) {
+              res.status(404).send('id of highest capacity not found');
+              return;
+          }
+    
+          const byproduct_storage_id = result[0].byproduct_storage_id;
+          const available_space = result[0].available_space;
+          res.send({ unit_id: byproduct_storage_id ,
+            available_space: available_space
+          });
+      });
+    });
+
+app.post('/manufactureByproduct', (req, res) => {
+  const { ModelID,unit_id } = req.body;
+      const updateQuery = `
+      insert into produced_byproduct (model_id,sold,byproduct_storage_id)
+      values(? , 0 , ?)
+      `;
+      db.query(updateQuery, [ModelID, unit_id], (err, updateResults) => {
+          if (err) {
+              console.error("Error adding by products:", err);
+              res.status(500).send('Error adding by products');
+              return;
+          }
+          res.send({ message: 'Updated Produced_byproduct successfully', affectedRows: updateResults.affectedRows });
+      });
+  });
+
+  app.get('/getBlueprint', (req, res) => {
+    const model_id = req.query.model_id;
+    console.log(model_id)
+    const query = `
+    SELECT 
+    model_id,
+    component_type_id,
+    count(component_type_id) AS number_of_components
+  FROM 
+    blueprint
+  WHERE 
+    model_id = ?
+  GROUP BY 
+    model_id,component_type_id;
+    `;
+  
+    db.query(query, [model_id], (err, results) => {
+      
+        if (err) {
+            console.error("Error retrieving blueprint", err);
+            return res.status(500).send('Error retrieving blueprint');
+        }
+      console.log(results);
+      res.send(results);
+    });
+  });
+
+  app.get('/availableComponents', async (req, res) => {
+    const model_id = req.query.model_id;
+    const manufactureQuantity = parseInt(req.query.quantity, 10)
+    try {
+        const blueprintQuery = `
+            SELECT component_type_id, COUNT(*) AS required_number
+            FROM blueprint
+            WHERE model_id = ?
+            GROUP BY component_type_id;
+        `;
+        const [blueprintResults] = await db.promise().query(blueprintQuery, [model_id]);
+        const componentChecks = blueprintResults.map(async (item) => {
+            const totalRequired = item.required_number * manufactureQuantity;
+            const availableQuery = `
+                SELECT quantity
+                FROM component_type
+                WHERE component_type_id = ?;
+            `;
+            const [availableResults] = await db.promise().query(availableQuery, [item.component_type_id]);
+            return {
+                component_type_id: item.component_type_id,
+                required: totalRequired,
+                available: availableResults[0] ? availableResults[0].quantity : 0,
+                isEnough: availableResults[0] && availableResults[0].quantity >= totalRequired
+            };
+        });
+
+        const results = await Promise.all(componentChecks);
+        res.json(results);
+    } catch (error) {
+        console.error("Error checking component availability:", error);
+        res.status(500).send('Error checking component availability');
+    }
+});app.post('/updateComponentQuantity', async (req, res) => {
+  const { component_type_id, decrement } = req.body;
+  try {
+      const updateQuery = `
+          UPDATE component_type
+          SET quantity = quantity - ?
+          WHERE component_type_id = ?;
+      `;
+      await db.promise().query(updateQuery, [decrement, component_type_id]);
+      res.send({ message: `Component stock for ${component_type_id} decreased by ${decrement}` });
+  } catch (error) {
+      console.error("Error updating component quantity:", error);
+      res.status(500).send('Error updating component quantity');
+  }
+});
+
+/*
+//this is where things are wrong:
+app.post('/updateComponentStorageStock', async (req, res) => {
+  const { component_type_id, required_quantity } = req.body;
+  try {
+      const storageQuery = `
+          SELECT cs.component_storage_id, cs.component_storage_current_stock
+          FROM component_storage AS cs
+          JOIN component_type AS ct ON cs.part_category_id = ct.part_category_id
+          WHERE ct.component_type_id = ?
+          ORDER BY cs.component_storage_current_stock DESC;
+      `;
+      const storages = await db.promise().query(storageQuery, [component_type_id]);
+      console.log(component_type_id,required_quantity)
+      console.log("Type of component_type_id: ", typeof component_type_id);
+      console.log("Type of required_quantity: ", typeof required_quantity);
+      console.log("splitttttttttttttttttttttttttttttttttttttttttttt")
+
+      const results = await decrementStock(storages, required_quantity);
+
+      if (results.unmetQuantity > 0) {
+          res.status(400).send({ message: "Not enough stock available", details: results });
+      } else {
+          res.send({
+              message: "Stock updated successfully",
+              details: results
+          });
+      }
+  } catch (error) {
+      console.error("Error updating component storage stock:", error);
+      res.status(500).send('Error updating component storage stock');
+  }
+});
+
+async function decrementStock(storages, quantityNeeded, index = 0) {
+  console.log("Received storages: ", storages);
+  console.log("Type of storages: ", typeof storages);
+  console.log("Received required_quantity: ", quantityNeeded);
+  console.log("Type of required_quantity: ", typeof quantityNeeded);
+
+    if (quantityNeeded <= 0 || index >= storages.length) {
+        return { unmetQuantity: quantityNeeded, updates: [] };
+    }
+
+    const storage = storages[index][0];
+    if (!storage || storage.component_storage_current_stock === undefined || storage.component_storage_id === undefined) {
+        console.error("Storage data is missing or incorrect:", storage);
+        return { unmetQuantity: quantityNeeded, updates: [] };
+    }
+
+console.log(quantityNeeded, storage.component_storage_current_stock)
+console.log("Type of quantityNeeded: ", typeof quantityNeeded);
+console.log("Type of storage.component_storage_current_stock: ", typeof storage.component_storage_current_stock);
+    
+const decrement = Math.min(quantityNeeded, storage.component_storage_current_stock);
+console.log("decrement: ",decrement ," type of decrement: ",typeof decrement)
+
+    const newStock = storage.component_storage_current_stock - decrement;
+    console.log(`Attempting to update stock: newStock = ${newStock}, component_storage_id = ${storage.component_storage_id}`);
+
+    if (isNaN(newStock) || newStock < 0) {
+        console.error("Computed stock is NaN or negative:", newStock);
+        return { unmetQuantity: quantityNeeded, updates: [] }; 
+    }
+
+    const updateQuery = `
+        UPDATE component_storage
+        SET component_storage_current_stock = ?
+        WHERE component_storage_id = ?;
+    `;
+
+    await db.promise().query(updateQuery, [newStock, storage.component_storage_id]).catch(err => {
+        console.error("Failed to update stock:", err);
+        throw err;  
+    });
+
+    const updates = [{
+        component_storage_id: storage.component_storage_id,
+        decremented: decrement
+    }];
+
+    const remainingResult = await decrementStock(storages, quantityNeeded - decrement, index + 1);
+    return {
+        unmetQuantity: remainingResult.unmetQuantity,
+        updates: [...updates, ...remainingResult.updates]
+    };
+}
+
+app.post('/finalizeComponentUpdates', async (req, res) => {
+  const { componentStorageId, numComponentsUpdated, componentTypeId } = req.body;
+  try {
+      const selectQuery = `
+          SELECT component_id FROM component
+          WHERE component_storage_id = ? AND component_type_id = ? AND sold = 0
+          LIMIT ?;
+      `;
+      const [componentsToUpdate] = await db.promise().query(selectQuery, [componentStorageId, componentTypeId, numComponentsUpdated]);
+
+console.log("componentsToUpdate: ",componentsToUpdate)
+console.log("typeof componentsToUpdate: ", typeof componentsToUpdate)
+
+      if (componentsToUpdate.length === 0) {
+          res.status(404).send('No components found to update.');
+          return;
+      }
+
+      const updateQuery = `
+          UPDATE component
+          SET sold = 1, component_storage_id = NULL
+          WHERE component_id IN (?);
+      `;
+      const componentIds = componentsToUpdate.map(comp => comp.component_id);
+      await db.promise().query(updateQuery, [componentIds]);
+
+      res.send({ message: 'Components updated successfully', updatedCount: componentsToUpdate.length });
+  } catch (error) {
+      console.error("Error updating components:", error);
+      res.status(500).send('Error updating components');
+  }
+});
+*/
+app.post('/startManufacturing', async (req, res) => {
+  const { model_id, quantity } = req.body;
+
+  try {
+      // First, retrieve the blueprint to know how many of each component type are needed
+      const blueprintResults = await db.promise().query(
+          `SELECT component_type_id, COUNT(*) AS needed 
+           FROM blueprint WHERE model_id = ? GROUP BY component_type_id`,
+          [model_id]
+      );
+
+      for (let { component_type_id, needed } of blueprintResults[0]) {
+          needed *= quantity; // Calculate total components needed based on the order quantity
+
+          while (needed > 0) {
+              // Fetch the storage location with the highest specific component count
+              const availableComponents = await db.promise().query(
+                  `SELECT c.component_storage_id, COUNT(*) AS component_count
+                   FROM component c
+                   WHERE c.component_type_id = ? AND c.sold = 0
+                   GROUP BY c.component_storage_id
+                   ORDER BY component_count DESC 
+                   LIMIT 1;`,
+                  [component_type_id]
+              );
+
+              if (availableComponents[0].length === 0) {
+                  res.status(400).send({ message: "Insufficient component stock available for type: " + component_type_id });
+                  return;
+              }
+
+              // Determine the number of components to mark as sold
+              const { component_storage_id, component_count } = availableComponents[0][0];
+              const updateCount = Math.min(needed, component_count);
+
+              // Mark components as sold and remove them from storage
+              await db.promise().query(
+                  `UPDATE component 
+                   SET sold = 1, component_storage_id = NULL 
+                   WHERE component_type_id = ? AND component_storage_id = ? AND sold = 0
+                   LIMIT ?`,
+                  [component_type_id, component_storage_id, updateCount]
+              );
+
+              // Decrement the needed count
+              needed -= updateCount;
+
+              // Decrement the stock in the storage
+              await db.promise().query(
+                  `UPDATE component_storage 
+                   SET component_storage_current_stock = component_storage_current_stock - ?
+                   WHERE component_storage_id = ?`,
+                  [updateCount, component_storage_id]
+              );
+          }
+      }
+
+      res.send({ message: "Manufacturing started successfully" });
+  } catch (error) {
+      console.error("Error in manufacturing process:", error);
+      res.status(500).send({ message: "Failed to start manufacturing process", error });
+  }
+});
+
+
+
+//////////////////////////////////////////END FADEL/////////////////////////////////////////////////////////////
 
 app.post('/createOrder', (req, res) => {
   const { managerId, employeeId, dateOrdered, price, quantity, offering_id, userRole } = req.body;
@@ -980,10 +1337,6 @@ app.post('/createOrder', (req, res) => {
     res.send({ message: 'Created order successfully', insertId: result.insertId });
   });
 });
-
-
-
-
 
 
 
