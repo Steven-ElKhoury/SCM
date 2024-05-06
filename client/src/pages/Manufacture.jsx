@@ -7,6 +7,9 @@ import { styled } from '@mui/system';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const StyledTable = styled(Table)({
     minWidth: 650,
 });
@@ -239,9 +242,7 @@ const handleCheckComponentsAndManufacture = async (model_id, quantity) => {
                         console.error(`Error updating component ${component_type_id}:`, error);
                     });
                 }
-                
-                console.log("All component_type quantity updated successfully.");
-                
+
                 /* this code has been removed because it contains a logical error (updating storage before components)
                 keep for later reference
                 for (const [component_type_id, num_components] of Object.entries(blueprintDict)) {
@@ -260,6 +261,16 @@ const handleCheckComponentsAndManufacture = async (model_id, quantity) => {
                 } catch (error) {
                     console.error('Error starting manufacturing process:', error);
                 }
+                //alert(`Successfully manufactured ${parsedQuantity} unit(s) of model ID ${model_id}.`);\
+                toast.success(`Successfully manufactured ${parsedQuantity} units of model ID ${model_id}.`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
 
             } else {
                 console.error("Invalid quantity");
@@ -272,7 +283,8 @@ const handleCheckComponentsAndManufacture = async (model_id, quantity) => {
           
     return (
         <div>
-            <Title variant="h4">Models</Title>  
+            <Title variant="h4">Models</Title> 
+            <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover /> 
             <TableContainer  style={{ width: '97%', marginRight: '20px' }} component={Paper}>
             <TextField placeholder="Search" variant="outlined" value={search} onChange={e => setSearch(e.target.value)} />
                 <Table>
