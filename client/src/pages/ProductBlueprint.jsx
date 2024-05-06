@@ -19,9 +19,12 @@ const ProductBlueprint = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedTypeComponents, setSelectedTypeComponents] = useState([]);
   const { modelId } = useParams();
-
+  const [counterState, setCounterState] = useState(0);
+  let counter = 0;
 
   useEffect(() => {
+    dispatch({ type: 'EMPTY_BLUEPRINT' });
+
     axios.get('http://localhost:3001/getParts')
       .then(response => {
         setComponents(response.data);
@@ -49,30 +52,32 @@ const ProductBlueprint = () => {
       console.error('Quantity must be greater than 0');
       return;
     }
-  
+    
     // Check if a part of the selected type already exists in the blueprint
-    const existingPart = blueprint.find(part => part.type === component.type);
+    // const existingPart = blueprint.find(part => part.type === component.type);
 
-    if (existingPart) {
-      // If it does, update the quantity of that part
-      dispatch({
-        type: 'UPDATE_PART_IN_BLUEPRINT',
-        item: {
-          id: component.component_type_id,
-          name: component.name,
-          type: component.type,
-          description: component.description,
-          image: component.image_url,
-          modelNumber: component.model_number,    
-        },
-      });
-    } else {
+    // if (existingPart) {
+    //   // If it does, update the quantity of that part
+    //   dispatch({
+    //     type: 'UPDATE_PART_IN_BLUEPRINT',
+    //     item: {
+    //       id: component.component_type_id,
+    //       name: component.name,
+    //       type: component.type,
+    //       description: component.description,
+    //       image: component.image_url,
+    //       modelNumber: component.model_number,    
+    //     },
+    //   });
+    // } else {
       // If it doesn't, add a new part to the blueprint
+      counter = counterState;
       console.log('selectedComponent', component);
       dispatch({
         type: 'ADD_TO_BLUEPRINT',
         item: {
           id: component.component_type_id,
+          uniqueId: counter++,
           name: component.name,
           type: component.type,
           description: component.description,
@@ -80,16 +85,15 @@ const ProductBlueprint = () => {
           modelNumber: component.model_number,    
         },
       });
-    }
-  
+    setCounterState(counter);
     setSelectedComponent(null);
     setQuantity(1);
   };
 
-  const handleRemovePart = (partId) => {
+  const handleRemovePart = (uniqueId) => {
     dispatch({
       type: 'REMOVE_FROM_BLUEPRINT',
-      id: partId,
+      id: uniqueId,
     });
   };
 
@@ -150,6 +154,7 @@ const ProductBlueprint = () => {
   <Part 
     key={index} 
     id={component.id} 
+    uniqueId={component.uniqueId}
     name={component.name} 
     type={component.type} 
     description={component.description} 
@@ -157,7 +162,7 @@ const ProductBlueprint = () => {
     modelNumber={component.modelNumber} 
     editable={false} 
   />
-  <button onClick={() => handleRemovePart(component.id)}>Remove</button>
+  <button onClick={() => handleRemovePart(component.uniqueId)}>Remove</button>
   </div>
 ))}
   </div>

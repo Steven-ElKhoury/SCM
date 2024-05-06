@@ -5,7 +5,7 @@ import axios from 'axios';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faBox, faTools } from '@fortawesome/free-solid-svg-icons';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis,Cell,Pie,PieChart, CartesianGrid, Tooltip, Legend,ResponsiveContainer } from 'recharts';
 
 const Dashboard = () => {
   // Sample data arrays
@@ -15,23 +15,69 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
+  const [inventoryData, setInventoryData] = useState([]);
+  const [inventoryBikeData, setInventoryBikeData] = useState([]);
   
-  const inventoryData = [
-    { unit: 'Unit A', Handlebars: 20, Frames: 50, Saddles: 30, Chains: 0, Wheels: 0, Pedals: 0, Forks: 0, Brakes: 0, Tires: 0, 'Mountain Bike': 0, BMX: 0, 'Hybrid Bike': 0, 'Road Bike': 0 },
-    { unit: 'Unit B', Handlebars: 0, Frames: 0, Saddles: 0, Chains: 40, Wheels: 70, Pedals: 50, Forks: 0, Brakes: 0, Tires: 0, 'Mountain Bike': 0, BMX: 0, 'Hybrid Bike': 0, 'Road Bike': 0 },
-    { unit: 'Unit C', Handlebars: 0, Frames: 0, Saddles: 0, Chains: 0, Wheels: 0, Pedals: 0, Forks: 30, Brakes: 40, Tires: 60, 'Mountain Bike': 0, BMX: 0, 'Hybrid Bike': 0, 'Road Bike': 0 },
-    { unit: 'Unit D', Handlebars: 0, Frames: 0, Saddles: 0, Chains: 0, Wheels: 0, Pedals: 0, Forks: 0, Brakes: 0, Tires: 0, 'Mountain Bike': 100, BMX: 100, 'Hybrid Bike': 100, 'Road Bike': 100 },
-    // Add more data as needed
-  ];
+ 
   
-  const productionData = [
-    { name: 'January', output: 50, defects: 5 },
-    { name: 'February', output: 70, defects: 7 },
-    { name: 'March', output: 90, defects: 9 },
-    // Add more data as needed
-  ];
+ 
+  useEffect(() => {
+    const fetchInventoryData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/getPartWarehouses');
+        console.log('Response data:', response.data); // Log the response data
 
+        // Process response data to extract significant inventory information
+        const processedData = response.data.map(item => {
+          // Calculate percentage of current stock
+          const currentStockPercentage = (item.component_storage_current_stock / item.component_storage_capacity) * 100;
 
+          return {
+            unit: item.component_storage_name,
+            currentStockPercentage,
+            capacity: item.component_storage_capacity,
+            currentStock : item.component_storage_current_stock
+          };
+        });
+
+        setInventoryData(processedData);
+      } catch (error) {
+        console.error('Error fetching inventory data:', error);
+      }
+    };
+
+    fetchInventoryData();
+  }, []);
+  
+  useEffect(() => {
+    const fetchBikeInventoryData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/getProductWarehouses');
+        console.log('Response data:', response.data); // Log the response data
+
+        // Process response data to extract significant inventory information
+        const processedBikeData = response.data.map(item => {
+          // Calculate percentage of current stock
+          const currentStockBikePercentage = (item.byproduct_storage_current_stock / item.byproduct_storage_capacity) * 100;
+
+          return {
+            unit: item.byproduct_storage_name,
+            currentStockBikePercentage,
+            capacity: item.byproduct_storage_capacity,
+            currentStock : item.byproduct_storage_current_stock
+          };
+        });
+
+        setInventoryBikeData(processedBikeData);
+      } catch (error) {
+        console.error('Error fetching inventory data:', error);
+      }
+    };
+
+    fetchBikeInventoryData();
+  }, []);
+
+ 
   useEffect(() => {
     const fetchCustomerOrders = async () => {
       try {
@@ -175,7 +221,20 @@ const Dashboard = () => {
     fetchSuppliersData();
   }, []);
   const colors = ['#8884d8', '#82ca9d', '#ffc658', '#e34c26', '#ff7f0e', '#2ca02c', '#9467bd', '#8c564b', '#1f77b4', '#ff00ff', '#ff99ff', '#33cc33', '#ff3300'];
-
+  const colorfulBeautifulColors = [
+    
+      '#2980b9', // Dark cerulean
+      '#8e44ad', // Deep lavender
+      '#27ae60', // Dark sea green
+      '#e67e22', // Gamboge
+      '#c0392b', // Dark terra cotta
+      '#16a085', // Dark cyan
+      '#f39c12', // Dark tangerine
+      '#2980b9'  // Dark cerulean
+  
+    
+  ];
+  
   const scrollToSection = (id) => {
     const section = document.getElementById(id);
     section.scrollIntoView({ behavior: 'smooth' });
@@ -263,56 +322,54 @@ const Dashboard = () => {
         </div>
         {/* Inventory Section */}
         <div className="chart-container" id="inventory-section">
-          <div className="chart">
-            <h2>Inventory Breakdown</h2>
-            <BarChart width={800} height={400} data={inventoryData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="unit" type="category" />
-              <Tooltip />
-              <Legend />
-              {Object.keys(inventoryData[0]).map((key, index) => (
-                key !== 'unit' &&
-                <Bar key={key} dataKey={key} stackId="a" fill={colors[index]} />
-              ))}
-            </BarChart>
-          </div>
-          <div className="stat-box-container">
-            {inventoryData.map((item, index) => (
-              <div className="stat-box inventory" key={index} onClick={() => scrollToSection('inventory-section')} style={{ backgroundColor: colors[index] }}>
-                <FontAwesomeIcon icon={faBox} className="stat-icon" />
-                <div className="stat-content">
-                  <h3>{item.unit} </h3>
-                  <p>{ordersData.reduce((total, order) => total + order.total_price, 0)}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        {/* Production Section */}
-        <div className="chart-container" id="production-section">
-          <div className="chart">
-            <h2>Production Output</h2>
-            <LineChart width={800} height={400} data={productionData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="output" stroke="#118ab2" />
-              <Line type="monotone" dataKey="defects" stroke="#ef476f" />
-            </LineChart>
-          </div>
-          <div className="stat-box-container">
-            <div className="stat-box production" onClick={() => scrollToSection('production-section')}>
-              <FontAwesomeIcon icon={faTools} className="stat-icon" />
-              <div className="stat-content">
-                <h3>Production Output</h3>
-                <p>210</p>
-              </div>
+      <div className="chart">
+        <h2>Inventory Breakdown for the Parts warehouse</h2>
+        <BarChart width={800} height={400} data={inventoryData} layout="vertical">
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis type="number" />
+          <YAxis dataKey="unit" type="category" />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="currentStockPercentage" stackId="a" fill={colorfulBeautifulColors[0]} name="Current Stock Percentage" />
+        </BarChart>
+      </div>
+      <div className="stat-box-container">
+        {inventoryData.map((item, index) => (
+          <div className="stat-box inventory" key={index} style={{ backgroundColor: colorfulBeautifulColors[index] }}>
+            <FontAwesomeIcon icon={faBox} className="stat-icon" />
+            <div className="stat-content">
+              <h3>{item.unit}</h3>
+              <p>Available Space: {item.capacity - item.currentStock} units</p>
             </div>
           </div>
-        </div>
+        ))}
+      </div>
+    </div>
+    <div className="chart-container" id="inventory-section">
+      <div className="chart">
+        <h2>Inventory Breakdown for the Bikes warehouse</h2>
+        <BarChart width={800} height={400} data={inventoryBikeData} layout="vertical">
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis type="number" />
+          <YAxis dataKey="unit" type="category" />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="currentStockPercentage" stackId="a" fill={colorfulBeautifulColors[0]} name="Current Stock Percentage" />
+        </BarChart>
+      </div>
+      <div className="stat-box-container">
+        {inventoryBikeData.map((item, index) => (
+          <div className="stat-box inventory" key={index} style={{ backgroundColor: colorfulBeautifulColors[index+3] }}>
+            <FontAwesomeIcon icon={faBox} className="stat-icon" />
+            <div className="stat-content">
+              <h3>{item.unit}</h3>
+              <p>Available Space: {item.capacity - item.currentStock} units</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
         {/* Suppliers Section */}
         <div className="chart-container" id="suppliers-section">
           <div className="chart">
