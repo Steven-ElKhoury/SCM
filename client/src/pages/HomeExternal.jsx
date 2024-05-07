@@ -37,7 +37,7 @@ const Home = () => {
     <div>
      
     <div className="home-container">
-      {/* <div className="header">
+      <div className="header">
         <div className="header-content">
           <Typography variant="h2" className="title animated-title">
             Welcome to Bike Chain Our Bike Factory SCM
@@ -52,7 +52,7 @@ const Home = () => {
             
           </div>
         </div>
-      </div> */}
+      </div>
 
       <div className="home-container">
 
@@ -60,9 +60,9 @@ const Home = () => {
         <div className="hero-content">
           <h1>Streamline Your Bike Factory's Supply Chain with Bike Chain</h1>
           <p>Empower your bike manufacturing process with our comprehensive supply chain management solution.</p>
-          {/* <Link to="/register" className="cta-button">
+          <Link to="/register" className="cta-button">
             Get Started <FontAwesomeIcon icon={faArrowRight} className="button-icon" />
-          </Link> */}
+          </Link>
         </div>
       </section>
 
@@ -171,7 +171,7 @@ const Home = () => {
     </section>
 
     </div>
-      <div className="chart-container">
+      {/* <div className="chart-container">
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <Card className="chart-card">
@@ -215,11 +215,12 @@ const Home = () => {
             </Card>
           </Grid>
 
-          {/* Add other charts here */}
+
 
           
         </Grid>
-      </div>
+      </div> 
+    */}
 
      
     </div>

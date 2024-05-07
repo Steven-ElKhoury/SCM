@@ -5,13 +5,14 @@ import Register from './Register'
 import About from './About'
 import InitialTopBar from './InitialTopBar'
 import Home from './Home'
+import HomeExternal from './HomeExternal'
 
 const LandingPage = () => {
   return (
     <>
         <InitialTopBar />
             <Routes>
-                  <Route path="/" element={<Home />} />
+                  <Route path="/" element={<HomeExternal />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/about" element={<About />} />
