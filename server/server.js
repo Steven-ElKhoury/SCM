@@ -90,69 +90,12 @@ app.post('/userexists', (req, res) => {
           res.send('no user found')
         }else{
           res.send('user exists')  
-          //console.log(result)
         }
       }
     }
   )
-  //err,result are what we will be done once the statement is done
 })
 
-
-app.post('/getpublisheraddress', (req, res) => {
-  const book_id = req.body.Book_ID
-  console.log("booooooooooooooooook id == "+book_id)
-  db.query(
-    //'INSERT INTO employees (name,age,country,position,wage) VALUES (?,?,?,?,?)',
-    'SELECT address from BOOK B, PUBLISHER P WHERE B.publisher_name = P.publisher_name and B.book_id = ? ',
-    [book_id],
-    (err, result) => {
-      if (err) {
-        console.log(err)
-      } else {
-        res.send('values Inserted') //sending a message to our request to know that things worked
-         console.log(result)
-      }
-    }
-  )
-  //err,result are what we will be done once the statement is done
-})
-/*
-app.get('/gettingproducts', (req, res) => {
-  db.query('SELECT * FROM product', (err, result) => {
-    if (err) {
-      console.log(err)
-    } else {
-      console.log('greeaat sucess');
-      console.log("result:::::::::::::::"+result);
-      res.send(result) //to send the data that we got from our query
-    }
-  })
-})
-*/
-
-/*
-app.post('/create', (req, res) => {
-  const name = req.body.name
-  const age = req.body.age
-  const country = req.body.country
-  const position = req.body.position
-  const wage = req.body.wage
-
-  db.query(
-    'INSERT INTO employees (name,age,country,position,wage) VALUES (?,?,?,?,?)',
-    [name, age, country, position, wage],
-    (err, result) => {
-      if (err) {
-        console.log(err)
-      } else {
-        res.send('values Inserted') //sending a message to our request to know that things worked
-      }
-    }
-  )
-  //err,result are what we will be done once the statement is done
-})
-*/
 
 app.get('/getpendingemployees', (req, res) => {
   db.query('SELECT * FROM EMPLOYEE WHERE pending = 1', (err, result) => {
@@ -294,17 +237,15 @@ app.post('/updatePrice', async (req, res) => {
   });
   app.post('/getcomponentid', (req, res) => {
     const  selectedType  = req.body.selectedType;
-    console.log(req.body)
+    //console.log(req.body)
     db.query("Select component_type_id from component_type where name = ?", [selectedType], (err, result) => {
       if (err) {
         console.error('Error getting component id:', err);
         res.status(500).send('Error getting component id');
         return;
       }
-      console.log('get component id');
-      console.log(JSON.stringify(result))
+      //console.log(JSON.stringify(result))
       res.send(result) //to send the data that we got from our query
-      //res.status(200).send('got component id');
     });
   });
   app.get('/getsupplierid', (req, res) => {
@@ -319,7 +260,7 @@ app.post('/updatePrice', async (req, res) => {
 
 
   app.post('/addsupplieroffering', (req, res) => {
-    console.log(req.body)
+    //console.log(req.body)
     const selectedPrice = req.body.selectedPrice;
     const selectedLeadTime = req.body.leadTime;
     const supplierId = req.body.supplier_id;
@@ -337,7 +278,7 @@ app.post('/updatePrice', async (req, res) => {
     });
   });
   app.post('/accept', (req, res) => {
-    console.log(req.body)
+    //console.log(req.body)
     const employee_id = req.body.employee_id;
     const email = req.body.email;
     db.query('Update employee set pending =0 where employee_id = ?', [ employee_id], (err, result) => {
@@ -353,7 +294,7 @@ app.post('/updatePrice', async (req, res) => {
     });
   });
   app.post('/deny', (req, res) => {
-    console.log(req.body)
+    //console.log(req.body)
     const employee_id = req.body.employee_id;
     const email = req.body.email;
     db.query('delete from employee where employee_id = ?', [ employee_id], (err, result) => {
@@ -415,7 +356,6 @@ app.post('/updatePrice', async (req, res) => {
 
 
   app.get('/supplierofferings/:componentType', (req, res) => {
-    console.log('hello')
     const { componentType } = req.params;
 
     db.query('SELECT offering_id,supplier_id, supplier_name, price, lead_time FROM supplier_offerings NATURAL JOIN supplier WHERE component_type_id = ?', [componentType], (err, results) => {
@@ -423,7 +363,7 @@ app.post('/updatePrice', async (req, res) => {
         console.error(err.message);
         return res.status(500).send('Server error');
       }
-      console.log(results);
+      //console.log(results);
       res.json(results);
     });
   });
@@ -464,7 +404,7 @@ app.post('/updatePrice', async (req, res) => {
 
   app.get('/blueprint/:modelId', (req, res) => {
     const { modelId } = req.params;
-    console.log(modelId);
+    //console.log(modelId);
     const query = `
       SELECT blueprint.*, component_type.*, part_category.part_category_id, part_category.category_name as type
       FROM blueprint 
@@ -478,7 +418,7 @@ app.post('/updatePrice', async (req, res) => {
         console.error(err.message);
         return res.status(500).send('Server error');
       }
-      console.log(results);
+      //console.log(results);
       res.json(results);
     });
   });
@@ -602,7 +542,6 @@ app.post('/logout', (req, res) => {
     const name= req.body.name
 
 
-    //console.log('xx')
     bcrypt.hash(pass, saltRounds, (err, hash) => {
       if (err) {
         console.log(err)
@@ -614,9 +553,7 @@ app.post('/logout', (req, res) => {
         (err, result) => {
           if (err) {
             console.log(err)
-            console.log("he 1")
           } else {
-            console.log('he 2')
             res.send('values Inserted') 
           }
         }
@@ -660,9 +597,8 @@ app.post('/login', (req, res) => {
             bcrypt.compare(pass, result[0].password, (error, response) => {
               if (response) {
                 result[0].isadmin = 1;
-                //console.log('jaweb'+result)
                 req.session.user = result // creating a session
-                console.log('manager in house')
+                console.log('manager is logged in')
                 res.send(result)
               } else {
                 res.send({ message: 'wrong email password combination' })
@@ -677,7 +613,7 @@ app.post('/login', (req, res) => {
         bcrypt.compare(pass, result[0].password, (error, response) => {
           if (response) {
             result[0].isadmin = 0;
-            console.log('jaweb'+JSON.stringify(result))
+            //console.log(JSON.stringify(result))
             req.session.user = result // creating a session
             req.session.isadmin = 0
 
@@ -704,7 +640,6 @@ app.get('/getbyProducts', (req, res) => {
   `, (err, result) => {
     if (err) {
       console.log(err)
-      console.log("fi error")
     } else {
       res.send(result) //to send the data that we got from our query
     }
@@ -905,8 +840,7 @@ app.get('/highest_stock_unit_ID', (req, res) => {
   app.post('/update_produced_byproduct', (req, res) => {
     const { ModelID, custOrderId, ByproductQuantity,unit_id } = req.body;
     //in order to get the sold products we can do a query where byproduct_storage_id=null
-    console.log(unit_id)
-    console.log("usssssssssssssssssssssssssssssnit_id")
+    //console.log("unit_id"+unit_id)
         const updateQuery = `
         UPDATE produced_byproduct
         SET cus_orderID = ?,  sold = 1 , byproduct_storage_id = null
@@ -1049,7 +983,7 @@ app.post('/manufactureByproduct', (req, res) => {
 
   app.get('/getBlueprint', (req, res) => {
     const model_id = req.query.model_id;
-    console.log(model_id)
+    //console.log(model_id)
     const query = `
     SELECT 
     model_id,
@@ -1069,7 +1003,7 @@ app.post('/manufactureByproduct', (req, res) => {
             console.error("Error retrieving blueprint", err);
             return res.status(500).send('Error retrieving blueprint');
         }
-      console.log(results);
+      //console.log(results);
       res.send(results);
     });
   });
@@ -1316,8 +1250,8 @@ app.post('/createOrder', (req, res) => {
   const { managerId, employeeId, dateOrdered, price, quantity, offering_id, userRole } = req.body;
   const pending = 1;
 
-  console.log(managerId);
-  console.log(employeeId);
+  //console.log(managerId);
+  //console.log(employeeId);
   let query = 'INSERT INTO component_supplier_order(manager_id, employee_id, date_ordered, price, quantity, offering_id, pending) VALUES (?, ?, ?, ?, ?, ?, ?)';
 
    // Format the date
