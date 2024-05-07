@@ -70,6 +70,10 @@ body{
     background-color: grey; /* Darker color on hover */
     transform: scale(1.05); /* Slightly larger on hover */
 }
+.profilebutton2:hover {
+    background-color: grey; /* Darker color on hover */
+    transform: scale(1.05); /* Slightly larger on hover */
+}
 
 .topbutton:hover{
     background-color: grey; /* Darker color on hover */
@@ -313,6 +317,22 @@ body{
     transition: background-color 0.3s ease;
 
 }
+.profilebutton2{
+    background-color: darkgrey; /* Green */
+    border: none;
+    color: #f0f0f0; /* Lighter color */
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px; /* Smaller font size */
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+
+}
+
 
 .profilebutton::after {
     content: " \25BC"; /* Downward triangle */

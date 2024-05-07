@@ -1,6 +1,4 @@
 import React, { useState, useRef} from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faCog, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Link} from 'react-router-dom'
 
 
@@ -62,24 +60,17 @@ function TopBar() {
             <div className="User">
                 <h2 id="welcomeMessage" style={{ color: 'white' }}>Welcome, </h2>
             </div>
+
             <div className="top-bar-buttons">
-                <button className='topbutton'><FontAwesomeIcon icon={faBell} /></button>
-                <button className = 'topbutton'><FontAwesomeIcon icon={faCog} /></button>
-                <div className="profile-dropdown" ref={dropdownRef}>
-                <button className="profilebutton" onClick={toggleDropdown}><FontAwesomeIcon icon={faUser} /></button>
-                    {dropdownOpen && (
-                        <div className="dropdown-menu">
-                            {/* <button onClick={handleLogout}>Logout</button> */}
                             <Link className='nav__listitem' onClick={logout} to='/login'>
-                            <button>
+                            <button className='profilebutton2'>
                                 Logout
                                 
                                 </button>
                             </Link>
-                            <button>View Account Info</button>
-                        </div>
-                    )}
-                </div>
+                {/* <div className="profile-dropdown" ref={dropdownRef}> */}
+                {/* <button className="profilebutton" onClick={toggleDropdown}><FontAwesomeIcon icon={faUser} /></button> */}
+                {/* </div> */}
             </div>
         </div>
     );
