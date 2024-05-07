@@ -239,7 +239,15 @@ const Dashboard = () => {
     const section = document.getElementById(id);
     section.scrollIntoView({ behavior: 'smooth' });
   };
-
+  const [grossProfit, setGrossProfit] = useState(0);
+  useEffect(() => {
+    if (!loading) {
+      const revenue = parseFloat(totalRevenue);
+      const expenses = parseFloat(totalExpenses);
+      const grossProfit = revenue - expenses;
+      setGrossProfit(grossProfit.toFixed(2));
+    }
+  }, [loading, totalRevenue, totalExpenses]);
 
   return (
     <div className="dashboard">
@@ -248,10 +256,14 @@ const Dashboard = () => {
         <div className="buttons">
           <button className="button orders" onClick={() => scrollToSection('orders-section')}>Orders</button>
           <button className="button inventory" onClick={() => scrollToSection('inventory-section')}>Inventory</button>
-          <button className="button production" onClick={() => scrollToSection('production-section')}>Production</button>
           <button className="button suppliers" onClick={() => scrollToSection('suppliers-section')}>Suppliers</button>
         </div>
+        <div className="gross-profit">
+  <h2>Gross Profit</h2>
+  <p>${(totalRevenue - totalExpenses).toFixed(2)}</p>
+</div>
       </div>
+    
       <div className="graphs">
         {/* Orders Section */}
         <div className="chart-container" id="orders-section">
@@ -322,9 +334,9 @@ const Dashboard = () => {
         </div>
         {/* Inventory Section */}
         <div className="chart-container" id="inventory-section">
-      <div className="chart">
+      <div className="chart-inventory">
         <h2>Inventory Breakdown for the Parts warehouse</h2>
-        <BarChart width={800} height={400} data={inventoryData} layout="vertical">
+        <BarChart width={800} height={800} data={inventoryData} layout="vertical">
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" />
           <YAxis dataKey="unit" type="category" />
@@ -359,7 +371,7 @@ const Dashboard = () => {
       </div>
       <div className="stat-box-container">
         {inventoryBikeData.map((item, index) => (
-          <div className="stat-box inventory" key={index} style={{ backgroundColor: colorfulBeautifulColors[index+3] }}>
+          <div className="stat-box inventory" key={index} style={{ backgroundColor: colorfulBeautifulColors[index] }}>
             <FontAwesomeIcon icon={faBox} className="stat-icon" />
             <div className="stat-content">
               <h3>{item.unit}</h3>

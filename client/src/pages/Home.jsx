@@ -58,7 +58,7 @@ const Home = () => {
 
       <section className="hero">
         <div className="hero-content">
-          <h1>Streamline Your Bike Factory's Supply Chain with Bike Chain</h1>
+          <h1>Streamline Your Bike Factory's Supply Chain with Pedal SCM</h1>
           <p>Empower your bike manufacturing process with our comprehensive supply chain management solution.</p>
           {/* <Link to="/register" className="cta-button">
             Get Started <FontAwesomeIcon icon={faArrowRight} className="button-icon" />
@@ -165,6 +165,10 @@ const Home = () => {
           <li>Track production trends to identify patterns and areas for improvement.</li>
           <li>Monitor supplier performance and order volumes to ensure timely procurement.</li>
           <li>Analyze inventory levels to prevent stockouts and reduce carrying costs.</li>
+          
+        <Link to="/main/Dashboard" className="dashboard-link">
+          Go to Dashboard <FontAwesomeIcon icon={faArrowRight} className="button-icon" />
+        </Link> 
           {/* Add more points as needed */}
         </ul>
       </div>
