@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
--- Host: localhost    Database: trial_library
+-- Host: localhost    Database: supply_chain
 -- ------------------------------------------------------
 -- Server version	8.0.33
 
@@ -16,28 +16,32 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `publisher`
+-- Table structure for table `byproduct_storage`
 --
 
-DROP TABLE IF EXISTS `publisher`;
+DROP TABLE IF EXISTS `byproduct_storage`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `publisher` (
-  `publisher_name` varchar(30) NOT NULL,
-  `ADDRESS` varchar(100) NOT NULL,
-  `PHONE` decimal(8,0) DEFAULT NULL,
-  PRIMARY KEY (`publisher_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `byproduct_storage` (
+  `byproduct_storage_id` int NOT NULL AUTO_INCREMENT,
+  `byproduct_storage_name` varchar(50) DEFAULT NULL,
+  `byproduct_storage_capacity` int DEFAULT NULL,
+  `byproduct_storage_size` double DEFAULT NULL,
+  `byproduct_storage_current_stock` int DEFAULT NULL,
+  `bike_category_id` int DEFAULT NULL,
+  PRIMARY KEY (`byproduct_storage_id`),
+  KEY `bike_category_id_idx` (`bike_category_id`),
+  CONSTRAINT `fk_bike_category_id` FOREIGN KEY (`bike_category_id`) REFERENCES `bike_category` (`bike_category_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `publisher`
+-- Dumping data for table `byproduct_storage`
 --
 
-LOCK TABLES `publisher` WRITE;
-/*!40000 ALTER TABLE `publisher` DISABLE KEYS */;
-INSERT INTO `publisher` VALUES ('publisher_2','Texas',11111111),('Warner Bros','California',12345678);
-/*!40000 ALTER TABLE `publisher` ENABLE KEYS */;
+LOCK TABLES `byproduct_storage` WRITE;
+/*!40000 ALTER TABLE `byproduct_storage` DISABLE KEYS */;
+/*!40000 ALTER TABLE `byproduct_storage` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -49,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-01-16 22:42:51
+-- Dump completed on 2024-05-07 20:38:21

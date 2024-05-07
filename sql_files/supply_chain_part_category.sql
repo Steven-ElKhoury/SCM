@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
--- Host: localhost    Database: trial_library
+-- Host: localhost    Database: supply_chain
 -- ------------------------------------------------------
 -- Server version	8.0.33
 
@@ -16,30 +16,29 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `book`
+-- Table structure for table `part_category`
 --
 
-DROP TABLE IF EXISTS `book`;
+DROP TABLE IF EXISTS `part_category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `book` (
-  `book_id` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(40) NOT NULL,
-  `publisher_name` varchar(30) NOT NULL,
-  PRIMARY KEY (`book_id`),
-  KEY `publisher_name` (`publisher_name`),
-  CONSTRAINT `book_ibfk_1` FOREIGN KEY (`publisher_name`) REFERENCES `publisher` (`publisher_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `part_category` (
+  `part_category_id` int NOT NULL AUTO_INCREMENT,
+  `category_name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`part_category_id`),
+  UNIQUE KEY `part_category_id_UNIQUE` (`part_category_id`),
+  UNIQUE KEY `category_name_UNIQUE` (`category_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `book`
+-- Dumping data for table `part_category`
 --
 
-LOCK TABLES `book` WRITE;
-/*!40000 ALTER TABLE `book` DISABLE KEYS */;
-INSERT INTO `book` VALUES (1,'petit canard','Warner Bros');
-/*!40000 ALTER TABLE `book` ENABLE KEYS */;
+LOCK TABLES `part_category` WRITE;
+/*!40000 ALTER TABLE `part_category` DISABLE KEYS */;
+INSERT INTO `part_category` VALUES (10,'Brakes'),(11,'Frame'),(14,'Pedals'),(5,'Saddle'),(7,'Seatpost'),(13,'Tyres'),(3,'Wheels');
+/*!40000 ALTER TABLE `part_category` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -51,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-01-16 22:42:51
+-- Dump completed on 2024-05-07 20:38:21
