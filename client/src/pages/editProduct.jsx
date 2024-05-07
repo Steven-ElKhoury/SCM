@@ -182,7 +182,9 @@ function EditProduct() {
             </Button>
             </DialogActions>
             </Dialog>
-            <h1 style={{ 'textAlign': 'center'}} className="create-product-header">Edit Product</h1>
+            <div className="create-product-header">
+            <h1 style={{ 'textAlign': 'center'}} >Edit Product</h1>
+            </div>
             <div className="create-product-form-container">   
                 <form className="create-product-form" onSubmit={handleEdit}>
                     <div className='input-group'>

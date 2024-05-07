@@ -170,8 +170,9 @@ function EditPart() {
             </Button>
             </DialogActions>
             </Dialog>
-
-        <h1 style={{ 'textAlign': 'center'}}className="create-part-header">Edit Part</h1>
+    <div className="create-part-header">
+        <h1 style={{ 'textAlign': 'center'}} >Edit Part</h1>
+    </div>
     <div className="create-part-form-container">   
     <form className="create-part-form" onSubmit={handleEdit}>
            <div className='input-group'>

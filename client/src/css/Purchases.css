@@ -60,9 +60,9 @@
 }
 
 /* Input styles */
-input[type="text"],
-input[type="number"],
-input[type="date"] {
+#purchases-page-container input[type="text"],
+#purchases-page-container input[type="number"],
+#purchases-page-container input[type="date"] {
   width: 100%;
   padding: 8px;
   margin-bottom: 10px;
@@ -94,20 +94,6 @@ input[type="date"] {
   grid-template-columns: repeat(2, 1fr); /* Display two orders horizontally */
 }
 
-/* Select and input styles */
-.select-name,
-input[type="text"],
-input[type="number"],
-input[type="date"] {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: white;
-  font-size: 16px;
-  color: #333;
-}
 
 /* Sort dropdown container styles */
 .sort-container {
@@ -148,4 +134,19 @@ input[type="date"] {
 /* Sort direction radio button input styles */
 .sort-direction input[type="radio"] {
   margin-right: 5px;
+}
+
+/* Select and input styles */
+.select-name,
+#purchases-page-container input[type="text"],
+#purchases-page-container input[type="number"],
+#purchases-page-container input[type="date"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 16px;
+  color: #333;
 }

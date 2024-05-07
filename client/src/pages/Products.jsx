@@ -6,12 +6,13 @@ import '../css/Product.css';
 function Products() {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
-    const [showDescription, setShowDescription] = useState(false);
+    const [showDescription, setShowDescription] = useState({});
     const [searchTerm, setSearchTerm] = useState('');
 
-    const toggleDescription = () => {
-        setShowDescription(!showDescription);
-    };
+    const toggleDescription = (model_id) => {
+        // Toggle the value for the specific model_id
+        setShowDescription(prevState => ({ ...prevState, [model_id]: !prevState[model_id] }));
+      };
     
     const navigateToCreateProduct = () => {
         navigate('/main/createProduct'); // Navigate to the add product page
@@ -62,13 +63,13 @@ function Products() {
                             </div>
                             <p>Type: {product.category_name}</p>
                             <p>Model: {product.model_number}</p>
-                            {showDescription ? (
+                            {showDescription[product.model_id] ? (
                                 <>
                                     <p>{product.description}</p>
-                                    <a href="#" onClick={toggleDescription} className="toggle-description">Read Less</a>
+                                    <a href="#" onClick={()=> toggleDescription(product.model_id)} className="toggle-description">Read Less</a>
                                 </>
                             ) : (
-                                <a href="#" onClick={toggleDescription} className="toggle-description">Read More</a>
+                                <a href="#" onClick={() => toggleDescription(product.model_id)}  className="toggle-description">Read More</a>
                             )}
                             <h3>Price: ${product.price}</h3>
                             <div className="buttons-container">
