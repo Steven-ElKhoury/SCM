@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { BlobProvider } from '@react-pdf/renderer';
 import PurchaseReceipt from '../Components/PurchaseReceipt';
 import '../css/Purchases.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Purchases() {
     const navigate = useNavigate();
@@ -43,7 +45,6 @@ function Purchases() {
             console.error('Error fetching Byproduct Types: ', error);
         });
     }, []);
-
 
     useEffect(() => {
         axios.get('http://localhost:3001/getbyProducts')
@@ -166,10 +167,51 @@ function Purchases() {
             alert("Quantity of the order is more than what is available, Manufacture more Byproducts!")
             navigate('/main/manufacture'); 
         }
+axios.get('http://localhost:3001/gettingByproductList').then((response) => {
+    setByproductList(response.data);
+}).catch(error => {
+    console.error('Error fetching Byproducts: ', error);
+});
+axios.get('http://localhost:3001/gettingByproductTypeList').then((response) => {
+    setByproductTypeList(response.data);
+}).catch(error => {
+    console.error('Error fetching Byproduct Types: ', error);
+});
+axios.get('http://localhost:3001/getbyProducts')
+.then((response) => {
+    const sortedByProducts = response.data.sort((a, b) => {
+        let comparison = 0;
+        if (sortKey === 'total_price' || sortKey === 'quantity') {
+            comparison = parseFloat(a[sortKey]) - parseFloat(b[sortKey]);
+        } else if (sortKey === 'date') {
+            comparison = new Date(a.date) - new Date(b.date);
+        } else {
+            comparison = a[sortKey] - b[sortKey];
+        }
+
+        return sortDirection === 'ascending' ? comparison : -comparison;
+    });
+    setbyProducts(sortedByProducts);
+})
+.catch((error) => {
+    console.error('Error fetching byproducts:', error);
+});
+
+toast.success(`Successfully manufactured ${parsedQuantity} units of model ID ${selectedModelID}.`, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+});
+        
     }
 
     return (
         <>
+        <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover /> 
             <div  id="purchases-page-container"className="purchases-container">
                     <h2 className="section-header" id="Purchase-page" onClick={() => setIsExpanded(!isExpanded)}>Add New Order {isExpanded ? '-' : '+'}</h2>
                 <div className="new-Purchase">

@@ -48,7 +48,8 @@ const filteredWarehouses = allWarehouses.filter(warehouse =>
   (warehouse.component_storage_name || warehouse.byproduct_storage_name).toLowerCase().includes(searchTerm.toLowerCase()) ||
   warehouse.category_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
   (warehouse.component_storage_size || warehouse.byproduct_storage_size).toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-  (warehouse.component_storage_capacity || warehouse.byproduct_storage_capacity).toString().toLowerCase().includes(searchTerm.toLowerCase())
+  (warehouse.component_storage_capacity || warehouse.byproduct_storage_capacity).toString().toLowerCase().includes(searchTerm.toLowerCase())||
+  warehouse.type.toString().toLowerCase().includes(searchTerm.toLowerCase())
 );
 
 return (
@@ -73,7 +74,7 @@ return (
               backgroundColor: 'skyblue',
               border: 'none',
               color: 'white',
-              padding: '10px 20px', // Reduced padding
+              padding: '10px 20px',
               textAlign: 'center',
               textDecoration: 'none',
               cursor: 'pointer',

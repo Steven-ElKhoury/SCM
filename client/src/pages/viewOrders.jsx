@@ -64,7 +64,8 @@ function Orders() {
         order.quantity.toString().includes(search) ||
         order.date_ordered && order.date_ordered.toLowerCase().includes(search.toLowerCase()) ||
         order.date_arrived && order.date_arrived.toLowerCase().includes(search.toLowerCase()) ||
-        order.lead_time.toString().includes(search)
+        order.lead_time.toString().includes(search)||
+        order.pending.toString().includes(search)
         // Add more fields as needed
       );
       const sortedAndFilteredOrders = [...filteredOrders].sort((a, b) => {
@@ -108,8 +109,8 @@ function Orders() {
                         <SortableTableCell onClick={() => { setSortField('lead_time'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
                             Lead Time {sortField === 'lead_time' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                         </SortableTableCell>
-                        <SortableTableCell onClick={() => { setSortField('status'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
-                            Status {sortField === 'status' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
+                        <SortableTableCell onClick={() => { setSortField('pending'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+                            Status {sortField === 'pending' && (sortDirection === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />)}
                         </SortableTableCell>
                         <TableCell>Change Status</TableCell>
                     </TableRow>

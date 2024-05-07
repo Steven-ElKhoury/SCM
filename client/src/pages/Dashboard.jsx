@@ -53,12 +53,10 @@ const Dashboard = () => {
     const fetchBikeInventoryData = async () => {
       try {
         const response = await axios.get('http://localhost:3001/getProductWarehouses');
-        console.log('Response data:', response.data); // Log the response data
+        console.log('Response data:', response.data);
 
-        // Process response data to extract significant inventory information
         const processedBikeData = response.data.map(item => {
-          // Calculate percentage of current stock
-          const currentStockBikePercentage = (item.byproduct_storage_current_stock / item.byproduct_storage_capacity) * 100;
+        const currentStockBikePercentage = (item.byproduct_storage_current_stock / item.byproduct_storage_capacity) * 100;
 
           return {
             unit: item.byproduct_storage_name,
@@ -90,8 +88,8 @@ const Dashboard = () => {
         }));
   
         // Filter orders for a specific year (e.g., 2024)
-        //const currentYear = new Date().getFullYear(); // Get current year
-        const currentYear = 2022;
+        const currentYear = new Date().getFullYear(); // Get current year
+        //const currentYear = 2022;
         const filteredOrdersData = ordersData.filter(order => order.date.getFullYear() === currentYear);
   
         // Generate monthly summary
@@ -192,7 +190,7 @@ const Dashboard = () => {
     const fetchSuppliersData = async () => {
       try {
         const response = await axios.get('http://localhost:3001/getOrders');
-        console.log('Response data:', response.data); // Log the response data
+        console.log('Response data:', response.data);
         const suppliersMap = {};
         response.data.forEach(order => {
           const supplierName = order.supplier_name;
@@ -204,13 +202,16 @@ const Dashboard = () => {
           suppliersMap[supplierName].orderCount++;
         });
 
-        const suppliersData = Object.keys(suppliersMap).map(supplierName => ({
+        const suppliersData2 = Object.keys(suppliersMap).map(supplierName => ({
           supplier: supplierName,
           orders: suppliersMap[supplierName].orderCount,
           deliveryTime: suppliersMap[supplierName].totalLeadTime / suppliersMap[supplierName].orderCount
         }));
         
-        setSuppliersData(suppliersData);
+        setSuppliersData(suppliersData2);
+        console.log("honnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
+        console.log(suppliersData2)
+        console.log(suppliersData)
         setLoading(false);
       } catch (error) {
         console.error('Error fetching suppliers data:', error);
@@ -366,7 +367,7 @@ const Dashboard = () => {
           <YAxis dataKey="unit" type="category" />
           <Tooltip />
           <Legend />
-          <Bar dataKey="currentStockPercentage" stackId="a" fill={colorfulBeautifulColors[0]} name="Current Stock Percentage" />
+          <Bar dataKey="currentStockBikePercentage" stackId="a" fill={colorfulBeautifulColors[0]} name="Current Stock Percentage" />
         </BarChart>
       </div>
       <div className="stat-box-container">
@@ -398,7 +399,7 @@ const Dashboard = () => {
           </div>
           <div className="stat-box-container">
             {suppliersData.map((supplier, index) => (
-              <div className="stat-box suppliers" key={index}>
+              <div className="stat-box suppliers" key={index} style={{ backgroundColor: colorfulBeautifulColors[index] }}>
                 <FontAwesomeIcon icon={faShoppingCart} className="stat-icon" />
                 <div className="stat-content">
                   <h3>Supplier {supplier.supplier}</h3>

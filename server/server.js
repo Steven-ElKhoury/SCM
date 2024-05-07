@@ -672,11 +672,11 @@ app.get('/gettingByproductTypeList', (req, res) => {
 
  /////new purch: update tables
  app.get('/availableQuantityCheck', (req, res) => {
-  const modelID = req.query.byProductName;
+  const modelID = req.query.modelID;
   const query = `
   SELECT COUNT(*) as quantity 
   FROM produced_byproduct 
-  WHERE model_id = 2 AND sold = 0;
+  WHERE model_id = ? AND sold = 0;
   `;
 
   db.query(query, [modelID], (err, result) => {
