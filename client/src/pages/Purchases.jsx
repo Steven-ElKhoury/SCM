@@ -170,7 +170,7 @@ function Purchases() {
 
     return (
         <>
-            <div className="purchases-container">
+            <div  id="purchases-page-container"className="purchases-container">
                 <div className="new-Purchase">
                     <h2 className="section-header" id="Purchase-page" onClick={() => setIsExpanded(!isExpanded)}>Add New Order {isExpanded ? '-' : '+'}</h2>
                     {isExpanded && (

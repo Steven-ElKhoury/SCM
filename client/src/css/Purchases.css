@@ -60,9 +60,9 @@
 }
 
 /* Input styles */
-input[type="text"],
-input[type="number"],
-input[type="date"] {
+#purchases-page-container input[type="text"],
+#purchases-page-container input[type="number"],
+#purchases-page-container input[type="date"] {
   width: 100%;
   padding: 8px;
   margin-bottom: 10px;
@@ -96,9 +96,9 @@ input[type="date"] {
 
 /* Select and input styles */
 .select-name,
-input[type="text"],
-input[type="number"],
-input[type="date"] {
+#purchases-page-container input[type="text"],
+#purchases-page-container input[type="number"],
+#purchases-page-container input[type="date"] {
   width: 100%;
   padding: 8px;
   margin-bottom: 10px;
