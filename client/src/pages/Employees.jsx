@@ -58,7 +58,7 @@ function Employees() {
     return (
         <> 
             <div  className = 'createEmployees'>
-                <button onClick={()=>navigate('/main/acceptemployee')}><FontAwesomeIcon icon = {faPlus}></FontAwesomeIcon>   Create Employee</button>
+                <button onClick={()=>navigate('/main/acceptemployee')}><FontAwesomeIcon icon = {faPlus}></FontAwesomeIcon>   Manage Pending Employees</button>
             </div>
         {/* <Table  columns={columns} data={employees} filterColumn={'Email'}/> */}
         <div className="employee-table-container">
