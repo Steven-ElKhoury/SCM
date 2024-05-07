@@ -171,8 +171,8 @@ function Purchases() {
     return (
         <>
             <div  id="purchases-page-container"className="purchases-container">
-                <div className="new-Purchase">
                     <h2 className="section-header" id="Purchase-page" onClick={() => setIsExpanded(!isExpanded)}>Add New Order {isExpanded ? '-' : '+'}</h2>
+                <div className="new-Purchase">
                     {isExpanded && (
                         <form className='form-container' id='Purchase-page' onSubmit={handleAddPurchase}>
                             <div className='form-container' id='Purchase-page'>
