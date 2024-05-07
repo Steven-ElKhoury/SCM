@@ -1,80 +1,44 @@
-.byProduct-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-  
-  .byProduct-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border-bottom: 1px solid #ccc;
-    padding: 1rem;
-  }
-  
-  .byProduct-content {
-    flex: 1;
-    overflow: auto;
-    padding: 1rem;
-  }
-  
-  .byProduct-grid {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+/* .purchases-container styles */
+.purchases-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 20px;
+  background-color: #f8f9fa; /* Light gray background */
 }
 
-  .byProduct-card-container {
-    display: grid;
-    gap: 1rem;
-  }
-  
-  .byProduct-card {
-    border: 1px solid #ccc;
-    border-radius: 0.25rem;
-    background-color: white;
-    max-width: 500px;
-  }
-  
-  .byProduct-card-content {
-    padding: 1rem;
-  }
-  
-  .byProduct-image {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 1rem;
-  }
-
-
-#Purchase-page .new-Purchase {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    display: flex; 
-    align-items: center; 
-    box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+/* .new-Purchase styles */
+.new-Purchase {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#Purchase-page .section-header {
-  background-color: #f0f0f0;
+.section-header {
+  background-color: #007bff; /* Blue header background */
   padding: 10px 20px;
   margin: 0;
   cursor: pointer;
-  font-size: 18px; 
+  font-size: 18px;
   border: none;
   border-radius: 8px;
+  color: white; /* White text color */
 }
 
-#Purchase-page .form-container {
-    padding: 20px;
-    background-color: white; 
-    border-radius: 8px; 
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px; 
+/* .form-container styles */
+.form-container {
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
-#Purchase-page .byProduct-container {
+/* .byProduct-container styles */
+.byProduct-container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -84,48 +48,57 @@
   margin-bottom: 20px;
 }
 
-#Purchase-page .byProduct-card {
+/* .byProduct-card styles */
+.byProduct-card {
   border: 1px solid #ccc;
   border-radius: 0.25rem;
   background-color: white;
   max-width: 500px;
   padding: 10px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-#Purchase-page input[type="text"], 
-#Purchase-page input[type="number"], 
-#Purchase-page input[type="date"] {
-    width: 100%; 
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+/* Input styles */
+input[type="text"],
+input[type="number"],
+input[type="date"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-#Purchase-page .submit-btn {
-    width: 100%;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 10px 20px;
-    margin-bottom: 10px;
-    cursor: pointer;
+/* Submit button styles */
+.submit-btn {
+  width: 100%;
+  background-color: #28a745; /* Green button */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth hover transition */
 }
 
-#Purchase-page .submit-btn:hover {
-    background-color: #0056b3;
+.submit-btn:hover {
+  background-color: #218838; /* Darker green on hover */
 }
 
-#Purchase-page .byProduct-grid {
+/* Grid styles */
+.byProduct-grid {
   display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjust based on design preference */
+  gap: 20px; /* Increased gap between items */
+  grid-template-columns: repeat(2, 1fr); /* Display two orders horizontally */
 }
 
-#Purchase-page .select-name, #Purchase-page input[type="text"], #Purchase-page input[type="number"], #Purchase-page input[type="date"] {
+/* Select and input styles */
+.select-name,
+input[type="text"],
+input[type="number"],
+input[type="date"] {
   width: 100%;
   padding: 8px;
   margin-bottom: 10px;
@@ -134,4 +107,45 @@
   background-color: white;
   font-size: 16px;
   color: #333;
+}
+
+/* Sort dropdown container styles */
+.sort-container {
+  display: flex;
+  flex-direction: column; /* Change to column direction */
+  margin-bottom: 20px;
+}
+
+/* Sort dropdown label styles */
+.sort-container label {
+  font-size: 16px;
+  margin-bottom: 5px; /* Add margin bottom */
+}
+
+/* Sort dropdown select styles */
+#sort-select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px; /* Add margin bottom */
+}
+
+/* Sort direction radio button container styles */
+.sort-direction {
+  display: flex;
+  flex-direction: column; /* Change to column direction */
+}
+
+/* Sort direction radio button label styles */
+.sort-direction label {
+  font-size: 16px;
+  margin-bottom: 5px; /* Add margin bottom */
+}
+
+/* Sort direction radio button input styles */
+.sort-direction input[type="radio"] {
+  margin-right: 5px;
 }
