@@ -58,7 +58,11 @@ function TopBar() {
     return (
         <div className="top-bar">
             <div className="User">
-                <h2 id="welcomeMessage" style={{ color: 'white' }}>Welcome, </h2>
+                <h2 id="welcomeMessage" style={{ color: 'white' }}>Pedal SCM </h2>
+            </div>
+            <div className='User'>
+            {/* <img className='logo-pic' src={require("../pictures/bicycle.png")}  alt="" /> */}
+                
             </div>
 
             <div className="top-bar-buttons">
