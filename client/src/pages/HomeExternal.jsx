@@ -171,7 +171,7 @@ const Home = () => {
     </section>
 
     </div>
-      {/* <div className="chart-container">
+      <div className="chart-container">
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <Card className="chart-card">
@@ -220,7 +220,7 @@ const Home = () => {
           
         </Grid>
       </div> 
-    */}
+   
 
      
     </div>

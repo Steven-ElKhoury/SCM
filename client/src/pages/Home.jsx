@@ -170,7 +170,8 @@ const Home = () => {
       </div>
     </section>
 
-    </div>
+  </div>
+  {/* 
       <div className="chart-container">
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
@@ -215,11 +216,10 @@ const Home = () => {
             </Card>
           </Grid>
 
-          {/* Add other charts here */}
 
           
         </Grid>
-      </div>
+      </div> */}
 
      
     </div>
