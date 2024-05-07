@@ -72,6 +72,7 @@ function Products() {
                                 <a href="#" onClick={() => toggleDescription(product.model_id)}  className="toggle-description">Read More</a>
                             )}
                             <h3>Price: ${product.price}</h3>
+                                </div>
                             <div className="buttons-container">
                                 <button onClick={() => navigate(`/main/editProduct/${product.model_id}`, { state: { product } })}>Edit</button>
                                 {product.hasBlueprint ? (
@@ -80,7 +81,6 @@ function Products() {
                                     <button onClick={() => navigate(`/main/addParts/${product.model_id}`)}>Add Parts</button>
                                 )}
                             </div>
-                        </div>
                     </div>
                 ))}
             </div>
