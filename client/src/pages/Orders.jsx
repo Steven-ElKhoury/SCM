@@ -5,10 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBicycle, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import '../css/orders.css'; // Import the CSS file
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import OrderReceipt from '../Components/OrderReceipt';
+
 import { PDFViewer } from '@react-pdf/renderer';
 import { BlobProvider } from '@react-pdf/renderer';
-
+import PurchaseReceipt from '../Components/PurchaseReceipt';
+import OrderReceipt from '../Components/OrderReceipt';
 const Orders = () => {
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
@@ -211,7 +212,7 @@ const Orders = () => {
                                     <p>Lead Time: {order.lead_time} days</p>
                                 </div>
                             </div>
-                                <BlobProvider document={<OrderReceipt order={order} />}>
+                                {/* <BlobProvider document={<OrderReceipt order={order} />}>
                                     {({ blob, url, loading, error }) => {
                                         if (loading) {
                                             return <div>Loading...</div>;
@@ -221,8 +222,19 @@ const Orders = () => {
                                             return <a href={url} target="_blank" rel="noopener noreferrer">View receipt</a>;
                                         }
                                     }}
-                                </BlobProvider>
-                        
+                                </BlobProvider> */}
+
+                          <BlobProvider document={<OrderReceipt order={order} />}>
+                                                {({ blob, url, loading, error }) => {
+                                                    if (loading) {
+                                                        return <div>Loading...</div>;
+                                                    } else if (error) {
+                                                        return <div>An error occurred while generating the PDF.</div>;
+                                                    } else {
+                                                        return <a href={url} target="_blank" rel="noopener noreferrer">View receipt</a>;
+                                                    }
+                                                }}
+                                            </BlobProvider>
                         </li>
                     ))}
                 </ul>
@@ -232,6 +244,3 @@ const Orders = () => {
 };
 
 export default Orders;
-
-
- 

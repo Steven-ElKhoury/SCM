@@ -11,8 +11,6 @@ const db = mysql.createConnection({
     database: 'supply_chain',
 });
 
-
-
 // Endpoint for fetching warehouses from the first table
 warehouseRouter.get('/getPartWarehouses', (req, res) => {
     db.query('SELECT s.*, c.category_name FROM component_storage s INNER JOIN part_category c ON s.part_category_id = c.part_category_id', (err, result) => {
@@ -85,7 +83,7 @@ warehouseRouter.post('/createWarehouse', (req, res) => {
             return;
         }
         console.log('Warehouse updated successfully');
-        res.status(200).send('Warehouse updated successfully');
+        res.status(200).send('Warehouse updated successfully');       
     });
 });
 
