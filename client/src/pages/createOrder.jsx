@@ -72,15 +72,16 @@ const CreateOrder = () => {
             setNoSuppliers(true);
           } else {
             console.log(response.data);
-            setSuppliers(response.data);
-            setSelectedSupplier(response.data[0]);
+            const sortedSuppliers = response.data.sort((a, b) => a.price - b.price);
+            setSuppliers(sortedSuppliers);
+            setSelectedSupplier(sortedSuppliers[0]);
             setNoSuppliers(false);
           }
         })
         .catch(error => console.error(error));
     }
     console.log(selectedSupplier);
-  };
+};
 
   const handleDelete = (id) => {
     console.log('Deleting item with id:', id);

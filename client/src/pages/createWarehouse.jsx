@@ -75,7 +75,7 @@ function CreateStorageUnit() {
     
         // Only submit the form if no fields are empty
         if (selectedStorageType && selectedType && name && size && capacity) {
-            const url = selectedStorageType === 'Part' ? 'http://localhost:3001/createComponentStorage' : 'http://localhost:3001/createByproductStorage';
+            const url = selectedStorageType === 'Part' ? 'http://localhost:3001/createWarehouse' : 'http://localhost:3001/createByproductStorage';
             const typeIdKey = selectedStorageType === 'Part' ? 'part_category_id' : 'bike_category_id';
            
             axios.post(url, {

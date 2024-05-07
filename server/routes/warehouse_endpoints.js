@@ -42,10 +42,10 @@ warehouseRouter.get('/getProductWarehouses', (req, res) => {
 
 warehouseRouter.post('/createWarehouse', (req, res) => {
     // Extract data from the request body
-    const { name, capacity, size, component_type_id } = req.body;
+    const { name, capacity, size, part_category_id } = req.body;
   
     // Insert the new warehouse into the database
-    db.query('INSERT INTO component_storage(component_storage_name, component_storage_size, component_storage_capacity, component_type_id, component_storage_current_stock) VALUES (?, ?, ?, ?, 0)', [name, size, capacity, component_type_id], (err, result) => {
+    db.query('INSERT INTO component_storage(component_storage_name, component_storage_size, component_storage_capacity, part_category_id, component_storage_current_stock) VALUES (?, ?, ?, ?, 0)', [name, size, capacity, part_category_id], (err, result) => {
       if (err) {
         console.error('Error adding warehouse to database:', err);
         res.status(500).send('Error adding warehouse');
