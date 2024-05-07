@@ -18,6 +18,7 @@
     align-items: center;
     justify-content: center;
     width: 100%;
+    flex-grow: 1;
 }
 
 .part__info h1, .part__info p {
@@ -46,6 +47,9 @@
     cursor: pointer;
     background-color: #007BFF;
     color: white;
+    align-self: flex-end center; /* Align button to the bottom of the container */
+
+
 }
 
 .toggle-description {
