@@ -116,6 +116,7 @@ const Dashboard = () => {
   
         setOrdersData(ordersByMonth);
         setLoading(false);
+        console.log("isiiiiiiiiiiissssssssssssss",ordersData)
   
         // Calculate total revenue
         const totalRevenue = filteredOrdersData.reduce((total, order) => total + parseFloat(order.total_price), 0).toFixed(2);
@@ -278,7 +279,7 @@ const Dashboard = () => {
     <Tooltip />
     <Legend />
     <Bar yAxisId="left" dataKey="orders" fill="#008B8B" name="Total Orders" />
-    <Bar yAxisId="right" dataKey="revenue" fill="#06d6a0" name="Total Revenue" />
+    
   </BarChart>
 </div>
   <div className="stat-box-container">

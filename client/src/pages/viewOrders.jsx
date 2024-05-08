@@ -15,7 +15,10 @@ const Title = styled(Typography)({
     margin: '20px 0',
 });
 
-
+const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US');
+};
 
 function Orders() {
     const [orders, setOrders] = useState([]);
@@ -122,8 +125,8 @@ function Orders() {
                             <TableCell>{order.component_type_name}</TableCell>
                             <TableCell>{order.supplier_name}</TableCell>
                             <TableCell>{order.quantity}</TableCell>
-                            <TableCell>{order.date_ordered}</TableCell>
-                            <TableCell style={{ color: new Date(order.date_arrived) - new Date(order.date_ordered) > order.lead_time ? 'red' : 'inherit' }}>{order.date_arrived}</TableCell>
+                            <TableCell>{formatDate(order.date_ordered)}</TableCell>
+                            <TableCell style={{ color: new Date(formatDate(order.date_arrived)) - new Date(formatDate(order.date_ordered)) > order.lead_time ? 'red' : 'inherit' }}>{formatDate(order.date_arrived)}</TableCell>
                             <TableCell>{order.lead_time}</TableCell>
                             <TableCell>{order.pending}</TableCell>
                             <TableCell>
