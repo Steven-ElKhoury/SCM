@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: supply_chain
 -- ------------------------------------------------------
--- Server version	8.0.33
+-- Server version	8.0.36
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -41,7 +41,7 @@ CREATE TABLE `component_storage` (
 
 LOCK TABLES `component_storage` WRITE;
 /*!40000 ALTER TABLE `component_storage` DISABLE KEYS */;
-INSERT INTO `component_storage` VALUES (9,2000,'Seatpost\'s Warehouse',600,0,7),(10,2000,'Brake\'s warehouse',600,0,10),(11,2000,'Pedal\'s Warehouse',600,0,14),(12,2000,'Frame\'s Warehouse',600,0,11),(13,2000,'Saddle\'s Warehouse',400,0,5),(14,2000,'Tyre\'s Warehouse',200,0,13),(15,2000,'Wheel\'s',250,0,3);
+INSERT INTO `component_storage` VALUES (9,2000,'Seatpost\'s Warehouse',600,1204,7),(10,2000,'Brake\'s warehouse',600,1808,10),(11,2000,'Pedal\'s Warehouse',600,1024,14),(12,2000,'Frame\'s Warehouse',600,2000,11),(13,2000,'Saddle\'s Warehouse',400,1345,5),(14,2000,'Tyre\'s Warehouse',200,1508,13),(15,2000,'Wheel\'s',250,768,3);
 /*!40000 ALTER TABLE `component_storage` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-07 20:38:22
+-- Dump completed on 2024-05-08  3:11:10

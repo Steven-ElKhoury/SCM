@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: supply_chain
 -- ------------------------------------------------------
--- Server version	8.0.33
+-- Server version	8.0.36
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,28 +16,29 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `supplier`
+-- Table structure for table `task`
 --
 
-DROP TABLE IF EXISTS `supplier`;
+DROP TABLE IF EXISTS `task`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `supplier` (
-  `supplier_id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(50) NOT NULL,
-  `supplier_name` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`supplier_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `task` (
+  `task_id` int NOT NULL AUTO_INCREMENT,
+  `task_type` varchar(50) NOT NULL,
+  `estimated_duration` int DEFAULT NULL,
+  `completed` tinyint NOT NULL DEFAULT '0',
+  PRIMARY KEY (`task_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `supplier`
+-- Dumping data for table `task`
 --
 
-LOCK TABLES `supplier` WRITE;
-/*!40000 ALTER TABLE `supplier` DISABLE KEYS */;
-INSERT INTO `supplier` VALUES (1,'brazilwinners1@gmail.com','john'),(2,'marc_supplier123@outlook.com','marc'),(3,'Jude1@gmail.com','Jude'),(4,'anthony@gmail.com','Anthony');
-/*!40000 ALTER TABLE `supplier` ENABLE KEYS */;
+LOCK TABLES `task` WRITE;
+/*!40000 ALTER TABLE `task` DISABLE KEYS */;
+INSERT INTO `task` VALUES (1,'reorder seats',20,0),(2,'fix bike blueprint',45,1),(3,'oversee Storage A',30,0),(4,'change warehousee',20,0),(5,'create new product',30,0),(6,'talk to supplier',50,1),(7,'check KPIs',40,0);
+/*!40000 ALTER TABLE `task` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -49,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-07 20:38:21
+-- Dump completed on 2024-05-08  3:11:10

@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: supply_chain
 -- ------------------------------------------------------
--- Server version	8.0.33
+-- Server version	8.0.36
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,35 +16,32 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `produced_byproduct`
+-- Table structure for table `blueprint`
 --
 
-DROP TABLE IF EXISTS `produced_byproduct`;
+DROP TABLE IF EXISTS `blueprint`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `produced_byproduct` (
-  `byproduct_id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `blueprint` (
+  `blueprint_id` int NOT NULL AUTO_INCREMENT,
   `model_id` int NOT NULL,
-  `cus_orderID` int DEFAULT NULL,
-  `sold` int DEFAULT '0',
-  `byproduct_storage_id` int DEFAULT NULL,
-  PRIMARY KEY (`byproduct_id`),
+  `component_type_id` int NOT NULL,
+  PRIMARY KEY (`blueprint_id`,`model_id`,`component_type_id`),
   KEY `model_id` (`model_id`),
-  KEY `fk_cus_orderID` (`cus_orderID`),
-  KEY `byproduct_storage_id_idx` (`byproduct_storage_id`),
-  CONSTRAINT `byproduct_storage_id` FOREIGN KEY (`byproduct_storage_id`) REFERENCES `byproduct_storage` (`byproduct_storage_id`),
-  CONSTRAINT `fk_cus_orderID` FOREIGN KEY (`cus_orderID`) REFERENCES `customer_order` (`cust_order_id`),
-  CONSTRAINT `produced_byproduct_ibfk_1` FOREIGN KEY (`model_id`) REFERENCES `model` (`model_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=231 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `component_type_id` (`component_type_id`),
+  CONSTRAINT `blueprint_ibfk_1` FOREIGN KEY (`model_id`) REFERENCES `model` (`model_id`),
+  CONSTRAINT `blueprint_ibfk_2` FOREIGN KEY (`component_type_id`) REFERENCES `component_type` (`component_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `produced_byproduct`
+-- Dumping data for table `blueprint`
 --
 
-LOCK TABLES `produced_byproduct` WRITE;
-/*!40000 ALTER TABLE `produced_byproduct` DISABLE KEYS */;
-/*!40000 ALTER TABLE `produced_byproduct` ENABLE KEYS */;
+LOCK TABLES `blueprint` WRITE;
+/*!40000 ALTER TABLE `blueprint` DISABLE KEYS */;
+INSERT INTO `blueprint` VALUES (16,2,2),(46,2,2),(47,2,13),(48,2,6),(49,2,8),(50,2,3),(51,2,10),(52,2,10),(53,2,5),(54,2,5),(36,3,11),(37,3,11),(38,3,14),(39,3,6),(40,3,1),(41,3,15),(42,3,9),(43,3,9),(44,3,4),(45,3,4),(19,17,2),(20,17,2),(28,17,13),(29,17,7),(30,17,7),(31,17,3),(32,17,10),(33,17,10),(34,17,5),(35,17,5),(55,18,11),(56,18,11),(57,18,12),(58,18,7),(59,18,8),(60,18,3),(61,18,10),(62,18,10),(63,18,5),(64,18,5);
+/*!40000 ALTER TABLE `blueprint` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -56,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-07 20:38:22
+-- Dump completed on 2024-05-08  3:11:10

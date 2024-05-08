@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: supply_chain
 -- ------------------------------------------------------
--- Server version	8.0.33
+-- Server version	8.0.36
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,29 +16,27 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `manager`
+-- Table structure for table `bike_category`
 --
 
-DROP TABLE IF EXISTS `manager`;
+DROP TABLE IF EXISTS `bike_category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `manager` (
-  `manager_id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `name` varchar(255) DEFAULT 'John',
-  PRIMARY KEY (`manager_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `bike_category` (
+  `bike_category_id` int NOT NULL AUTO_INCREMENT,
+  `category_name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`bike_category_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `manager`
+-- Dumping data for table `bike_category`
 --
 
-LOCK TABLES `manager` WRITE;
-/*!40000 ALTER TABLE `manager` DISABLE KEYS */;
-INSERT INTO `manager` VALUES (1,'steven123123123@gmail.com','$2b$10$jMJqmLxK3uYXS5r2xP95Ne52E2hVEdHHjlFK0L5hlemzPWrsP9Yv.','Steven'),(2,'zakhia123123123@gmail.com','$2b$10$3BGHr7qbFSd9LjF2YVENYev6doBUXV9j.0vdtSfQVCtAmmMqplnDm','Zakhia');
-/*!40000 ALTER TABLE `manager` ENABLE KEYS */;
+LOCK TABLES `bike_category` WRITE;
+/*!40000 ALTER TABLE `bike_category` DISABLE KEYS */;
+INSERT INTO `bike_category` VALUES (1,'Kids Bike'),(3,'E-MountainBike'),(4,'Road Bike'),(5,'Mountain Bike'),(6,'BMX'),(7,'City Bike');
+/*!40000 ALTER TABLE `bike_category` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -50,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-07 20:38:21
+-- Dump completed on 2024-05-08  3:11:11

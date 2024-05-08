@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: supply_chain
 -- ------------------------------------------------------
--- Server version	8.0.33
+-- Server version	8.0.36
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -31,7 +31,7 @@ CREATE TABLE `customer_order` (
   PRIMARY KEY (`cust_order_id`),
   KEY `fk_modelID` (`modelID`),
   CONSTRAINT `fk_modelID` FOREIGN KEY (`modelID`) REFERENCES `model` (`model_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,6 +40,7 @@ CREATE TABLE `customer_order` (
 
 LOCK TABLES `customer_order` WRITE;
 /*!40000 ALTER TABLE `customer_order` DISABLE KEYS */;
+INSERT INTO `customer_order` VALUES (124,10,3500.00,'2024-05-08',17),(125,10,3500.00,'2024-05-08',17),(126,24,6000.00,'2024-05-03',2),(127,10,23000.00,'2024-05-01',3),(128,2,3440.00,'2024-05-03',18),(129,14,24080.00,'2024-05-03',18),(130,1,1720.00,'2024-05-02',18),(131,1,250.00,'2024-05-02',2),(132,2,4600.00,'2024-05-02',3),(133,3,5160.00,'2024-05-01',18),(134,25,43000.00,'2024-05-08',18),(135,70,120400.00,'2024-05-09',18),(136,50,86000.00,'2024-05-03',18),(137,3,750.00,'2024-04-08',2);
 /*!40000 ALTER TABLE `customer_order` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -52,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-07 20:38:22
+-- Dump completed on 2024-05-08  3:11:11

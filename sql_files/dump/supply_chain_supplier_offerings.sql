@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: supply_chain
 -- ------------------------------------------------------
--- Server version	8.0.33
+-- Server version	8.0.36
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,32 +16,34 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `blueprint`
+-- Table structure for table `supplier_offerings`
 --
 
-DROP TABLE IF EXISTS `blueprint`;
+DROP TABLE IF EXISTS `supplier_offerings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `blueprint` (
-  `blueprint_id` int NOT NULL AUTO_INCREMENT,
-  `model_id` int NOT NULL,
+CREATE TABLE `supplier_offerings` (
+  `offering_id` int NOT NULL AUTO_INCREMENT,
+  `price` int NOT NULL,
+  `lead_time` int NOT NULL,
+  `supplier_id` int NOT NULL,
   `component_type_id` int NOT NULL,
-  PRIMARY KEY (`blueprint_id`,`model_id`,`component_type_id`),
-  KEY `model_id` (`model_id`),
+  PRIMARY KEY (`offering_id`,`supplier_id`,`component_type_id`),
+  KEY `supplier_id` (`supplier_id`),
   KEY `component_type_id` (`component_type_id`),
-  CONSTRAINT `blueprint_ibfk_1` FOREIGN KEY (`model_id`) REFERENCES `model` (`model_id`),
-  CONSTRAINT `blueprint_ibfk_2` FOREIGN KEY (`component_type_id`) REFERENCES `component_type` (`component_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `supplier_offerings_ibfk_1` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`supplier_id`),
+  CONSTRAINT `supplier_offerings_ibfk_2` FOREIGN KEY (`component_type_id`) REFERENCES `component_type` (`component_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `blueprint`
+-- Dumping data for table `supplier_offerings`
 --
 
-LOCK TABLES `blueprint` WRITE;
-/*!40000 ALTER TABLE `blueprint` DISABLE KEYS */;
-INSERT INTO `blueprint` VALUES (16,2,2),(46,2,2),(47,2,13),(48,2,6),(49,2,8),(50,2,3),(51,2,10),(52,2,10),(53,2,5),(54,2,5),(36,3,11),(37,3,11),(38,3,14),(39,3,6),(40,3,1),(41,3,15),(42,3,9),(43,3,9),(44,3,4),(45,3,4),(19,17,2),(20,17,2),(28,17,13),(29,17,7),(30,17,7),(31,17,3),(32,17,10),(33,17,10),(34,17,5),(35,17,5),(55,18,11),(56,18,11),(57,18,12),(58,18,7),(59,18,8),(60,18,3),(61,18,10),(62,18,10),(63,18,5),(64,18,5);
-/*!40000 ALTER TABLE `blueprint` ENABLE KEYS */;
+LOCK TABLES `supplier_offerings` WRITE;
+/*!40000 ALTER TABLE `supplier_offerings` DISABLE KEYS */;
+INSERT INTO `supplier_offerings` VALUES (1,50,2,1,2),(2,60,5,1,1),(3,80,3,2,1),(4,20,5,3,1),(5,600,2,4,5),(6,30,2,5,3),(7,20,4,6,4),(8,15,3,7,5),(9,10,3,8,6),(10,30,6,9,7),(11,20,3,10,8),(12,30,2,11,9),(13,10,7,12,10),(14,13,5,13,11),(15,15,4,14,12),(16,40,4,15,13),(17,20,5,16,14),(18,20,5,17,15);
+/*!40000 ALTER TABLE `supplier_offerings` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -53,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-07 20:38:21
+-- Dump completed on 2024-05-08  3:11:11
