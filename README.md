@@ -1,6 +1,6 @@
 # SCM 
 
-## SCM is an application for supply chain management of a bike factory, it includes features for creating new products, suppliers, parts to be used in the production of bikes. It also includes warehouse management capabilities along with tracking of orders for components and purchase of bikes. The application includes capability to assign tasks to different employees, onboarding new employees, and a dashboard page for analytics regarding the performance of the factory.
+## SCM is an application for supply chain management of a bike factory, it includes features for creating new products, suppliers, parts to be used in the production of bikes. It also includes warehouse management capabilities along with tracking of orders for components and purchase of bikes. The application includes the capability to assign tasks to different employees, onboarding new employees, and a dashboard page for analytics regarding the performance of the factory.
 
 REACT, NODE.JS, MYSQL should be installed on your machine
 
